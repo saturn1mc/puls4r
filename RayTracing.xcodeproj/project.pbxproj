@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		911E10180D38E2C60055A153 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 911E10170D38E2C60055A153 /* Scene.cpp */; };
+		917DE2F80D3904AE0027B056 /* Observer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91ED3CAD0D1965DC004C1C11 /* Observer.cpp */; };
 		919FEBE30D350EFC00A94B01 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 919FEBE20D350EFC00A94B01 /* main.cpp */; };
 		91D20E7A0D355553000EA8CD /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91D20E790D355553000EA8CD /* Sphere.cpp */; };
 		91D20E840D3555A3000EA8CD /* Plan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91D20E830D3555A3000EA8CD /* Plan.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		911E10170D38E2C60055A153 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		919FE9BC0D34FE8900A94B01 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
 		919FEA1C0D3503D800A94B01 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
 		919FEA210D3504A800A94B01 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
@@ -47,6 +50,7 @@
 			isa = PBXGroup;
 			children = (
 				91A8BF5E0D19524100AC8AB5 /* Products */,
+				919FEBE20D350EFC00A94B01 /* main.cpp */,
 				91A8BF500D1950E500AC8AB5 /* Point.h */,
 				91A8BF6D0D19532D00AC8AB5 /* Vector.h */,
 				91ED3C100D195B59004C1C11 /* Matrix.h */,
@@ -55,9 +59,9 @@
 				91ED3CAD0D1965DC004C1C11 /* Observer.cpp */,
 				919FEA210D3504A800A94B01 /* Image.h */,
 				919FEA280D35055100A94B01 /* Scene.h */,
+				911E10170D38E2C60055A153 /* Scene.cpp */,
 				919FEA2F0D35068500A94B01 /* Ray.h */,
 				919FEACF0D35096B00A94B01 /* Intersection.h */,
-				919FEBE20D350EFC00A94B01 /* main.cpp */,
 				919FEA1C0D3503D800A94B01 /* Object.h */,
 				919FEA4A0D35076700A94B01 /* Sphere.h */,
 				91D20E790D355553000EA8CD /* Sphere.cpp */,
@@ -116,9 +120,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				919FEBE30D350EFC00A94B01 /* main.cpp in Sources */,
+				917DE2F80D3904AE0027B056 /* Observer.cpp in Sources */,
+				911E10180D38E2C60055A153 /* Scene.cpp in Sources */,
 				91D20E7A0D355553000EA8CD /* Sphere.cpp in Sources */,
 				91D20E840D3555A3000EA8CD /* Plan.cpp in Sources */,
+				919FEBE30D350EFC00A94B01 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
