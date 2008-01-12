@@ -1,0 +1,200 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		919FEBE30D350EFC00A94B01 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 919FEBE20D350EFC00A94B01 /* main.cpp */; };
+		91D20E7A0D355553000EA8CD /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91D20E790D355553000EA8CD /* Sphere.cpp */; };
+		91D20E840D3555A3000EA8CD /* Plan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91D20E830D3555A3000EA8CD /* Plan.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		919FE9BC0D34FE8900A94B01 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
+		919FEA1C0D3503D800A94B01 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
+		919FEA210D3504A800A94B01 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
+		919FEA280D35055100A94B01 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
+		919FEA2F0D35068500A94B01 /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
+		919FEA4A0D35076700A94B01 /* Sphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sphere.h; sourceTree = "<group>"; };
+		919FEAC60D35093F00A94B01 /* Plan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plan.h; sourceTree = "<group>"; };
+		919FEACF0D35096B00A94B01 /* Intersection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Intersection.h; sourceTree = "<group>"; };
+		919FEBE20D350EFC00A94B01 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		91A8BF500D1950E500AC8AB5 /* Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
+		91A8BF5D0D19524100AC8AB5 /* raytracing */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = raytracing; sourceTree = BUILT_PRODUCTS_DIR; };
+		91A8BF6D0D19532D00AC8AB5 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
+		91D20E790D355553000EA8CD /* Sphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sphere.cpp; sourceTree = "<group>"; };
+		91D20E830D3555A3000EA8CD /* Plan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plan.cpp; sourceTree = "<group>"; };
+		91ED3C100D195B59004C1C11 /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
+		91ED3CAC0D1965DC004C1C11 /* Observer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Observer.h; sourceTree = "<group>"; };
+		91ED3CAD0D1965DC004C1C11 /* Observer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Observer.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		91A8BF5B0D19524100AC8AB5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		91A8BF3E0D19501D00AC8AB5 = {
+			isa = PBXGroup;
+			children = (
+				91A8BF5E0D19524100AC8AB5 /* Products */,
+				91A8BF500D1950E500AC8AB5 /* Point.h */,
+				91A8BF6D0D19532D00AC8AB5 /* Vector.h */,
+				91ED3C100D195B59004C1C11 /* Matrix.h */,
+				919FE9BC0D34FE8900A94B01 /* Color.h */,
+				91ED3CAC0D1965DC004C1C11 /* Observer.h */,
+				91ED3CAD0D1965DC004C1C11 /* Observer.cpp */,
+				919FEA210D3504A800A94B01 /* Image.h */,
+				919FEA280D35055100A94B01 /* Scene.h */,
+				919FEA2F0D35068500A94B01 /* Ray.h */,
+				919FEACF0D35096B00A94B01 /* Intersection.h */,
+				919FEBE20D350EFC00A94B01 /* main.cpp */,
+				919FEA1C0D3503D800A94B01 /* Object.h */,
+				919FEA4A0D35076700A94B01 /* Sphere.h */,
+				91D20E790D355553000EA8CD /* Sphere.cpp */,
+				919FEAC60D35093F00A94B01 /* Plan.h */,
+				91D20E830D3555A3000EA8CD /* Plan.cpp */,
+			);
+			sourceTree = "<group>";
+		};
+		91A8BF5E0D19524100AC8AB5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				91A8BF5D0D19524100AC8AB5 /* raytracing */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		91A8BF5C0D19524100AC8AB5 /* raytracing */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 91A8BF600D19524200AC8AB5 /* Build configuration list for PBXNativeTarget "raytracing" */;
+			buildPhases = (
+				91A8BF5A0D19524100AC8AB5 /* Sources */,
+				91A8BF5B0D19524100AC8AB5 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = raytracing;
+			productName = raytracing;
+			productReference = 91A8BF5D0D19524100AC8AB5 /* raytracing */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		91A8BF400D19501D00AC8AB5 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 91A8BF410D19501D00AC8AB5 /* Build configuration list for PBXProject "RayTracing" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 0;
+			mainGroup = 91A8BF3E0D19501D00AC8AB5;
+			productRefGroup = 91A8BF5E0D19524100AC8AB5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				91A8BF5C0D19524100AC8AB5 /* raytracing */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		91A8BF5A0D19524100AC8AB5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				919FEBE30D350EFC00A94B01 /* main.cpp in Sources */,
+				91D20E7A0D355553000EA8CD /* Sphere.cpp in Sources */,
+				91D20E840D3555A3000EA8CD /* Plan.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		91A8BF420D19501D00AC8AB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		91A8BF430D19501D00AC8AB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			name = Release;
+		};
+		91A8BF610D19524200AC8AB5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = .;
+				INSTALL_PATH = "$(HOME)/bin";
+				PREBINDING = NO;
+				PRODUCT_NAME = raytracing;
+				USER_HEADER_SEARCH_PATHS = .;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		91A8BF620D19524200AC8AB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = .;
+				INSTALL_PATH = "$(HOME)/bin";
+				PREBINDING = NO;
+				PRODUCT_NAME = raytracing;
+				USER_HEADER_SEARCH_PATHS = .;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		91A8BF410D19501D00AC8AB5 /* Build configuration list for PBXProject "RayTracing" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				91A8BF420D19501D00AC8AB5 /* Debug */,
+				91A8BF430D19501D00AC8AB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		91A8BF600D19524200AC8AB5 /* Build configuration list for PBXNativeTarget "raytracing" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				91A8BF610D19524200AC8AB5 /* Debug */,
+				91A8BF620D19524200AC8AB5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 91A8BF400D19501D00AC8AB5 /* Project object */;
+}
