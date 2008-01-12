@@ -10,18 +10,12 @@
 #ifndef OBSERVER_H
 #define OBSERVER_H
 
-#include <cmath>
-
 #include "Point.h"
 #include "Vector.h"
 #include "Matrix.h"
 
 class Observer{
 private:
-	
-	static const int NL;
-	static const int NP;
-	static const double alpha;
 	
 	Point *eye;
 	Vector *sight;
@@ -44,9 +38,7 @@ public:
 		initMatrix();
 	}
 	
-	double focal(void);
 	Vector &ray(Point *sp);
-	void rayTracing(void);
 };
 
 #endif //OBSERVER_H
