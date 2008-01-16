@@ -31,25 +31,25 @@ public:
 		}
 	}
 	
-	Matrix(const Vector &u, const Vector &v, const Vector &w, const Point &eye){
-		content[0][0] = w.getX();
-		content[0][1] = w.getY();
-		content[0][2] = w.getZ();
+	Matrix(const Vector &l1, const Vector &l2, const Vector &l3, const Point &l4){
+		content[0][0] = l1.getX();
+		content[0][1] = l1.getY();
+		content[0][2] = l1.getZ();
 		content[0][3] = 0;
 		
-		content[1][0] = u.getX();
-		content[1][1] = u.getY();
-		content[1][2] = u.getZ();
+		content[1][0] = l2.getX();
+		content[1][1] = l2.getY();
+		content[1][2] = l2.getZ();
 		content[1][3] = 0;
 		
-		content[2][0] = v.getX();
-		content[2][1] = v.getY();
-		content[2][2] = v.getZ();
+		content[2][0] = l3.getX();
+		content[2][1] = l3.getY();
+		content[2][2] = l3.getZ();
 		content[2][3] = 0;
 		
-		content[3][0] = eye.getX();
-		content[3][1] = eye.getY();
-		content[3][2] = eye.getZ();
+		content[3][0] = l4.getX();
+		content[3][1] = l4.getY();
+		content[3][2] = l4.getZ();
 		content[3][3] = 1;
 	}
 	
