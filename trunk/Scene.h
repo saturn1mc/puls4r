@@ -21,10 +21,6 @@
 class Scene{
 private:
 	
-	int nl;
-	int np;
-	double alpha;
-	
 	Observer *observer;
 	std::list<Object *> objects;
 	Image *img;
@@ -38,13 +34,8 @@ public:
 		background = _background;
 	}
 	
-	int getnl() {return nl;}
-	int getnp() {return np;}
-	double getAlpha() {return alpha;}
-	
-	void setnl(int _nl) {nl=_nl;}
-	void setnp(int _np) {np=_np;}
-	void setAlpha(int _alpha) {alpha=_alpha;}
+	int getH() {return img->getH();}
+	int getW() {return img->getW();}
 	
 	void add(Object *obj);
 	void rayTrace(void);

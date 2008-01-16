@@ -21,6 +21,7 @@ private:
 	Point *eye;
 	Vector *sight;
 	Matrix *view;
+	double alpha;
 	
 	void initMatrix(void);
 	
@@ -40,6 +41,22 @@ public:
 	}
 	
 	Ray &ray(Point *sp);
+	
+	Point *getEye(void){
+		return eye;
+	}
+	
+	Vector *getSight(void){
+		return sight;
+	}
+	
+	Matrix *getView(void){
+		return view;
+	}
+	
+	double getAlpha() {return alpha;}
+	
+	void setAlpha(int _alpha) {alpha=_alpha;}
 };
 
 #endif //OBSERVER_H
