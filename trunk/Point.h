@@ -62,7 +62,7 @@ public:
 	double getZ() const { return z; }
 	double getT() const { return t; }
 	
-	double set(int d, int val){
+	double set(int d, double val){
 		switch(d){
 			case 0:
 				x = val;
