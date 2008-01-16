@@ -10,15 +10,20 @@
 #include "Observer.h"
 
 void Observer::initMatrix(void){
-	Vector u; 
-	Vector w;
+	
+	sight->normalize();
+	
 	Vector up(0,1,0);
+	up.normalize();
 	
-	w = *sight ^ up;
-	u = *sight ^ w;
+	Vector &w = *sight ^ up;
+	w.normalize();
 	
-	Matrix *v = new Matrix(u, *sight, w, *eye);
-	*view = v->t();
+	Vector &u = *sight ^ w;
+	u.normalize();
+	
+	view = new Matrix(*sight, u, w, *eye);
+	//*view = view->t();
 }
 
 Ray& Observer::ray(Point *sp){
