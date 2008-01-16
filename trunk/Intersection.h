@@ -23,13 +23,19 @@ private:
 	Point *point;
 	Vector *norm;
 	Color *color;
+	double t;
 	
 public:
 	
-	Intersection(Point *_point, Vector *_norm, Color *_color){
+	Intersection(Point *_point, Vector *_norm, Color *_color, double _t){
 		point = _point;
 		norm = _norm;
 		color = _color;
+		t = _t;
+	}
+	
+	double getT(){
+		return t;
 	}
 };
 

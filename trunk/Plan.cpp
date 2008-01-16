@@ -31,7 +31,7 @@ Intersection *Plan::intersection(Ray ray){
 			m.setY(ray.getOrigin().getY() + (ray.getDirection().getY() * ray.getT()));
 			m.setZ(ray.getOrigin().getZ() + (ray.getDirection().getZ() * ray.getT()));
 		
-			return new Intersection(&m, norm, color);
+			return new Intersection(&m, norm, color, ray.getT());
 		}
 	}
 }
