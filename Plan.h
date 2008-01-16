@@ -17,11 +17,20 @@ private:
 	
 	Vector *norm;
 	double d;
+	
 	bool monoface;
 
 public:
+
+	Plan(Vector *_norm, double _d, Color *_color, bool _monoface){
+		norm = _norm;
+		d = _d;
+		color = _color;
+		monoface = _monoface;
+	}
+
 	virtual ~Plan(void) {}
-	virtual void intersection(Ray ray);
+	virtual Intersection *intersection(Ray ray);
 
 };
 

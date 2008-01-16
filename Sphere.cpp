@@ -9,7 +9,7 @@
 
 #include "Sphere.h"
 
-void Sphere::intersection(Ray ray){
+Intersection *Sphere::intersection(Ray ray){
 	
 	double A = ( ray.getDirection().getX() * ray.getDirection().getX() ) + ( ray.getDirection().getY() * ray.getDirection().getY() ) + ( ray.getDirection().getZ() * ray.getDirection().getZ() );
 	double B = 2.0 * ( ray.getDirection().getX() * ( ray.getOrigin().getX() - center->getX() ) + ray.getDirection().getY() * ( ray.getOrigin().getY() - center->getY() ) + ray.getDirection().getZ() * ( ray.getOrigin().getZ() - center->getZ() ));
@@ -35,11 +35,14 @@ void Sphere::intersection(Ray ray){
 		nm.setY((m.getY() - center->getY()) / radius);
 		nm.setZ((m.getZ() - center->getZ()) / radius);
 		
-		//TODO intersection
+		return new Intersection(&m, &nm, color);
 	}
 	else{
 		if(t0 < 0 && t1 < 0){
-			//TODO no intersection
+			return 0;
+		}
+		else{
+			return 0;
 		}
 	}
 }

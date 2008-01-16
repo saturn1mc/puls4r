@@ -15,19 +15,15 @@
 #include "Ray.h"
 
 class Object{
-private:
 
-	Intersection *i;
-	Color *color;
-	
 protected:
-	
+	Color *color;
 	Object(void) {}
 	
 public:
 	
 	virtual ~Object(void) {}
-	virtual void intersection(Ray ray) = 0;
+	virtual Intersection *intersection(Ray ray) = 0;
 };
 
 #endif //OBJECT_H
