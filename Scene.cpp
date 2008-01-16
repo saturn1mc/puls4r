@@ -5,8 +5,8 @@ void Scene::add(Object *obj){
 }
 	
 void Scene::rayTrace(void){
-	for(int l=0; l<nl; l++){
-		for(int p=0; p<np; p++){
+	for(int l=0; l<img->getH(); l++){
+		for(int p=0; p<img->getW(); p++){
 			
 			Intersection *current_intersection = 0;
 			Point *pix = new Point(p, l, 0);
@@ -17,16 +17,18 @@ void Scene::rayTrace(void){
 				Intersection *candidate = (*iter)->intersection(ray);
 				
 				if(candidate != 0){
-					if(current_intersection == 0 || current_intersection.getT() > ){
-					
+					if(current_intersection == 0 || current_intersection->getT() > candidate->getT()){
+						current_intersection = candidate;
 					}
 				}
 			}
+			
+			//TODO ecrire pixel
 			
 		}
 	}
 }
 
 double Scene::focal(void){
-	return ( (np / 2.0) / tan(alpha/2.0) );
+	return ( (img->getW() / 2.0) / tan(observer->getAlpha()/2.0) );
 }

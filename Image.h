@@ -29,6 +29,14 @@ public:
 		h = _h;
 		filename = _filename;
 	}
+	
+	int getW(){
+		return w;
+	}
+	
+	int getH(){
+		return h;
+	}
 };
 
 #endif //IMAGE_H

@@ -106,18 +106,18 @@ public:
 	}
 	
 	void normalize(){
-		double n = norm(*this);
+		double n = norm();
 		x /= n;
 		y /= n;
 		z /= n;
 	}
 	
-	double norm(const Vector& v){
-		sqrt(v*v);
+	double norm(){
+		return sqrt( (*this) * (*this) );
 	}
 	
 	double operator*(const Vector& v) const{
-		return (x*v.getX()) + (y*v.getY()) + (z*v.getZ());
+		return (x * v.x) + (y * v.y) + (z * v.z);
 	}
 	
 	Vector& operator^(const Vector& v) const{
