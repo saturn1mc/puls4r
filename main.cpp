@@ -19,14 +19,30 @@
 using namespace std;
 
 int main (int argc, char * const argv[]) {
-	Observer *obs = new Observer(new Point(6.0, 2.0, 6.0), new Point(0.0, 0.0, 0.0));
-	//cout << "Matrice :\n" << *obs->getView();
+// 	Observer *obs = new Observer(new Point(6.0, 2.0, 6.0), new Point(0.0, 0.0, 0.0));
+// 	cout << "Matrice :\n" << *obs->getView();
 	
-// 	Vector *v = new Vector(1,2,3);
-// 	cout << "Vector " << *v << endl;
-// 	
-// 	cout << "Norm " << v->norm() << endl;
-// 	
-// 	v->normalize();
-// 	cout << "Normalized " << *v << endl;
+	Point *p = new Point(6.0,2.0,6.0);
+	Point *d = new Point(0.0, 0.0 ,0.0);
+	
+	Vector *sight = new Vector(*d, *p);
+	sight->normalize();
+	
+	cout << "sight norm " << *sight << endl;
+	
+	Vector up(0,1,0);
+	
+	up.normalize();
+	
+	cout << "up norm " <<  up << endl;
+	
+	Vector &w = *sight ^ up;
+	w.normalize();
+	
+	Vector &u = *sight ^ w;
+	u.normalize();
+	
+	Matrix *v = new Matrix(u, *sight, w, *p);
+	
+	cout << "Matrice\n" << v->t();
 }

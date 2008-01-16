@@ -97,12 +97,12 @@ public:
 	void setZ(double _z) {z = _z;}
 	void setT(double _t) {t = _t;}
 	
-	Vector& operator=(const Vector& v){
+	const Vector& operator=(const Vector& v){
 		x = v.x;
 		y = v.y;
 		z = v.z;
 		
-		return *this;
+		return v;
 	}
 	
 	void normalize(){
@@ -121,11 +121,13 @@ public:
 	}
 	
 	Vector& operator^(const Vector& v) const{
-		Vector *res = new Vector(
-				  (y*v.getZ()) - (z*v.getY()),
-				  (z*v.getX()) - (x*v.getZ()),
-				  (x*v.getY()) - (y*v.getX())
-				);
+	
+		Vector* res = new Vector(
+					(y*v.z) - (z*v.y),
+					(z*v.x) - (x*v.z),
+					(x*v.y) - (y*v.x)
+				);;
+		
 		return *res;
 	}
 };
