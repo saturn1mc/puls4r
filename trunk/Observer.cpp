@@ -19,11 +19,11 @@ void Observer::initMatrix(void){
 	*view = view->t();
 }
 
-Vector& Observer::ray(Point *sp){
+Ray& Observer::ray(Point *sp){
 	Point eye2( (*view)*(*eye) );
 	Point sp2( (*view) * (*sp));
 	
-	Vector *r = new Vector(eye2, sp2);
+	Ray *r = new Ray(eye, new Vector(eye2, sp2));
 	
 	return *r;
 }

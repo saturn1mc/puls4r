@@ -19,12 +19,11 @@
 #include "Color.h"
 
 class Scene{
-public:
-	static const int NL;
-	static const int NP;
-	static const double alpha;
-
 private:
+	
+	int nl;
+	int np;
+	double alpha;
 	
 	Observer *obs;
 	std::list<Object *> objects;
@@ -38,6 +37,14 @@ public:
 		img = _img;
 		background = _background;
 	}
+	
+	int getnl() {return nl;}
+	int getnp() {return np;}
+	double getAlpha() {return alpha;}
+	
+	void setnl(int _nl) {nl=_nl;}
+	void setnp(int _np) {np=_np;}
+	void setAlpha(int _alpha) {alpha=_alpha;}
 	
 	void add(Object *obj);
 	void rayTrace(void);

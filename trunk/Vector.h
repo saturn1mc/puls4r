@@ -105,6 +105,13 @@ public:
 		return *this;
 	}
 	
+	void normalize(){
+		double n = norm(*this);
+		x /= n;
+		y /= n;
+		z /= n;
+	}
+	
 	double norm(const Vector& v){
 		sqrt(v*v);
 	}

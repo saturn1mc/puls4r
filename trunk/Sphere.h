@@ -27,7 +27,7 @@ public:
 	}
 	
 	virtual ~Sphere(void) {}
-	virtual void intersection(Ray ray);
+	virtual Intersection *intersection(Ray ray);
 		
 };
 

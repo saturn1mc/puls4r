@@ -13,6 +13,7 @@
 #include "Point.h"
 #include "Vector.h"
 #include "Matrix.h"
+#include "Ray.h"
 
 class Observer{
 private:
@@ -38,7 +39,7 @@ public:
 		initMatrix();
 	}
 	
-	Vector &ray(Point *sp);
+	Ray &ray(Point *sp);
 };
 
 #endif //OBSERVER_H
