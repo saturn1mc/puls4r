@@ -35,7 +35,7 @@ Intersection *Sphere::intersection(Ray ray){
 		nm.setY((m.getY() - center->getY()) / radius);
 		nm.setZ((m.getZ() - center->getZ()) / radius);
 		
-		return new Intersection(&m, &nm, color);
+		return new Intersection(&m, &nm, color, ray.getT());
 	}
 	else{
 		if(t0 < 0 && t1 < 0){

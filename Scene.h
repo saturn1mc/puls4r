@@ -25,15 +25,15 @@ private:
 	int np;
 	double alpha;
 	
-	Observer *obs;
+	Observer *observer;
 	std::list<Object *> objects;
 	Image *img;
 	Color *background;
 	
 public:
 	
-	Scene(Observer *_obs, Image *_img, Color *_background) : objects(0) {
-		obs = _obs;
+	Scene(Observer *_observer, Image *_img, Color *_background) : objects(0) {
+		observer = _observer;
 		img = _img;
 		background = _background;
 	}
