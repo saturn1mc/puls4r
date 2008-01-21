@@ -1,7 +1,11 @@
 #include "Scene.h"
 
-void Scene::add(Object *obj){
+void Scene::addObject(Object *obj){
 	objects.push_front(obj);
+}
+
+void Scene::addLight(Light *light){
+	lights.push_front(light);
 }
 	
 void Scene::rayTrace(void){
@@ -10,7 +14,7 @@ void Scene::rayTrace(void){
 		for(int p=-getW()/2; p<getW()/2; p++){
 			
 			Intersection *current_intersection = 0;
-			Point *pix = new Point(p, l, 0);
+			Point *pix = new Point(p, l, focal());
 			Ray &ray = observer->ray(pix);
 			delete(pix);
 			
@@ -24,22 +28,28 @@ void Scene::rayTrace(void){
 				}
 			}
 			
-			// ------- FOR TESTING PURPOSE
 			if(current_intersection != 0){
-				cout << "#";
+				
+				Color *color;
+				
+				for(list<Light *>::iterator iter = lights.begin(); iter != lights.end(); ++iter){
+					
+					//TODO enlight
+					color = new Color(current_intersection->getColor());
+				}
+				
+				img->writePixel(*color);
+				delete(color);
 			}
 			else{
-				cout << "-";
+				img->writePixel(*background);
 			}
-			// -------
 		}
-		
-		// ------- FOR TESTING PURPOSE
-		cout << endl;
-		// -------
 	}
+	
+	img->writeBitmap();
 }
 
-double Scene::focal(void){
+double Scene::focal(void) const{
 	return ( (getW() / 2.0) / tan(observer->getAlpha()/2.0) );
 }
