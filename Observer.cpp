@@ -22,8 +22,8 @@ void Observer::initMatrix(void){
 	Vector &u = *sight ^ w;
 	u.normalize();
 	
-	view = new Matrix(*sight, u, w, *eye);
-	//*view = view->t();
+	view = new Matrix(w, u, *sight, *eye);
+	*view = view->t();
 }
 
 Ray& Observer::ray(Point *sp){
