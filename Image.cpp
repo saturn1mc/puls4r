@@ -1,23 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#define MALLOC(ptr, type, n) { ptr=(type *)malloc(sizeof(type)*((size_t)(n))); }
-#define CALLOC(ptr, type, n) { ptr=(type *)calloc(1,sizeof(type)*((size_t)(n))); }
-#define REALLOC(ptr, type, n) { ptr=(type *)realloc(ptr,sizeof(type)*((size_t)(n))); }
-#define FREE(ptr) free(ptr);
-
-// structure image BMP
-typedef struct 
-{ 
-	unsigned char *pic;   // buffer image
-	int   w, h;           // resolution de l'image
-	char *filename;       // nom du fichier image
-} BMPImage;
+#include "Image.h"
 
 // Ecrit un short dans un fichier
-static void putshort(FILE *file, int i)
-{
+void Image::putshort(FILE *file, int i){
 	int c, c1;
 	
 	c = ((unsigned int ) i) & 0xff;  
@@ -28,8 +12,7 @@ static void putshort(FILE *file, int i)
 
 
 // Ecrit un int dans un fichier
-static void putint(FILE *file, int i)
-{
+void Image::putint(FILE *file, int i){
 	int c, c1, c2, c3;
 	c  = ((unsigned int ) i)      & 0xff;  
 	c1 = (((unsigned int) i)>>8)  & 0xff;
@@ -43,8 +26,7 @@ static void putint(FILE *file, int i)
 }
 
 // write bmp 24 bits in file
-static void writeBMP24(FILE *file, unsigned char *pic24, int w, int h)
-{
+void Image::writeBMP24(FILE *file, unsigned char *pic24, int w, int h){
 	int   i, j, pad_bytes;
 	unsigned char *pp;
 	
@@ -68,12 +50,9 @@ static void writeBMP24(FILE *file, unsigned char *pic24, int w, int h)
 }  
 
 // Ecriture d'un buffer image dans un fichier au format BMP
-void WriteBitmap(char *filename, BMPImage *ima)
-{
+void Image::WriteBitmap(){
 	int i, nbits = 24, bperlin, cmaplen = 0;
 	FILE *file;
-	unsigned char *pic24 = ima->pic;
-	int w = ima->w, h = ima->h;
 	
 	file=fopen(filename, "wb");
 	
@@ -105,27 +84,10 @@ void WriteBitmap(char *filename, BMPImage *ima)
 	putint(file, 0);           
 	
 	// Ecriture du buffer image dans un fichier
-	writeBMP24(file, pic24, w, h);
+	writeBMP24(file, pic, w, h);
 	
 	fprintf(stdout, "Saved in file: %s\n", filename);
 	
 	fclose(file);
-}
-
-// Creation d'une image au format BMP (allocation et initialisation)
-BMPImage *Create_Image(char *name, int np, int nl)
-{
-	BMPImage *ima;
-	
-	MALLOC(ima, BMPImage, 1);
-	MALLOC(ima->filename, char, strlen(name)+1);
-	
-	strcpy(ima->filename, name);
-	ima->w = np;
-	ima->h = nl;
-	
-	MALLOC(ima->pic, unsigned char, np*nl*3);
-	
-	return ima;
 }
 
