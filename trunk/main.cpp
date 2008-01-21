@@ -10,15 +10,18 @@
 #include <iostream>
 #include <cmath>
 
-#include "Point.h"
-#include "Vector.h"
-#include "Matrix.h"
-#include "Color.h"
-#include "Observer.h"
+#include "Scene.h"
+#include "Sphere.h"
 
 using namespace std;
 
 int main (int argc, char * const argv[]) {
-	Observer *obs = new Observer(new Point(6.0, 2.0, 6.0), new Point(0.0, 0.0, 0.0));
-	cout << *obs->getView() << endl;
+	Observer *obs = new Observer(new Point(6.0, 2.0, 6.0), new Point(0.0, 0.0, 0.0), M_PI/4.0);
+	Scene *scene = new Scene(obs, new Image("test", 50, 50), new Color(1.0,1.0,1.0));
+	
+	scene->add(new Sphere(new Point(10.0, 0.0, 20.0), 10.0));
+	
+	cout << *scene << endl;
+	
+	scene->rayTrace();
 }
