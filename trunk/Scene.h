@@ -15,15 +15,16 @@
 
 #include "Observer.h"
 #include "Object.h"
-#include "Image.h"
 #include "Color.h"
+
+#include "bmp.c"
 
 class Scene{
 private:
 	
 	Observer *observer;
 	std::list<Object *> objects;
-	Image *img;
+	BMPImage *img;
 	Color *background;
 	
 public:
