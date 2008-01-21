@@ -5,8 +5,9 @@ void Scene::add(Object *obj){
 }
 	
 void Scene::rayTrace(void){
-	for(int l=0; l<getH(); l++){
-		for(int p=0; p<getW(); p++){
+	for(int l=-getH()/2; l<getH()/2; l++){
+		
+		for(int p=-getW()/2; p<getW()/2; p++){
 			
 			Intersection *current_intersection = 0;
 			Point *pix = new Point(p, l, 0);
@@ -23,9 +24,19 @@ void Scene::rayTrace(void){
 				}
 			}
 			
-			//TODO ecrire pixel
-			
+			// ------- FOR TESTING PURPOSE
+			if(current_intersection != 0){
+				cout << "#";
+			}
+			else{
+				cout << "-";
+			}
+			// -------
 		}
+		
+		// ------- FOR TESTING PURPOSE
+		cout << endl;
+		// -------
 	}
 }
 
