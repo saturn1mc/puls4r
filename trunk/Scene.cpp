@@ -5,8 +5,8 @@ void Scene::add(Object *obj){
 }
 	
 void Scene::rayTrace(void){
-	for(int l=0; l<img->getH(); l++){
-		for(int p=0; p<img->getW(); p++){
+	for(int l=0; l<getH(); l++){
+		for(int p=0; p<getW(); p++){
 			
 			Intersection *current_intersection = 0;
 			Point *pix = new Point(p, l, 0);
@@ -30,5 +30,5 @@ void Scene::rayTrace(void){
 }
 
 double Scene::focal(void){
-	return ( (img->getW() / 2.0) / tan(observer->getAlpha()/2.0) );
+	return ( (getW() / 2.0) / tan(observer->getAlpha()/2.0) );
 }

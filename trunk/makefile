@@ -10,7 +10,7 @@ pulsar : \
 	./Plan.o\
 	./Sphere.o\
 	./Scene.o\
-	./bmp.o\
+	./Image.o\
 		
 	$(CC) $(LNK_OPTIONS) \
 	./main.o\
@@ -18,17 +18,17 @@ pulsar : \
 	./Plan.o\
 	./Sphere.o\
 	./Scene.o\
-	./bmp.o\
+	./Image.o\
 	-o $(PROJ)
 
 clean : 
-	rm \
+	rm -fr \
 	./main.o\
 	./Observer.o\
 	./Plan.o\
 	./Sphere.o\
 	./Scene.o\
-	./bmp.o\
+	./Image.o\
 	*~\
 	$(PROJ)
 
@@ -48,5 +48,5 @@ clean :
 ./Scene.o : Scene.h
 	$(CC) $(CC_OPTIONS) Scene.cpp -c $(INCLUDE) -o ./Scene.o
 
-./bmp.o :
-	$(CC) $(CC_OPTIONS) bmp.c -c $(INCLUDE) -o ./bmp.o
+./Image.o :
+	$(CC) $(CC_OPTIONS) Image.cpp -c $(INCLUDE) -o ./Image.o

@@ -20,5 +20,6 @@ using namespace std;
 
 int main (int argc, char * const argv[]) {
 	Observer *obs = new Observer(new Point(6.0, 2.0, 6.0), new Point(0.0, 0.0, 0.0));
-	Image *img = new Image("/Users/camille/Desktop", , );
+	//Image *img = new Image("/Users/camille/Desktop", , );
+	cout << *obs->getView() << endl;
 }
