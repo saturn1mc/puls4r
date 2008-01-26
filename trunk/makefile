@@ -13,6 +13,7 @@ pulsar : \
 	./Image.o\
 	./Linear.o\
 	./Phong.o\
+	./Lambert.o\
 		
 	$(CC) $(LNK_OPTIONS) \
 	./main.o\
@@ -23,6 +24,7 @@ pulsar : \
 	./Image.o\
 	./Linear.o\
 	./Phong.o\
+	./Lambert.o\
 	-o $(PROJ)
 
 clean : 
@@ -55,3 +57,6 @@ clean :
 
 ./Phong.o :
 	$(CC) $(CC_OPTIONS) Phong.cpp -c $(INCLUDE) -o ./Phong.o
+
+./Lambert.o :
+	$(CC) $(CC_OPTIONS) Lambert.cpp -c $(INCLUDE) -o ./Lambert.o
