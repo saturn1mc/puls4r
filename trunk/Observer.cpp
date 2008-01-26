@@ -11,8 +11,6 @@
 
 void Observer::initMatrix(void){
 	
-	sight->normalize();
-	
 	Vector up(0,1,0);
 	up.normalize();
 	
@@ -27,10 +25,10 @@ void Observer::initMatrix(void){
 }
 
 Ray& Observer::ray(Point *sp){
-	Point eye2( (*view) * (*eye) );
+	
 	Point sp2( (*view) * (*sp));
 	
-	Ray *r = new Ray(eye, new Vector(eye2, sp2));
+	Ray *r = new Ray(eye, new Vector(*eye, sp2));
 	
 	return *r;
 }

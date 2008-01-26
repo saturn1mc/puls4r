@@ -9,7 +9,7 @@
 
 #include "Plan.h"
 
-Intersection *Plan::intersection(Ray ray){
+Intersection *Plan::intersection(Ray &ray){
 	
 	double vd = (norm->getX() * ray.getDirection().getX()) + (norm->getY() * ray.getDirection().getY()) + (norm->getZ() * ray.getDirection().getZ());
 	double t = -((norm->getX() * ray.getOrigin().getX()) + (norm->getY() * ray.getOrigin().getY()) + (norm->getZ() * ray.getOrigin().getZ()) + d) / vd;
@@ -31,7 +31,21 @@ Intersection *Plan::intersection(Ray ray){
 			m.setY(ray.getOrigin().getY() + (ray.getDirection().getY() * ray.getT()));
 			m.setZ(ray.getOrigin().getZ() + (ray.getDirection().getZ() * ray.getT()));
 		
-			return new Intersection(&m, norm, color, ray.getT());
+			return new Intersection(&m, norm, this, ray.getT());
 		}
 	}
+}
+
+std::string Plan::toString(void) const{
+	
+	std::stringstream ss;
+	
+	ss << "---------------------------" << std::endl;
+	ss << "Plan :" << std::endl;
+	ss << "---------------------------" << std::endl;
+	ss << "Norm : " << *norm << std::endl;
+	ss << "D : " << d << std::endl;
+	ss << "---------------------------" << std::endl;
+	
+	return ss.str();
 }

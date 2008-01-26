@@ -32,25 +32,35 @@ void Image::writeBMP24(FILE *file, unsigned char *pic24, int w, int h){
 	
 	pad_bytes = (4 - ((w*3) % 4)) & 0x03;  // # of pad bytes to write at EOscanline 
 	
-	for (i=h-1; i>=0; i--) 
-    {
+	for (i=h-1; i>=0; i--){
+		
 		pp = pic24 + (i * w * 3);
 		
-		for (j=0; j<w; j++) 
-		{
+		for (j=0; j<w; j++){
 			putc(pp[2], file);
 			putc(pp[1], file);
 			putc(pp[0], file);
 			pp += 3;
 		}
 		
-		for (j=0; j<pad_bytes; j++) 
+		for (j=0; j<pad_bytes; j++) {
 			putc(0, file);
+		}
     }
 }  
 
+void Image::writePixel(Color &color){
+
+	pic[writingPos] = 255 * color.getR();
+	pic[writingPos+1] = 255 * color.getG();
+	pic[writingPos+2] = 255 * color.getB();
+	
+	writingPos += 3;
+}
+
 // Ecriture d'un buffer image dans un fichier au format BMP
-void Image::WriteBitmap(){
+void Image::writeBitmap(void){
+	
 	int i, nbits = 24, bperlin, cmaplen = 0;
 	FILE *file;
 	

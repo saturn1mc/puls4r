@@ -19,16 +19,19 @@ private:
 	Point *center;
 	double radius;
 	
+	Intersection *Sphere::createIntersection(Ray &ray);
+	
 public:
 
-	Sphere(Point *_center, double _radius) {
+	Sphere(Enlightment *_enlightment, Point *_center, double _radius) {
+		enlightment = _enlightment;
 		center = _center;
 		radius = _radius;
 	}
 	
 	virtual ~Sphere(void) {}
-	virtual Intersection *intersection(Ray ray);
-		
+	virtual Intersection *intersection(Ray &ray);
+	virtual std::string toString(void) const;
 };
 
 #endif //SPHERE_H

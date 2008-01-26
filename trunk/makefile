@@ -11,6 +11,8 @@ pulsar : \
 	./Sphere.o\
 	./Scene.o\
 	./Image.o\
+	./Linear.o\
+	./Phong.o\
 		
 	$(CC) $(LNK_OPTIONS) \
 	./main.o\
@@ -19,16 +21,13 @@ pulsar : \
 	./Sphere.o\
 	./Scene.o\
 	./Image.o\
+	./Linear.o\
+	./Phong.o\
 	-o $(PROJ)
 
 clean : 
 	rm -fr \
-	./main.o\
-	./Observer.o\
-	./Plan.o\
-	./Sphere.o\
-	./Scene.o\
-	./Image.o\
+	*.o\
 	*~\
 	$(PROJ)
 
@@ -47,6 +46,12 @@ clean :
 
 ./Scene.o : Scene.h
 	$(CC) $(CC_OPTIONS) Scene.cpp -c $(INCLUDE) -o ./Scene.o
-
+	
 ./Image.o :
 	$(CC) $(CC_OPTIONS) Image.cpp -c $(INCLUDE) -o ./Image.o
+
+./Linear.o :
+	$(CC) $(CC_OPTIONS) Linear.cpp -c $(INCLUDE) -o ./Linear.o
+
+./Phong.o :
+	$(CC) $(CC_OPTIONS) Phong.cpp -c $(INCLUDE) -o ./Phong.o

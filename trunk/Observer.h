@@ -10,6 +10,9 @@
 #ifndef OBSERVER_H
 #define OBSERVER_H
 
+#include <iostream>
+#include <sstream>
+
 #include "Point.h"
 #include "Vector.h"
 #include "Matrix.h"
@@ -26,37 +29,65 @@ private:
 	void initMatrix(void);
 	
 public:
-	Observer(Point *_eye, Point *_sight){
+	Observer(Point *_eye, Point *_sight, double _alpha){
 		eye = _eye;
 		sight = new Vector(*eye, *_sight);
+		alpha = _alpha;
+		
+		sight->normalize();
 		
 		initMatrix();
 	}
 	
-	Observer(Point *_eye, Vector *_sight){
+	Observer(Point *_eye, Vector *_sight, double _alpha){
 		eye = _eye;
 		sight = _sight;
+		alpha = _alpha;
+		
+		sight->normalize();
 		
 		initMatrix();
 	}
 	
 	Ray &ray(Point *sp);
 	
-	Point *getEye(void){
-		return eye;
-	}
+	Point &getEye(void) const {return *eye;}
 	
-	Vector *getSight(void){
-		return sight;
-	}
+	Vector &getSight(void) const {return *sight;}
 	
-	Matrix *getView(void){
-		return view;
-	}
+	Matrix &getView(void) const {return *view;}
 	
-	double getAlpha() {return alpha;}
+	double getAlpha(void) const {return alpha;}
 	
 	void setAlpha(int _alpha) {alpha=_alpha;}
 };
+
+template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Observer &obs){
+	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
+	
+	/* string stream
+	* - with same format
+	* - without special field width
+	*/
+	std::basic_ostringstream<charT,traits> s;
+	s.copyfmt(strm);
+	s.width(0);
+	
+	// fill string stream
+	s << "---------------------------" << std::endl;
+	s << "Observer :" << std::endl;
+	s << "---------------------------" << std::endl;
+	s << "Eye : " << obs.getEye() << std::endl;
+	s << "Sight : " << obs.getSight() << std::endl;
+	s << "View : " << std::endl;
+	s << obs.getView() << std::endl;
+	s << "Alpha : " << obs.getAlpha() << std::endl;
+	s << "---------------------------" << std::endl;
+	
+	// print string stream
+	strm << s.str();
+	
+	return strm;
+}
 
 #endif //OBSERVER_H
