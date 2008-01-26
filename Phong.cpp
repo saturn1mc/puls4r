@@ -18,7 +18,12 @@ Color &Phong::getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> 
 		Vector &R = getR(L, norm);
 		Vector &V = getV(ray);
 		
-		*color = *color + ((*od) * (kd * (L * norm))) + ((*os) * (ks * pow(R*V, n)));
+		if(R*V > 0){
+			*color = *color + ((*od) * (kd * (L * norm))) + ((*os) * (ks * pow(R*V, n)));
+		}
+		else {
+			*color = *color + ((*od) * (kd * (L * norm))) + ((*os) * 0.0);
+		}
 	}
 	
 	return *color;

@@ -16,7 +16,13 @@ Color &Lambert::getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *
 	
 	for(std::list<Light *>::iterator iter = lights.begin(); iter != lights.end(); ++iter){
 		Vector &L = getL(point, *(*iter));
-		*color = (*color) * (kd *(L * norm));
+		
+		if((L * norm) > 0){
+			*color = (*color) * kd *(L * norm);
+		}
+		else{
+			*color = (*color) * 0.0;
+		}
 	}
 	
 	return *color;
