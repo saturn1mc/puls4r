@@ -30,7 +30,7 @@ int main (int argc, char * const argv[]) {
 	Linear *linear = new Linear(red);
 	
 	Observer *obs = new Observer(new Point(10.0, 10.0, 10.0), new Point(0.0, 0.0, 0.0), M_PI/4.0);
-	Scene *scene = new Scene(obs, new Image("/Users/Camille/Desktop/test.bmp", 1900, 1200), black);
+	Scene *scene = new Scene(obs, new Image("/Users/camille/Desktop/test.bmp", 1900, 1200), black);
 	
 	scene->addLight(new Light(new Point(0.0, 20.0, 0.0), white));
 	
