@@ -45,6 +45,8 @@ public:
 		focal = calcFocal();
 	}
 	
+	~Scene(){}
+	
 	int getH(void) const {return img->getH();}
 	int getW(void) const {return img->getW();}
 	double getFocal(void) const {return focal;}

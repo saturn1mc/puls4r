@@ -32,6 +32,14 @@ public:
 		z = 0;
 		t = 1;
 	}
+	
+	Vector(Vector &vector){
+		x = vector.x;
+		y = vector.y;
+		z = vector.z;
+		t = vector.t;
+
+	}
 		
 	Vector(double _x, double _y, double _z) {
 		x = _x; 
@@ -46,6 +54,8 @@ public:
 		z = b.getZ() - a.getZ(); 
 		t = 1;
 	}
+	
+	~Vector(){}
 	
 	double get(int d) const{
 		switch(d){

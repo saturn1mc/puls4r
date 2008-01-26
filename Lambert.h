@@ -16,20 +16,17 @@
 class Lambert : public Enlightment{
 	
 	Color *od;
-	Color *os;
 	double kd;
 	
 public:
 	
 	Lambert(Color *_od){
 		od = _od;
-		os = new Color(1.0, 1.0, 1.0);
 		kd = 1.0;
 	}
 	
-	Lambert(Color *_od, Color *_os, double _kd){
+	Lambert(Color *_od, double _kd){
 		od = _od;
-		os = _os;
 		kd = _kd;
 	}
 	

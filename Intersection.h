@@ -35,6 +35,15 @@ public:
 		t = _t;
 	}
 	
+	Intersection(Intersection &intersection){
+		point = intersection.point;
+		norm = intersection.norm;
+		object = intersection.object;
+		t = intersection.t;
+	}
+	
+	~Intersection(){}
+	
 	Point &getPoint(void) const {return *point;}
 	Vector &getNorm(void) const {return *norm;}
 	Object &getObject() const {return *object;}

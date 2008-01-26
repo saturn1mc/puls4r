@@ -28,7 +28,6 @@ void Scene::rayTrace(void){
 			Intersection *current_intersection = 0;
 			Point *pix = new Point(p, l, focal);
 			Ray &ray = observer->ray(pix);
-			delete(pix);
 			
 			for(list<Object *>::iterator iter = objects.begin(); iter != objects.end(); ++iter){
 				Intersection *candidate = (*iter)->intersection(ray);
@@ -41,7 +40,6 @@ void Scene::rayTrace(void){
 			}
 			
 			if(current_intersection != 0){
-				
 				Color *color = new Color(current_intersection->getObject().getEnlightment().getColor(current_intersection->getPoint(), current_intersection->getNorm(), ray, lights));
 				img->writePixel(*color);
 				delete(color);

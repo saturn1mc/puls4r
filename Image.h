@@ -55,6 +55,8 @@ public:
 		filename = _filename;
 	}
 	
+	~Image(){}
+	
 	int getW(void) const {return w;}
 	
 	int getH(void) const {return h;}

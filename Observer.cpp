@@ -25,10 +25,6 @@ void Observer::initMatrix(void){
 }
 
 Ray& Observer::ray(Point *sp){
-	
-	Point sp2( (*view) * (*sp));
-	
-	Ray *r = new Ray(eye, new Vector(*eye, sp2));
-	
-	return *r;
+	Vector *dir = new Vector(*eye, (*view) * (*sp));
+	return *(new Ray(eye, dir));
 }

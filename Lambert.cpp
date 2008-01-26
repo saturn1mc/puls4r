@@ -12,15 +12,12 @@
 
 Color &Lambert::getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> lights) const{
 	
-	Color &color = (*od);
-	double coeff = 0;
+	Color *color = new Color(*od);
 	
 	for(std::list<Light *>::iterator iter = lights.begin(); iter != lights.end(); ++iter){
 		Vector &L = getL(point, *(*iter));
-		coeff += (L * norm);
+		*color = (*color) * (kd *(L * norm));
 	}
 	
-	color = (*od) * coeff;
-	
-	return color;
+	return *color;
 }

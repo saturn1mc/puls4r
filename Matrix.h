@@ -31,6 +31,14 @@ public:
 		}
 	}
 	
+	Matrix(Matrix &matrix){
+		for(int i =0; i<4; i++){
+			for(int j=0; j<4; j++){
+				content[i][j] = matrix.content[i][j];
+			}
+		}
+	}
+	
 	Matrix(const Vector &l1, const Vector &l2, const Vector &l3, const Point &l4){
 		content[0][0] = l1.getX();
 		content[0][1] = l1.getY();
@@ -52,6 +60,8 @@ public:
 		content[3][2] = l4.getZ();
 		content[3][3] = 1;
 	}
+	
+	~Matrix(){}
 	
 	void loadIdentity(void) {
 		

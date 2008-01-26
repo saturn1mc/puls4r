@@ -28,6 +28,8 @@ public:
 		color = _color;
 	}
 	
+	~Light(){}
+	
 	Point &getSource(void) const {return *source;}
 	
 	Color &getColor(void) const {return *color;}

@@ -48,6 +48,8 @@ public:
 		b = _b;
 	}
 	
+	~Color(){}
+	
 	double getR(void) const { return r; }
 	double getG(void) const { return g; }
 	double getB(void) const { return b; }	
@@ -55,6 +57,15 @@ public:
 	void setR(double _r) {r = _r;}
 	void setG(double _g) {g = _g;}
 	void setB(double _b) {b = _b;}
+	
+	
+	Color &operator=(const Color &c){
+		r = c.r;
+		g = c.g;
+		b = c.b;
+		
+		return *this;
+	}
 	
 	Color& operator+(const Color& c){
 		
