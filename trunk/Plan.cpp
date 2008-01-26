@@ -25,13 +25,12 @@ Intersection *Plan::intersection(Ray &ray){
 			
 			ray.setT(t);
 		
-			Point m;
+			Point *m = new Point(	ray.getOrigin().getX() + (ray.getDirection().getX() * ray.getT()),
+									ray.getOrigin().getY() + (ray.getDirection().getY() * ray.getT()),
+									ray.getOrigin().getZ() + (ray.getDirection().getZ() * ray.getT())
+								);
 		
-			m.setX(ray.getOrigin().getX() + (ray.getDirection().getX() * ray.getT()));
-			m.setY(ray.getOrigin().getY() + (ray.getDirection().getY() * ray.getT()));
-			m.setZ(ray.getOrigin().getZ() + (ray.getDirection().getZ() * ray.getT()));
-		
-			return new Intersection(&m, norm, this, ray.getT());
+			return new Intersection(m, norm, this, ray.getT());
 		}
 	}
 }

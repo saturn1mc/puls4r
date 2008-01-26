@@ -31,15 +31,15 @@ private:
 public:
 		
 	Phong(Color *_od){
-		oa = new Color(1.0, 1.0, 1.0);
+		oa = _od;
 		od = _od;
 		os = new Color(1.0, 1.0, 1.0);
 		
-		ka = 0.1;
+		ka = 1.0;
 		kd = 0.5;
-		ks = 0.4;
+		ks = 0.5;
 		
-		n = 5;
+		n = 10;
 	}
 	
 	Phong(Color *_od, Color *_os, double _ka, double _kd, double _ks, int _n){
@@ -50,6 +50,8 @@ public:
 		ks = _ks;
 		n = _n;
 	}
+	
+	virtual ~Phong(void) {}
 	
 	virtual Color &getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> lights) const;
 };

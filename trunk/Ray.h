@@ -32,6 +32,8 @@ public:
 		direction->normalize();
 	}
 	
+	~Ray(){}
+	
 	Point &getOrigin(void) const {return *origin;}
 	
 	Vector &getDirection(void) const {return *direction;}

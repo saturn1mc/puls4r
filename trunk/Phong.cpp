@@ -10,15 +10,16 @@
 #include "Phong.h"
 
 Color &Phong::getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> lights) const{
-	Color &color = (*oa) * ka;
+	
+	Color *color = new Color((*oa) * ka);
 	
 	for(std::list<Light *>::iterator iter = lights.begin(); iter != lights.end(); ++iter){
 		Vector &L = getL(point, *(*iter));
 		Vector &R = getR(L, norm);
 		Vector &V = getV(ray);
 		
-		color = color + ((*od) * (kd * (L * norm))) + ((*os) * (ks * pow(R*V, n)));
+		*color = *color + ((*od) * (kd * (L * norm))) + ((*os) * (ks * pow(R*V, n)));
 	}
 	
-	return color;
+	return *color;
 }

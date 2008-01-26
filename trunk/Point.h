@@ -30,12 +30,21 @@ public:
 		t = 0;
 	}
 	
+	Point(Point &point){
+		x = point.x;
+		y = point.y;
+		z = point.z;
+		t = point.t;
+	}
+	
 	Point(double _x, double _y, double _z) {
 		x = _x; 
 		y = _y; 
 		z = _z; 
 		t = 0;
 	}
+	
+	~Point(){}
 	
 	double get(int d) const{
 		switch(d){

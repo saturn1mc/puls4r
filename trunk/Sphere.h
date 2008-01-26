@@ -11,7 +11,6 @@
 #define SPHERE_H
 
 #include "Object.h"
-#include "Point.h"
 
 class Sphere : public Object{
 private:

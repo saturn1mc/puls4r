@@ -49,6 +49,8 @@ public:
 		initMatrix();
 	}
 	
+	~Observer(){}
+	
 	Ray &ray(Point *sp);
 	
 	Point &getEye(void) const {return *eye;}

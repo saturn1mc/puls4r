@@ -10,21 +10,19 @@
 #include "Sphere.h"
 
 Intersection *Sphere::createIntersection(Ray &ray){
-	Point m;
+	Point *m =  new Point(	ray.getOrigin().getX() + (ray.getDirection().getX() * ray.getT()),
+							ray.getOrigin().getY() + (ray.getDirection().getY() * ray.getT()),
+							ray.getOrigin().getZ() + (ray.getDirection().getZ() * ray.getT())
+						);
 	
-	m.setX(ray.getOrigin().getX() + (ray.getDirection().getX() * ray.getT()));
-	m.setY(ray.getOrigin().getY() + (ray.getDirection().getY() * ray.getT()));
-	m.setZ(ray.getOrigin().getZ() + (ray.getDirection().getZ() * ray.getT()));
+	Vector *nm = new Vector(	(m->getX() - center->getX()) / radius,
+								(m->getY() - center->getY()) / radius,
+								(m->getZ() - center->getZ()) / radius
+							);
 	
-	Vector nm;
+	nm->normalize();
 	
-	nm.setX((m.getX() - center->getX()) / radius);
-	nm.setY((m.getY() - center->getY()) / radius);
-	nm.setZ((m.getZ() - center->getZ()) / radius);
-	
-	nm.normalize();
-	
-	return new Intersection(&m, &nm, this, ray.getT());
+	return new Intersection(m, nm, this, ray.getT());
 }
 
 Intersection *Sphere::intersection(Ray &ray){
