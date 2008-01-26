@@ -57,10 +57,10 @@ public:
 		}
 	}
 	
-	double getX() const { return x; }
-	double getY() const { return y; }
-	double getZ() const { return z; }
-	double getT() const { return t; }
+	double getX(void) const { return x; }
+	double getY(void) const { return y; }
+	double getZ(void) const { return z; }
+	double getT(void) const { return t; }
 	
 	double set(int d, double val){
 		switch(d){

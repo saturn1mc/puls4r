@@ -22,16 +22,19 @@ private:
 
 public:
 
-	Plan(Vector *_norm, double _d, Color *_color, bool _monoface){
+	Plan(Enlightment *_enlightment, Vector *_norm, double _d, bool _monoface){
+		enlightment = _enlightment;
+		
 		norm = _norm;
+		norm->normalize();
+		
 		d = _d;
-		color = _color;
 		monoface = _monoface;
 	}
 
 	virtual ~Plan(void) {}
-	virtual Intersection *intersection(Ray ray);
-
+	virtual Intersection *intersection(Ray &ray);
+	virtual std::string toString(void) const;
 };
 
 #endif //PLAN_H

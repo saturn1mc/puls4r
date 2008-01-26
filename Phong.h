@@ -1,0 +1,57 @@
+/*
+ *  Phong.h
+ *  RayTracing
+ *
+ *  Created by Camille on 23/01/08.
+ *  Copyright 2008 __MyCompanyName__. All rights reserved.
+ *
+ */
+
+#ifndef PHONG_H
+#define PHONG_H
+
+#include <list>
+
+#include "Enlightment.h"
+#include "Light.h"
+
+class Phong : public Enlightment{
+private:
+	
+	Color *oa; //ambient color
+	Color *od; //diffuse color
+	Color *os; //specular color
+	
+	double ka; //ambient reflection constant
+	double kd; //diffuse reflection constant
+	double ks; //specular reflection constant
+	
+	int n; //"shininess" constant
+
+public:
+		
+	Phong(Color *_od){
+		oa = new Color(1.0, 1.0, 1.0);
+		od = _od;
+		os = new Color(1.0, 1.0, 1.0);
+		
+		ka = 0.1;
+		kd = 0.5;
+		ks = 0.4;
+		
+		n = 5;
+	}
+	
+	Phong(Color *_od, Color *_os, double _ka, double _kd, double _ks, int _n){
+		od = _od;
+		os = _os;
+		ka = _ka;
+		kd = _kd;
+		ks = _ks;
+		n = _n;
+	}
+	
+	virtual Color &getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> lights) const;
+};
+
+#endif //PHONG_H

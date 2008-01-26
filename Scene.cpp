@@ -9,12 +9,24 @@ void Scene::addLight(Light *light){
 }
 	
 void Scene::rayTrace(void){
+	
+	cout << "Tracing ... ";
+	int progress = 0;
+	
 	for(int l=-getH()/2; l<getH()/2; l++){
+		
+		int done = round(100 * (float)(l+(getH()/2)+1) / (float)getH());
+		
+		if(progress != done){
+			progress = done;
+			cout << progress << "% ";
+			cout.flush();
+		}
 		
 		for(int p=-getW()/2; p<getW()/2; p++){
 			
 			Intersection *current_intersection = 0;
-			Point *pix = new Point(p, l, focal());
+			Point *pix = new Point(p, l, focal);
 			Ray &ray = observer->ray(pix);
 			delete(pix);
 			
@@ -30,14 +42,7 @@ void Scene::rayTrace(void){
 			
 			if(current_intersection != 0){
 				
-				Color *color;
-				
-				for(list<Light *>::iterator iter = lights.begin(); iter != lights.end(); ++iter){
-					
-					//TODO enlight
-					color = new Color(current_intersection->getColor());
-				}
-				
+				Color *color = new Color(current_intersection->getObject().getEnlightment().getColor(current_intersection->getPoint(), current_intersection->getNorm(), ray, lights));
 				img->writePixel(*color);
 				delete(color);
 			}
@@ -50,6 +55,6 @@ void Scene::rayTrace(void){
 	img->writeBitmap();
 }
 
-double Scene::focal(void) const{
+double Scene::calcFocal(void) const{
 	return ( (getW() / 2.0) / tan(observer->getAlpha()/2.0) );
 }

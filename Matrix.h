@@ -149,7 +149,7 @@ public:
 		content[3][3] = 1;
 	}
 	
-	void loadTranslation( const double x, const double y, const double z ){
+	void loadTranslation(const double x, const double y, const double z){
 		content[0][0] = 1;
 		content[0][1] = 0;
 		content[0][2] = 0;
@@ -207,6 +207,19 @@ public:
 	Point& operator*(const Point &p){
 		
 		Point *res = new Point();
+		
+		for(int i=0; i<4; i++){
+			for(int j=0; j<4; j++){
+				res->set(i, res->get(i) + content[i][j] * p.get(j));
+			}
+		}
+		
+		return *res;
+	}
+	
+	Vector& operator*(const Vector &p){
+		
+		Vector *res = new Vector();
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
