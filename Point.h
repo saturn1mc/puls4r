@@ -103,6 +103,17 @@ public:
 		
 		return *this;
 	}
+	
+	Point& operator-(const Point& a){
+		
+		Point *res = new Point();
+		
+		res->x = x - a.x;
+		res->y = y - a.y;
+		res->z = z - a.z;
+		
+		return *res;
+	}
 };
 
 template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Point &p){

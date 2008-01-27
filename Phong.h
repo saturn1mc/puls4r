@@ -51,9 +51,21 @@ public:
 		n = _n;
 	}
 	
+	Phong(Phong &phong) { 
+		oa = new Color(*phong.oa);
+		od = new Color(*phong.od);
+		os = new Color(*phong.os);
+		
+		ka = phong.ka;
+		kd = phong.kd;
+		ks = phong.ks;
+	}
+	
 	virtual ~Phong(void) {}
 	
 	virtual Color &getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> lights) const;
+	
+	virtual Enlightment *getCopy() {return new Phong(*this);}
 };
 
 #endif //PHONG_H
