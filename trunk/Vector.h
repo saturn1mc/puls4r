@@ -38,7 +38,6 @@ public:
 		y = vector.y;
 		z = vector.z;
 		t = vector.t;
-
 	}
 		
 	Vector(double _x, double _y, double _z) {

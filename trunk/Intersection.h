@@ -47,6 +47,7 @@ public:
 	Point &getPoint(void) const {return *point;}
 	Vector &getNorm(void) const {return *norm;}
 	Object &getObject() const {return *object;}
+	void setObject(Object *_object) {object = _object;}
 	double getT(void) const {return t;}
 };
 

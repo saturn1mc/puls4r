@@ -47,9 +47,10 @@ protected:
 	}
 	
 public:
-	
+	Enlightment(Enlightment &enlightment) {}
 	virtual ~Enlightment(void) {}
 	virtual Color &getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> lights) const = 0;
+	virtual Enlightment *getCopy() = 0;
 };
 
 #endif //ENLIGHTMENT_H
