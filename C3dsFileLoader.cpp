@@ -581,8 +581,6 @@ bool C3dsFileLoader::ParseChunks()
 
 	chunk3ds	chunk;
 
-//	getchar();
-
 	if(!ReadBlock((char*) &chunk, sizeof(chunk3ds)))
 		return false;
 	switch(chunk.Flag)

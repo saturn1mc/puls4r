@@ -17,10 +17,14 @@
 #include "Phong.h"
 #include "Linear.h"
 #include "Lambert.h"
+#include "C3dsParser.h"
 
 using namespace std;
 
 int main (int argc, char * const argv[]) {
+	
+	C3dsParser * parser = new C3dsParser();
+	parser->ProcessFile("/Users/camille/Documents/IFIPS/SIA/puls4r/3DS/coke_can.3DS");
 	
 	Color *white = new Color(1.0, 1.0, 1.0);
 	Color *black = new Color(0.0, 0.0, 0.0);
