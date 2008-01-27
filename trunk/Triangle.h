@@ -7,6 +7,9 @@
  *
  */
 
+#ifndef TRIANGLE_H
+#define TRIANGLE_H
+
 #include "Object.h"
 #include "Plan.h"
 
@@ -47,3 +50,5 @@ public:
 		}
 	}
 };
+
+#endif //TRIANGLE_H
