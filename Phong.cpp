@@ -11,20 +11,35 @@
 
 Color &Phong::getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> lights) const{
 	
-	Color *color = new Color((*oa) * ka);
+	Color *color = new Color();
 	
 	for(std::list<Light *>::iterator iter = lights.begin(); iter != lights.end(); ++iter){
 		Vector &L = getL(point, *(*iter));
 		Vector &R = getR(L, norm);
 		Vector &V = getV(ray);
 		
-		if(R*V > 0){
-			*color = *color + ((*od) * (kd * (L * norm))) + ((*os) * (ks * pow(R*V, n)));
+		Color *diffuse = new Color( (*od) * (kd * (L * norm)) );
+		
+		Color *specular;
+		
+		if(R*V < 0){
+			specular = new Color();
 		}
-		else {
-			*color = *color + ((*od) * (kd * (L * norm))) + ((*os) * 0.0);
+		else{
+			specular = new Color( (*os) * (ks * pow(R*V, n)) );
 		}
+		
+		
+		diffuse->normalize();
+		specular->normalize();
+		
+		*color = *color + *diffuse + *specular;
+		
+		delete(diffuse);
+		delete(specular);
 	}
+	
+	color->normalize();
 	
 	return *color;
 }
