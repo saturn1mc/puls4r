@@ -51,9 +51,9 @@ void Image::writeBMP24(FILE *file, unsigned char *pic24, int w, int h){
 
 void Image::writePixel(Color &color){
 
-	pic[writingPos] = 255 * color.getR();
-	pic[writingPos+1] = 255 * color.getG();
-	pic[writingPos+2] = 255 * color.getB();
+	pic[writingPos] = (unsigned char) ((int)(255 * color.getR()));
+	pic[writingPos+1] = (unsigned char) ((int)(255 * color.getG()));
+	pic[writingPos+2] = (unsigned char) ((int)(255 * color.getB()));
 	
 	writingPos += 3;
 }

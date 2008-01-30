@@ -22,16 +22,21 @@ private:
 	Color *od; //diffuse color
 	Color *os; //specular color
 	
+	double ia;
+	
 	double ka; //ambient reflection constant
 	double kd; //diffuse reflection constant
 	double ks; //specular reflection constant
 	
-	int n; //"shininess" constant
+	int n; //rugosity constant
 
 public:
 		
 	Phong(Color *_od){
-		oa = _od;
+		
+		ia = 1.0;
+		
+		oa = new Color((*_od) * ia);
 		od = _od;
 		os = new Color(1.0, 1.0, 1.0);
 		
@@ -42,7 +47,8 @@ public:
 		n = 10;
 	}
 	
-	Phong(Color *_od, Color *_os, double _ka, double _kd, double _ks, int _n){
+	Phong(Color *_oa, Color *_od, Color *_os, double _ka, double _kd, double _ks, int _n){
+		oa = oa;
 		od = _od;
 		os = _os;
 		ka = _ka;

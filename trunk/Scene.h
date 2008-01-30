@@ -31,9 +31,11 @@ private:
 	Color *background;
 	std::list<Object *> objects;
 	std::list<Light *> lights;
-	
 	double focal;
+	
+	Intersection *getNearestIntersection(Ray &ray);
 	double calcFocal(void) const;
+	void shadow(Color &color, Object &object, Point &point);
 	
 public:
 	

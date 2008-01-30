@@ -34,28 +34,24 @@ void Scene::rayTrace(void){
 		
 		for(int p=-getW()/2; p<getW()/2; p++){
 			
-			Intersection *current_intersection = 0;
 			Point *pix = new Point(p, l, focal);
 			Ray &ray = observer->ray(pix);
 			
-			for(list<Object *>::iterator iter = objects.begin(); iter != objects.end(); ++iter){
-				Intersection *candidate = (*iter)->intersection(ray);
-				
-				if(candidate != 0){
-					if(current_intersection == 0 || current_intersection->getT() > candidate->getT()){
-						current_intersection = candidate;
-					}
-				}
-			}
+			Intersection *nearestIntersection = getNearestIntersection(ray);
 			
-			if(current_intersection != 0){
-				Color *color = new Color(current_intersection->getObject().getEnlightment().getColor(current_intersection->getPoint(), current_intersection->getNorm(), ray, lights));
+			if(nearestIntersection != 0){
+				Color *color = new Color(nearestIntersection->getObject().getEnlightment().getColor(nearestIntersection->getPoint(), nearestIntersection->getNorm(), ray, lights));
+				shadow(*color, nearestIntersection->getObject(), nearestIntersection->getPoint());
+				
 				img->writePixel(*color);
+				
 				delete(color);
 			}
 			else{
 				img->writePixel(*background);
 			}
+			
+			delete(pix);
 		}
 	}
 	
@@ -64,4 +60,37 @@ void Scene::rayTrace(void){
 
 double Scene::calcFocal(void) const{
 	return ( (getW() / 2.0) / tan(observer->getAlpha()/2.0) );
+}
+
+Intersection *Scene::getNearestIntersection(Ray &ray){
+	
+	Intersection *nearestIntersection = 0;
+	
+	for(list<Object *>::iterator iter = objects.begin(); iter != objects.end(); ++iter){
+		Intersection *candidate = (*iter)->intersection(ray);
+		
+		if(candidate != 0){
+			if(nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()){
+				nearestIntersection = candidate;
+			}
+		}
+	}
+	
+	return nearestIntersection;
+}
+
+void Scene::shadow(Color &color, Object &object, Point &point){
+	for(std::list<Light *>::iterator iter = lights.begin(); iter != lights.end(); ++iter){
+		Vector *l = new Vector(point, (*iter)->getSource());
+		l->normalize();
+		
+		Ray *ray = new Ray(&point, l);
+		Intersection *intersection = getNearestIntersection(*ray);
+		
+		if(intersection != 0 && (&intersection->getObject() != &object)){
+			color.darken(0.3);
+		}
+	}
+	
+	color.normalize();
 }

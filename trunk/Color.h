@@ -23,6 +23,16 @@ private:
 	double g;
 	double b;
 	
+	void normalizeComponent(double &component){
+		if(component < 0.0){
+			component = 0.0;
+		}
+		
+		if(component > 1.0){
+			component = 1.0;
+		}
+	}
+	
 public:
 	
 	Color(void){
@@ -58,6 +68,17 @@ public:
 	void setG(double _g) {g = _g;}
 	void setB(double _b) {b = _b;}
 	
+	void normalize(void) {
+		normalizeComponent(r);
+		normalizeComponent(g);
+		normalizeComponent(b);
+	}
+	
+	void darken(double intensity){
+		r *= intensity;
+		g *= intensity;
+		b *= intensity;
+	}
 	
 	Color &operator=(const Color &c){
 		r = c.r;
@@ -71,9 +92,9 @@ public:
 		
 		Color *res = new Color();
 		
-		res->r = (c.r + r) / 2.0;
-		res->g = (c.g + g) / 2.0;
-		res->b = (c.b + b) / 2.0;
+		res->r = (c.r + r);
+		res->g = (c.g + g);
+		res->b = (c.b + b);
 		
 		return *res;
 	}
@@ -101,7 +122,7 @@ public:
 		}
 		else{
 			res->b = b;
-		}		
+		}
 		
 		return *res;
 	}

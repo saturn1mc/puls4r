@@ -11,23 +11,32 @@
 #define C3DSPARSER_H
 
 #include <list>
+#include <string>
+#include <iostream>
 
 #include "C3dsFileLoader.h"
+#include "Scene.h"
 #include "Triangle.h"
 
 class C3dsParser : public C3dsFileLoader{
 private:
 	
+	std::list<Point *> points;
+	Scene *scene;
 	Enlightment *enlightment;
-	std::list<Point*> points;
 	
 protected:
 	void User3dVert(float x, float y, float z);
 	
 public:
-	C3dsParser(Enlightment *_enlightment) : C3dsFileLoader(), points(0){
+	C3dsParser(Scene *_scene, Enlightment *_enlightment) : C3dsFileLoader(), points(0){
+		scene = _scene;
 		enlightment = _enlightment;
-	} 
+	}
+	
+	Scene &getScene(void) const{
+		return *scene;
+	}
 };
 
 #endif //C3DSPARSER_H

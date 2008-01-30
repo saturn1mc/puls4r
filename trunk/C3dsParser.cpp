@@ -10,10 +10,24 @@
 #include "C3dsParser.h"
 
 void C3dsParser::User3dVert(float x, float y, float z){
-	points.push_back(new Point(x, y, z));
+	
+	Point *p = new Point((double)x, (double)y, (double)z);
+	std::cout << *p << std::endl;
+	points.push_back(p);
 	
 	if(points.size() >= 3){
-		//TODO create triangles
+		
+		Point *a = points.front();
 		points.pop_front();
+		
+		Point *b = points.front();
+		points.pop_front();
+		
+		Point *c = points.front();
+		points.pop_front();
+		
+		Triangle *triangle = new Triangle(enlightment, a, b, c);
+		scene->addObject(triangle);
+		cout << *triangle << endl;
 	}
 }
