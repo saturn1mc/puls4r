@@ -22,6 +22,9 @@ private:
 public:
 
 	Triangle(Enlightment *_enlightment, Point *a, Point *b, Point *c) {
+		
+		reflect = false;
+		
 		enlightment = _enlightment;
 		points[0] = a;
 		points[1] = b;

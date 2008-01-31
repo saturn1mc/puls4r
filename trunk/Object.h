@@ -22,12 +22,25 @@ class Object{
 protected:
 	
 	Object(void) {}
+	bool reflect;
 	Enlightment *enlightment;
 	
 public:
 	
+	bool isReflecting(void) const{
+		return reflect;
+	}
+	
+	void setReflectance(bool _reflect){
+		reflect = _reflect;
+	}
+		
 	Enlightment &getEnlightment(void) const {
 		return *enlightment;
+	}
+	
+	void setEnlightment(Enlightment *_enlightment){
+		enlightment = _enlightment;
 	}
 	
 	virtual ~Object(void) {}

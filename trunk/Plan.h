@@ -23,6 +23,9 @@ private:
 public:
 
 	Plan(Enlightment *_enlightment, Vector *_norm, double _d, bool _monoface){
+		
+		reflect = false;
+		
 		enlightment = _enlightment;
 		
 		norm = _norm;

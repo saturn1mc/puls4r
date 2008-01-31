@@ -33,7 +33,7 @@ Color &Phong::getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> 
 		diffuse->normalize();
 		specular->normalize();
 		
-		*color = *color + *diffuse + *specular;
+		*color = *color + ((*iter)->getColor() * (*diffuse + *specular));
 		
 		delete(diffuse);
 		delete(specular);
