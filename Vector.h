@@ -81,7 +81,7 @@ public:
 	double getZ(void) const { return z; }
 	double getT(void) const { return t; }
 	
-	double set(int d, int val){
+	double set(int d, double val){
 		switch(d){
 			case 0:
 				x = val;
