@@ -34,8 +34,10 @@ private:
 	double focal;
 	
 	Intersection *getNearestIntersection(Ray &ray);
+	Intersection *getNearestIntersectionExcluding(Ray &ray, Object &object);
 	double calcFocal(void) const;
-	void shadow(Color &color, Object &object, Point &point);
+	void shadow(Color &color, Intersection &intersection);
+	Color &reflection(Color &color, Ray &ray, Intersection &intersection);
 	
 public:
 	
