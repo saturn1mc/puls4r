@@ -19,12 +19,12 @@ void Scene::addLight(Light *light){
 	
 void Scene::rayTrace(void){
 	
-	cout << "Tracing ... ";
+	cout << "Tracing ...";
 	int progress = 0;
 	
 	for(int l=-getH()/2; l<getH()/2; l++){
 		
-		int done = round(100 * (float)(l+(getH()/2)+1) / (float)getH());
+		int done = (int)round(100 * (float)(l+(getH()/2)+1) / (float)getH());
 		
 		if(progress != done){
 			progress = done;

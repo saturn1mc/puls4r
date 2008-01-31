@@ -31,7 +31,7 @@ void generateTestScene(){
 	Color *purple = new Color(1.0, 0.0, 1.0);
 	
 	Observer *obs = new Observer(new Point(0.0, 6.0, 30.0), new Point(0.0, 0.0, 0.0), M_PI/4.0);
-	Scene *scene = new Scene(obs, new Image("/Users/camille/Desktop/test.bmp", 800, 600), black);
+	Scene *scene = new Scene(obs, new Image("test.bmp", 800, 600), black);
 	
 	scene->addLight(new Light(new Point(0.0, 30.0, 40.0), white));
 	
