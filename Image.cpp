@@ -1,5 +1,44 @@
 #include "Image.h"
 
+void Image::initPixels(void){
+	pixels = new Color*[h*antialiasing];
+	
+	for (int i = 0; i<(h*antialiasing); ++i) {
+		pixels[i] = new Color[w*antialiasing];
+	}
+}
+
+void Image::writeToPic(void){
+	for(int i=0; i<h*antialiasing; i+=antialiasing){
+		for(int j=0; j<w*antialiasing; j+=antialiasing){
+			
+			Color *color = new Color();
+			
+			for(int ii=0; ii<antialiasing; ii+=antialiasing){
+				for(int jj=0; jj<antialiasing; jj+=antialiasing){
+					*color = *color + pixels[i+ii][j+jj];
+				}
+			}
+			
+			writePixel(*color);
+			delete(color);
+		}
+	}
+}
+
+void Image::setPixel(int _h, int _w, Color *color){
+	pixels[_h][_w] = *color;
+}
+
+void Image::writePixel(Color &color){
+	
+	pic[writingPos] = (unsigned char) ((int)(255 * color.getR()));
+	pic[writingPos+1] = (unsigned char) ((int)(255 * color.getG()));
+	pic[writingPos+2] = (unsigned char) ((int)(255 * color.getB()));
+	
+	writingPos += 3;
+}
+
 // Ecrit un short dans un fichier
 void Image::putshort(FILE *file, int i){
 	int c, c1;
@@ -14,14 +53,15 @@ void Image::putshort(FILE *file, int i){
 // Ecrit un int dans un fichier
 void Image::putint(FILE *file, int i){
 	int c, c1, c2, c3;
+	
 	c  = ((unsigned int ) i)      & 0xff;  
 	c1 = (((unsigned int) i)>>8)  & 0xff;
 	c2 = (((unsigned int) i)>>16) & 0xff;
 	c3 = (((unsigned int) i)>>24) & 0xff;
 	
-	putc(c, file);   
-	putc(c1, file);  
-	putc(c2, file);  
+	putc(c, file);
+	putc(c1, file);
+	putc(c2, file);
 	putc(c3, file);
 }
 
@@ -47,19 +87,12 @@ void Image::writeBMP24(FILE *file, unsigned char *pic24, int w, int h){
 			putc(0, file);
 		}
     }
-}  
-
-void Image::writePixel(Color &color){
-
-	pic[writingPos] = (unsigned char) ((int)(255 * color.getR()));
-	pic[writingPos+1] = (unsigned char) ((int)(255 * color.getG()));
-	pic[writingPos+2] = (unsigned char) ((int)(255 * color.getB()));
-	
-	writingPos += 3;
 }
 
 // Ecriture d'un buffer image dans un fichier au format BMP
 void Image::writeBitmap(void){
+	
+	writeToPic();
 	
 	int i, nbits = 24, bperlin, cmaplen = 0;
 	FILE *file;
@@ -100,4 +133,3 @@ void Image::writeBitmap(void){
 	
 	fclose(file);
 }
-
