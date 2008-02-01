@@ -31,10 +31,9 @@ void generateTestScene(){
 	Color *purple = new Color(1.0, 0.0, 1.0);
 	
 	Observer *obs = new Observer(new Point(0.0, 6.0, 30.0), new Point(0.0, 0.0, 0.0), M_PI/4.0);
-	Scene *scene = new Scene(obs, new Image("test.bmp", 400, 300), black);
+	Scene *scene = new Scene(obs, new Image("test.bmp", 800, 600, 2), black);
 	
 	scene->addLight(new Light(new Point(10.0, 30.0, 40.0), white));
-	//scene->addLight(new Light(new Point(-10.0, 30.0, 40.0), white));
 	
 	scene->addObject(new Sphere(new Phong(red), new Point(-4.0, 3.0, 0.0), 1.0));
 	scene->addObject(new Sphere(new Phong(purple), new Point(-2.0, 3.0, 0.0), 1.0));
@@ -42,7 +41,7 @@ void generateTestScene(){
 	scene->addObject(new Sphere(new Phong(blue), new Point(2.0, 3.0, 0.0), 1.0));
 	scene->addObject(new Sphere(new Phong(yellow), new Point(4.0, 3.0, 0.0), 1.0));
 	
-	Sphere *reflectingSphere = new Sphere(new Phong(white), new Point(0.0, 0.0, 0.0), 1.0);
+	Sphere *reflectingSphere = new Sphere(new Phong(white), new Point(0.0, -1.0, 0.0), 2.0);
 	reflectingSphere->setReflectance(true);
 	scene->addObject(reflectingSphere);
 	

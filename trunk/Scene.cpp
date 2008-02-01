@@ -19,7 +19,7 @@ void Scene::addLight(Light *light){
 	
 void Scene::rayTrace(void){
 	
-	cout << "Tracing ...";
+	cout << "Tracing..." << endl;
 	int progress = 0;
 	
 	for(int l=-getH()/2; l<getH()/2; l++){
@@ -44,20 +44,27 @@ void Scene::rayTrace(void){
 				shadow(*color, *nearestIntersection);
 				Color *color2 = new Color(reflection(*color, ray, *nearestIntersection));
 				
-				img->writePixel(*color2);
+				//img->writePixel(*color2);
+				//TODO write into pixel's matrix
+				img->setPixel(l+(getH()/2), p+(getW()/2), color2);
 				
-				delete(color);
-				delete(color2);
+				//delete(color);
+				//delete(color2);
 			}
 			else{
-				img->writePixel(*background);
+				//img->writePixel(*background);
+				//TODO write into pixel's matrix
+				img->setPixel(l+(getH()/2), p+(getW()/2), background);
 			}
 			
 			delete(pix);
 		}
 	}
 	
+	cout << endl;
+	cout << "Writing image to " << img->getFilename() << endl;
 	img->writeBitmap();
+	cout << "Tracing over" << endl;
 }
 
 double Scene::calcFocal(void) const{
@@ -134,7 +141,7 @@ Color &Scene::reflection(Color &color, Ray &ray, Intersection &intersection){
 			return reflection(reflectionIntersection->getObject().getEnlightment().getColor(reflectionIntersection->getPoint(), reflectionIntersection->getNorm(), *reflected, lights), *reflected, *reflectionIntersection);
 		}
 		else{
-			return color;
+			return *background;
 		}
 		
 		delete(reflected);

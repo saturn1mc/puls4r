@@ -27,47 +27,61 @@ class Image{
 private:
 	
 	unsigned char *pic;
+	int antialiasing;
 	int w;
 	int h;
 	char *filename;
-	
 	int writingPos;
+	
+	Color **pixels;
+	void initPixels(void);
+	void writeToPic(void);
+	void writePixel(Color &color);
 	
 public:
 	
-	Image(char *name, int np, int nl){
-		
+	Image(char *_filename, int _w, int _h){
 		writingPos = 0;
 		
-		MALLOC(filename, char, strlen(name)+1);
-		strcpy(filename, name);
+		MALLOC(filename, char, strlen(_filename)+1);
+		strcpy(filename, _filename);
 		
-		w = np;
-		h = nl;
-			
-		MALLOC(pic, unsigned char, np*nl*3);
-	}	
-	
-	Image(unsigned char *_pic, int _w, int _h, char *_filename){
-		pic = _pic;
 		w = _w;
 		h = _h;
-		filename = _filename;
+			
+		MALLOC(pic, unsigned char, _w*_h*3);
+		
+		antialiasing = 1;
+		initPixels();
+	}	
+	
+	Image(char *_filename, int _w, int _h, int _antialiasing){
+		writingPos = 0;
+		
+		MALLOC(filename, char, strlen(_filename)+1);
+		strcpy(filename, _filename);
+		
+		w = _w;
+		h = _h;
+		
+		MALLOC(pic, unsigned char, _w*_h*3);
+		
+		antialiasing = _antialiasing;
+		initPixels();
 	}
 	
 	~Image(){}
 	
-	int getW(void) const {return w;}
+	void setPixel(int _h, int _w, Color *color);
 	
-	int getH(void) const {return h;}
+	int getW(void) const {return w*antialiasing;}
+	int getH(void) const {return h*antialiasing;}
 	
 	char *getFilename(void) const {return filename;}
 	
 	static void putshort(FILE *file, int i);
 	static void putint(FILE *file, int i);
 	static void writeBMP24(FILE *file, unsigned char *pic24, int w, int h);
-	
-	void writePixel(Color &color);
 	
 	void writeBitmap(void);
 };
