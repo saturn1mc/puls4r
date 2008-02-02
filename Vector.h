@@ -33,11 +33,11 @@ public:
 		t = 1;
 	}
 	
-	Vector(Vector &vector){
-		x = vector.x;
-		y = vector.y;
-		z = vector.z;
-		t = vector.t;
+	Vector(Vector *vector){
+		x = vector->x;
+		y = vector->y;
+		z = vector->z;
+		t = vector->t;
 	}
 		
 	Vector(double _x, double _y, double _z) {
@@ -47,10 +47,10 @@ public:
 		t = 1;
 	}	
 	
-	Vector(Point &a, Point &b) {
-		x = b.getX() - a.getX(); 
-		y = b.getY() - a.getY(); 
-		z = b.getZ() - a.getZ(); 
+	Vector(Point *a, Point *b) {
+		x = b->getX() - a->getX(); 
+		y = b->getY() - a->getY(); 
+		z = b->getZ() - a->getZ(); 
 		t = 1;
 	}
 	
@@ -121,47 +121,47 @@ public:
 		z /= n;
 	}
 	
-	double norm(void){
-		return sqrt( (*this) * (*this) );
+	double norm(void) const{
+		return sqrt((x * x) + (y * y) + (z * z));
 	}
 	
-	double operator*(const Vector& v) const{
-		return (x * v.x) + (y * v.y) + (z * v.z);
+	double operator*(const Vector *v) const{
+		return (x * v->x) + (y * v->y) + (z * v->z);
 	}
 	
-	Vector& operator*(double coeff) const{
+	Vector *operator*(double coeff) const{
 		Vector *res = new Vector(x*coeff, y*coeff, z*coeff);
 		
-		return *res;
+		return res;
 	}
 	
-	Vector& operator+(const Vector& v) const{
+	Vector *operator+(const Vector *v) const{
 		
-		Vector *res = new Vector(x + v.x, y + v.y, z + v.z);
+		Vector *res = new Vector(x + v->x, y + v->y, z + v->z);
 								 
-		return *res;
+		return res;
 	}
 	
-	Vector& operator-(const Vector& v) const{
+	Vector *operator-(const Vector* v) const{
 		
-		Vector *res = new Vector(x - v.x, y - v.y, z - v.z);
+		Vector *res = new Vector(x - v->x, y - v->y, z - v->z);
 		
-		return *res;
+		return res;
 	}
 	
-	Vector& operator^(const Vector& v) const{
+	Vector *operator^(const Vector *v) const{
 	
 		Vector *res = new Vector(
-					(y*v.z) - (z*v.y),
-					(z*v.x) - (x*v.z),
-					(x*v.y) - (y*v.x)
+					(y*v->z) - (z*v->y),
+					(z*v->x) - (x*v->z),
+					(x*v->y) - (y*v->x)
 				);
 		
-		return *res;
+		return res;
 	}
 };
 
-template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Vector &v){
+template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Vector *v){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream
@@ -173,7 +173,7 @@ template <class charT, class traits> std::basic_ostream<charT,traits> &operator 
 	s.width(0);
 	
 	// fill string stream
-	s << "[" << v.getX() << "," << v.getY() << "," << v.getZ()  << "," << v.getT() << "]";
+	s << "[" << v->getX() << "," << v->getY() << "," << v->getZ()  << "," << v->getT() << "]";
 	
 	// print string stream
 	strm << s.str();

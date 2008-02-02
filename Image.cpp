@@ -16,25 +16,25 @@ void Image::writeToPic(void){
 			
 			for(int ii=0; ii<antialiasing; ii+=antialiasing){
 				for(int jj=0; jj<antialiasing; jj+=antialiasing){
-					*color = *color + pixels[i+ii][j+jj];
+					color = (*color) + &pixels[i+ii][j+jj];
 				}
 			}
 			
-			writePixel(*color);
+			writePixel(color);
 			delete(color);
 		}
 	}
 }
 
 void Image::setPixel(int _h, int _w, Color *color){
-	pixels[_h][_w] = *color;
+	pixels[_h][_w] = color;
 }
 
-void Image::writePixel(Color &color){
+void Image::writePixel(Color *color){
 	
-	pic[writingPos] = (unsigned char) ((int)(255 * color.getR()));
-	pic[writingPos+1] = (unsigned char) ((int)(255 * color.getG()));
-	pic[writingPos+2] = (unsigned char) ((int)(255 * color.getB()));
+	pic[writingPos] = (unsigned char) ((int)(255 * color->getR()));
+	pic[writingPos+1] = (unsigned char) ((int)(255 * color->getG()));
+	pic[writingPos+2] = (unsigned char) ((int)(255 * color->getB()));
 	
 	writingPos += 3;
 }

@@ -36,7 +36,7 @@ public:
 	}
 
 	virtual ~Plan(void) {}
-	virtual Intersection *intersection(Ray &ray);
+	virtual Intersection *intersection(Ray *ray);
 	virtual std::string toString(void) const;
 };
 

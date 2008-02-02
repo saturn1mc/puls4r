@@ -18,7 +18,7 @@ private:
 	Point *center;
 	double radius;
 	
-	Intersection *Sphere::createIntersection(Ray &ray);
+	Intersection *Sphere::createIntersection(Ray *ray);
 	
 public:
 
@@ -30,7 +30,7 @@ public:
 	}
 	
 	virtual ~Sphere(void) {}
-	virtual Intersection *intersection(Ray &ray);
+	virtual Intersection *intersection(Ray *ray);
 	virtual std::string toString(void) const;
 };
 

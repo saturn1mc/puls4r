@@ -22,10 +22,10 @@ public:
 		color = _color;
 	}
 	
-	Linear(Linear &linear) {}
+	Linear(Linear *linear) {}
 	virtual ~Linear(void) {}
-	virtual Color &getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> lights) const;
-	virtual Enlightment *getCopy() {return new Linear(*this);}
+	virtual Color *getColor(Point *point, Vector *norm, Ray *ray, std::list<Light *> lights) const;
+	virtual Enlightment *clone(void) {return new Linear(this);}
 };
 
 #endif //LINEAR_H

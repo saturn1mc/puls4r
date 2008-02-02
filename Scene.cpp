@@ -34,30 +34,24 @@ void Scene::rayTrace(void){
 		
 		for(int p=-getW()/2; p<getW()/2; p++){
 			
-			Point *pix = new Point(p, l, focal);
-			Ray &ray = observer->ray(pix);
+			Ray *ray = observer->ray(new Point(p, l, focal));
 			
 			Intersection *nearestIntersection = getNearestIntersection(ray);
 			
 			if(nearestIntersection != 0){
-				Color *color = new Color(nearestIntersection->getObject().getEnlightment().getColor(nearestIntersection->getPoint(), nearestIntersection->getNorm(), ray, lights));
-				shadow(*color, *nearestIntersection);
-				Color *color2 = new Color(reflection(*color, ray, *nearestIntersection));
+				Color *color = new Color(nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNorm(), ray, lights));
+				shadow(color, nearestIntersection);
+				Color *color2 = new Color(reflection(color, ray, nearestIntersection));
 				
-				//img->writePixel(*color2);
-				//TODO write into pixel's matrix
 				img->setPixel(l+(getH()/2), p+(getW()/2), color2);
 				
-				//delete(color);
-				//delete(color2);
+				delete(color);
 			}
 			else{
-				//img->writePixel(*background);
-				//TODO write into pixel's matrix
 				img->setPixel(l+(getH()/2), p+(getW()/2), background);
 			}
 			
-			delete(pix);
+			delete(ray);
 		}
 	}
 	
@@ -71,7 +65,7 @@ double Scene::calcFocal(void) const{
 	return ( (getW() / 2.0) / tan(observer->getAlpha()/2.0) );
 }
 
-Intersection *Scene::getNearestIntersection(Ray &ray){
+Intersection *Scene::getNearestIntersection(Ray *ray){
 	
 	Intersection *nearestIntersection = 0;
 	
@@ -88,13 +82,13 @@ Intersection *Scene::getNearestIntersection(Ray &ray){
 	return nearestIntersection;
 }
 
-Intersection *Scene::getNearestIntersectionExcluding(Ray &ray, Object &object){
+Intersection *Scene::getNearestIntersectionExcluding(Ray *ray, Object *object){
 	
 	Intersection *nearestIntersection = 0;
 	
 	for(list<Object *>::iterator iter = objects.begin(); iter != objects.end(); ++iter){
 		
-		if((*iter) != &object){
+		if((*iter) != object){
 		
 			Intersection *candidate = (*iter)->intersection(ray);
 		
@@ -110,38 +104,38 @@ Intersection *Scene::getNearestIntersectionExcluding(Ray &ray, Object &object){
 	return nearestIntersection;
 }
 
-void Scene::shadow(Color &color, Intersection &intersection){
+void Scene::shadow(Color *color, Intersection *intersection){
 	for(std::list<Light *>::iterator iter = lights.begin(); iter != lights.end(); ++iter){
-		Vector *l = new Vector(intersection.getPoint(), (*iter)->getSource());
+		Vector *l = new Vector(intersection->getPoint(), (*iter)->getSource());
 		l->normalize();
 		
-		Ray *ray = new Ray(&intersection.getPoint(), l);
-		Intersection *shadowIntersection = getNearestIntersectionExcluding(*ray, intersection.getObject());
+		Ray *ray = new Ray(intersection->getPoint(), l);
+		Intersection *shadowIntersection = getNearestIntersectionExcluding(ray, intersection->getObject());
 		
-		if(shadowIntersection != 0 && (&shadowIntersection->getObject() != &intersection.getObject())){
-			color.darken(0.3);
+		if(shadowIntersection != 0 && (shadowIntersection->getObject() != intersection->getObject())){
+			color->darken(0.3);
 		}
 		
 		delete(ray);
 		delete(shadowIntersection);
 	}
 	
-	color.normalize();
+	color->normalize();
 }
 
-Color &Scene::reflection(Color &color, Ray &ray, Intersection &intersection){
-	if(intersection.getObject().isReflecting()){
-		Vector &r = ray.getDirection() - ((intersection.getNorm() * 2.0) * (intersection.getNorm() * ray.getDirection()));
-		r.normalize();
+Color *Scene::reflection(Color *color, Ray *ray, Intersection *intersection){
+	if(intersection->getObject()->isReflecting()){
+		Vector *r = (*ray->getDirection()) - ( (*((*intersection->getNorm()) * 2.0)) * ((*intersection->getNorm()) * ray->getDirection()));
+		r->normalize();
 		
-		Ray *reflected = new Ray(&intersection.getPoint(), &r);
-		Intersection *reflectionIntersection = getNearestIntersectionExcluding(*reflected, intersection.getObject());
+		Ray *reflected = new Ray(intersection->getPoint(), r);
+		Intersection *reflectionIntersection = getNearestIntersectionExcluding(reflected, intersection->getObject());
 		
 		if(reflectionIntersection != 0){
-			return reflection(reflectionIntersection->getObject().getEnlightment().getColor(reflectionIntersection->getPoint(), reflectionIntersection->getNorm(), *reflected, lights), *reflected, *reflectionIntersection);
+			return reflection(reflectionIntersection->getObject()->getEnlightment()->getColor(reflectionIntersection->getPoint(), reflectionIntersection->getNorm(), reflected, lights), reflected, reflectionIntersection);
 		}
 		else{
-			return *background;
+			return background;
 		}
 		
 		delete(reflected);

@@ -9,31 +9,31 @@
 
 #include "Phong.h"
 
-Color &Phong::getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> lights) const{
+Color *Phong::getColor(Point *point, Vector *norm, Ray *ray, std::list<Light *> lights) const{
 	
 	Color *color = new Color();
 	
 	for(std::list<Light *>::iterator iter = lights.begin(); iter != lights.end(); ++iter){
-		Vector &L = getL(point, *(*iter));
-		Vector &R = getR(L, norm);
-		Vector &V = getV(ray);
+		Vector *L = getL(point, (*iter));
+		Vector *R = getR(L, norm);
+		Vector *V = getV(ray);
 		
-		Color *diffuse = new Color( (*od) * (kd * (L * norm)) );
+		Color *diffuse = new Color( (*od) * (kd * ((*L) * norm)) );
 		
 		Color *specular;
 		
-		if(R*V < 0){
+		if((*R)*V < 0){
 			specular = new Color();
 		}
 		else{
-			specular = new Color( (*os) * (ks * pow(R*V, n)) );
+			specular = new Color( (*os) * (ks * pow((*R)*V, n)) );
 		}
 		
 		
 		diffuse->normalize();
 		specular->normalize();
 		
-		*color = *color + ((*iter)->getColor() * (*diffuse + *specular));
+		*color = *color + ((*(*iter)->getColor()) * ((*diffuse) + specular));
 		
 		delete(diffuse);
 		delete(specular);
@@ -41,5 +41,5 @@ Color &Phong::getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> 
 	
 	color->normalize();
 	
-	return *color;
+	return color;
 }

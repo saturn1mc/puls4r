@@ -189,7 +189,7 @@ public:
 		return content[l][c];
 	}
 	
-	Matrix& t(void){
+	Matrix *t(void){
 		Matrix *res = new Matrix();
 		
 		for(int i=0; i<4; i++){
@@ -198,50 +198,52 @@ public:
 			}
 		}
 		
-		return *res;
+		return res;
 	}
 	
-	Matrix& operator*(const Matrix &m){
+	Matrix *operator*(const Matrix *m){
 		
 		Matrix *res = new Matrix();
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
 				for(int k=0; k<4; k++){
-					res->content[i][j] += content[i][k] * m.content[k][j];
+					res->content[i][j] += content[i][k] * m->content[k][j];
 				}	
 			}
 		}
+		
+		return res;
 	}
 	
-	Point& operator*(const Point &p){
+	Point *operator*(const Point *p){
 		
 		Point *res = new Point();
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
-				res->set(i, res->get(i) + content[i][j] * p.get(j));
+				res->set(i, res->get(i) + content[i][j] * p->get(j));
 			}
 		}
 		
-		return *res;
+		return res;
 	}
 	
-	Vector& operator*(const Vector &p){
+	Vector *operator*(const Vector *v){
 		
 		Vector *res = new Vector();
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
-				res->set(i, res->get(i) + content[i][j] * p.get(j));
+				res->set(i, res->get(i) + content[i][j] * v->get(j));
 			}
 		}
 		
-		return *res;
+		return res;
 	}
 };
 
-template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Matrix &m){
+template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Matrix *m){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream
@@ -254,7 +256,7 @@ template <class charT, class traits> std::basic_ostream<charT,traits> &operator 
 	
 	// fill string stream
 	for(int i=0; i<4; i++){
-		s << "|" << m(i, 0) << "," << m(i, 1) << "," << m(i, 2)  << "," << m(i, 3) << "|" << std::endl;
+		s << "|" << (*m)(i, 0) << "," << (*m)(i, 1) << "," << (*m)(i, 2)  << "," << (*m)(i, 3) << "|" << std::endl;
 	}
 	
 	// print string stream

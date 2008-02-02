@@ -30,12 +30,11 @@ public:
 	
 	~Light(){}
 	
-	Point &getSource(void) const {return *source;}
-	
-	Color &getColor(void) const {return *color;}
+	Point *getSource(void) const {return source;}
+	Color *getColor(void) const {return color;}
 };
 
-template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Light &light){
+template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Light *light){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream
@@ -50,8 +49,8 @@ template <class charT, class traits> std::basic_ostream<charT,traits> &operator 
 	s << "---------------------------" << std::endl;
 	s << "Light :" << std::endl;
 	s << "---------------------------" << std::endl;
-	s << "Source : " << light.getSource() << std::endl;
-	s << "Color : " << light.getColor() << std::endl;
+	s << "Source : " << light->getSource() << std::endl;
+	s << "Color : " << light->getColor() << std::endl;
 	s << "---------------------------" << std::endl;
 	
 	// print string stream

@@ -36,7 +36,7 @@ private:
 	Color **pixels;
 	void initPixels(void);
 	void writeToPic(void);
-	void writePixel(Color &color);
+	void writePixel(Color *color);
 	
 public:
 	

@@ -29,9 +29,10 @@ private:
 	void initMatrix(void);
 	
 public:
+
 	Observer(Point *_eye, Point *_sight, double _alpha){
 		eye = _eye;
-		sight = new Vector(*eye, *_sight);
+		sight = new Vector(eye, _sight);
 		alpha = _alpha;
 		
 		sight->normalize();
@@ -51,20 +52,16 @@ public:
 	
 	~Observer(){}
 	
-	Ray &ray(Point *sp);
+	Ray *ray(Point *sp);
 	
-	Point &getEye(void) const {return *eye;}
-	
-	Vector &getSight(void) const {return *sight;}
-	
-	Matrix &getView(void) const {return *view;}
-	
+	Point *getEye(void) const {return eye;}	
+	Vector *getSight(void) const {return sight;}
+	Matrix *getView(void) const {return view;}
 	double getAlpha(void) const {return alpha;}
-	
 	void setAlpha(int _alpha) {alpha=_alpha;}
 };
 
-template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Observer &obs){
+template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Observer *obs){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream
@@ -79,11 +76,11 @@ template <class charT, class traits> std::basic_ostream<charT,traits> &operator 
 	s << "---------------------------" << std::endl;
 	s << "Observer :" << std::endl;
 	s << "---------------------------" << std::endl;
-	s << "Eye : " << obs.getEye() << std::endl;
-	s << "Sight : " << obs.getSight() << std::endl;
+	s << "Eye : " << obs->getEye() << std::endl;
+	s << "Sight : " << obs->getSight() << std::endl;
 	s << "View : " << std::endl;
-	s << obs.getView() << std::endl;
-	s << "Alpha : " << obs.getAlpha() << std::endl;
+	s << obs->getView() << std::endl;
+	s << "Alpha : " << obs->getAlpha() << std::endl;
 	s << "---------------------------" << std::endl;
 	
 	// print string stream

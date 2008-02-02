@@ -31,7 +31,7 @@ void generateTestScene(){
 	Color *purple = new Color(1.0, 0.0, 1.0);
 	
 	Observer *obs = new Observer(new Point(0.0, 6.0, 30.0), new Point(0.0, 0.0, 0.0), M_PI/4.0);
-	Scene *scene = new Scene(obs, new Image("test.bmp", 800, 600, 2), black);
+	Scene *scene = new Scene(obs, new Image("test.bmp", 400, 300, 2), black);
 	
 	scene->addLight(new Light(new Point(10.0, 30.0, 40.0), white));
 	
@@ -47,7 +47,7 @@ void generateTestScene(){
 	
 	scene->addObject(new Plan(new Phong(white), new Vector(0.0, 1.0, 0.0), 10.0, true));
 	
-	cout << *scene << endl;
+	cout << scene << endl;
 	
 	scene->rayTrace();
 }

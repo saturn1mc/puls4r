@@ -10,16 +10,16 @@
 #include "Lambert.h"
 
 
-Color &Lambert::getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> lights) const{
+Color *Lambert::getColor(Point *point, Vector *norm, Ray *ray, std::list<Light *> lights) const{
 	
-	Color *color = new Color(*od);
+	Color *color = new Color(od);
 	
 	for(std::list<Light *>::iterator iter = lights.begin(); iter != lights.end(); ++iter){
-		Vector &L = getL(point, *(*iter));
-		*color = (*color) * ((*iter)->getColor() * (kd * (L * norm)));
+		Vector *L = getL(point, (*iter));
+		color = (*color) * (*((*iter)->getColor()) * (kd * ((*L) * norm)));
 	}
 	
 	color->normalize();
 	
-	return *color;
+	return color;
 }
