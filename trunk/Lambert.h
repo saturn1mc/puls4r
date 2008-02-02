@@ -30,16 +30,15 @@ public:
 		kd = _kd;
 	}
 	
-	Lambert(Lambert &lambert) { 
-		od = new Color(*lambert.od); 
-		kd = lambert.kd;
+	Lambert(Lambert *lambert) { 
+		od = new Color(lambert->od); 
+		kd = lambert->kd;
 	}
 	
 	virtual ~Lambert(void) {}
 	
-	virtual Color &getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> lights) const;
-	
-	virtual Enlightment *getCopy() {return new Lambert(*this);}
+	virtual Color *getColor(Point *point, Vector *norm, Ray *ray, std::list<Light *> lights) const;
+	virtual Enlightment *clone(void) {return new Lambert(this);}
 };
 
 #endif //LINEAR_H

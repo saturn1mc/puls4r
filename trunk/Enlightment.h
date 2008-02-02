@@ -26,31 +26,30 @@ protected:
 	
 	Enlightment(void) {}
 	
-	Vector &getV(Ray &ray) const{
-		return (ray.getDirection() * -1.0);
+	Vector *getV(Ray *ray) const{
+		return ((*ray->getDirection()) * -1.0);
 	}
 	
-	Vector &getR(Vector &light, Vector &norm) const{
-		Vector &r = ((norm * 2.0) * (norm * light)) - light;
-		
-		r.normalize();
+	Vector *getR(Vector *light, Vector *norm) const{
+		Vector *r = *(*((*norm) * 2.0) * ((*norm) * (light))) - light;
+		r->normalize();
 		
 		return r;
 	}
 	
-	Vector &getL(Point &point, Light &light) const{
-		Vector *l = new Vector(point, light.getSource());
+	Vector *getL(Point *point, Light *light) const{
+		Vector *l = new Vector(point, light->getSource());
 		
 		l->normalize();
 		
-		return *l;
+		return l;
 	}
 	
 public:
 	Enlightment(Enlightment &enlightment) {}
 	virtual ~Enlightment(void) {}
-	virtual Color &getColor(Point &point, Vector &norm, Ray &ray, std::list<Light *> lights) const = 0;
-	virtual Enlightment *getCopy() = 0;
+	virtual Color *getColor(Point *point, Vector *norm, Ray *ray, std::list<Light *> lights) const = 0;
+	virtual Enlightment *clone(void) = 0;
 };
 
 #endif //ENLIGHTMENT_H

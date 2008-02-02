@@ -41,10 +41,10 @@ public:
 		b = 0;
 	}
 	
-	Color(Color &color){
-		r = color.r;
-		g = color.g;
-		b = color.b;
+	Color(Color *color){
+		r = color->r;
+		g = color->g;
+		b = color->b;
 	}
 		
 	Color(double _r, double _g, double _b)  throw(exception){
@@ -80,54 +80,37 @@ public:
 		b *= intensity;
 	}
 	
-	Color &operator=(const Color &c){
-		r = c.r;
-		g = c.g;
-		b = c.b;
+	Color *operator=(const Color *c){
+		r = c->r;
+		g = c->g;
+		b = c->b;
 		
-		return *this;
+		return this;
 	}
 	
-	Color& operator+(const Color& c){
+	Color *operator+(const Color *c){
 		
 		Color *res = new Color();
 		
-		res->r = (c.r + r);
-		res->g = (c.g + g);
-		res->b = (c.b + b);
+		res->r = (c->r + r);
+		res->g = (c->g + g);
+		res->b = (c->b + b);
 		
-		return *res;
+		return res;
 	}
 	
-	Color& operator-(const Color& c){
+	Color *operator-(const Color *c){
 		
 		Color *res = new Color();
 		
-		if(r > c.r){
-			res->r = r - c.r;
-		}
-		else{
-			res->r = r;
-		}
+		res->r = (c->r - r);
+		res->g = (c->g - g);
+		res->b = (c->b - b);
 		
-		if(g > c.g){
-			res->g = g - c.g;
-		}
-		else{
-			res->g = g;
-		}
-
-		if(r > c.b){
-			res->b = b - c.b;
-		}
-		else{
-			res->b = b;
-		}
-		
-		return *res;
+		return res;
 	}
 	
-	Color& operator*(double coeff){
+	Color *operator*(double coeff){
 		
 		Color *res = new Color();
 		
@@ -135,18 +118,18 @@ public:
 		res->g = g * coeff;
 		res->b = b * coeff;
 		
-		return *res;
+		return res;
 	}
 	
-	Color& operator*(Color &color){
+	Color *operator*(Color *color){
 		
 		Color *res = new Color();
 		
-		res->r = r * color.r;
-		res->g = g * color.g;
-		res->b = b * color.b;
+		res->r = r * color->r;
+		res->g = g * color->g;
+		res->b = b * color->b;
 		
-		return *res;
+		return res;
 	}
 };
 

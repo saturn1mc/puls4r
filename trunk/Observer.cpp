@@ -11,20 +11,20 @@
 
 void Observer::initMatrix(void){
 	
-	Vector up(0,1,0);
-	up.normalize();
+	Vector *up = new Vector(0,1,0);
+	up->normalize();
 	
-	Vector &w = *sight ^ up;
-	w.normalize();
+	Vector *w = (*sight) ^ up;
+	w->normalize();
 	
-	Vector &u = *sight ^ w;
-	u.normalize();
+	Vector *u = (*sight) ^ w;
+	u->normalize();
 	
 	view = new Matrix(w, u, *sight, *eye);
-	*view = view->t();
+	view = view->t();
 }
 
-Ray& Observer::ray(Point *sp){
-	Vector *dir = new Vector(*eye, (*view) * (*sp));
-	return *(new Ray(eye, dir));
+Ray *Observer::ray(Point *sp){
+	Vector *dir = new Vector(eye, (*view) * sp);
+	return new Ray(eye, dir);
 }

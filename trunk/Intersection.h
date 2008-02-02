@@ -35,23 +35,16 @@ public:
 		t = _t;
 	}
 	
-	Intersection(Intersection &intersection){
-		point = intersection.point;
-		norm = intersection.norm;
-		object = intersection.object;
-		t = intersection.t;
-	}
-	
 	~Intersection(){}
 	
-	Point &getPoint(void) const {return *point;}
-	Vector &getNorm(void) const {return *norm;}
-	Object &getObject() const {return *object;}
+	Point *getPoint(void) const {return point;}
+	Vector *getNorm(void) const {return norm;}
+	Object *getObject() const {return object;}
 	void setObject(Object *_object) {object = _object;}
 	double getT(void) const {return t;}
 };
 
-template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Intersection &inter){
+template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Intersection *inter){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream
@@ -66,9 +59,9 @@ template <class charT, class traits> std::basic_ostream<charT,traits> &operator 
 	s << "---------------------------" << std::endl;
 	s << "Intersection :" << std::endl;
 	s << "---------------------------" << std::endl;
-	s << "Point : " << inter.getPoint() << std::endl;
-	s << "Norm : " << inter.getNorm() << std::endl;
-	s << "t : " << inter.getT() << std::endl;
+	s << "Point : " << inter->getPoint() << std::endl;
+	s << "Norm : " << inter->getNorm() << std::endl;
+	s << "t : " << inter->getT() << std::endl;
 	s << "---------------------------" << std::endl;
 	
 	// print string stream

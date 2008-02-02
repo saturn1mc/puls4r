@@ -34,9 +34,9 @@ public:
 	
 	~Ray(){}
 	
-	Point &getOrigin(void) const {return *origin;}
+	Point *getOrigin(void) const {return origin;}
 	
-	Vector &getDirection(void) const {return *direction;}
+	Vector *getDirection(void) const {return direction;}
 	
 	double getT(void) const {return t;}
 	

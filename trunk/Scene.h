@@ -33,11 +33,11 @@ private:
 	std::list<Light *> lights;
 	double focal;
 	
-	Intersection *getNearestIntersection(Ray &ray);
-	Intersection *getNearestIntersectionExcluding(Ray &ray, Object &object);
+	Intersection *getNearestIntersection(Ray *ray);
+	Intersection *getNearestIntersectionExcluding(Ray *ray, Object *object);
 	double calcFocal(void) const;
-	void shadow(Color &color, Intersection &intersection);
-	Color &reflection(Color &color, Ray &ray, Intersection &intersection);
+	void shadow(Color *color, Intersection *intersection);
+	Color *reflection(Color *color, Ray *ray, Intersection *intersection);
 	
 public:
 	
@@ -54,9 +54,9 @@ public:
 	int getH(void) const {return img->getH();}
 	int getW(void) const {return img->getW();}
 	double getFocal(void) const {return focal;}
-	Observer &getObserver(void) const {return *observer;}
-	Image &getImage(void) const {return *img;}
-	Color &getBackground(void) const {return *background;}
+	Observer *getObserver(void) const {return observer;}
+	Image *getImage(void) const {return img;}
+	Color *getBackground(void) const {return background;}
 	std::list<Object *> &getObjects(void) {return objects;}
 	std::list<Light *> &getLights(void) {return lights;}
 	
@@ -65,7 +65,7 @@ public:
 	void rayTrace(void);
 };
 
-template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, Scene &scene){
+template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, Scene *scene){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream
@@ -80,22 +80,22 @@ template <class charT, class traits> std::basic_ostream<charT,traits> &operator 
 	s << "##########################################" << std::endl;
 	s << "Scene :" << std::endl;
 	s << "##########################################" << std::endl;
-	s << scene.getObserver() << std::endl;
-	s << scene.getImage() << std::endl;
-	s << "Focal : " << scene.getFocal() << std::endl;
-	s << "Background color : " << scene.getBackground() << std::endl;
+	s << scene->getObserver() << std::endl;
+	s << scene->getImage() << std::endl;
+	s << "Focal : " << scene->getFocal() << std::endl;
+	s << "Background color : " << scene->getBackground() << std::endl;
 	s << "********************************" << std::endl;
 	s << "Lights :" << std::endl;
 	s << "********************************" << std::endl;
-	for(std::list<Light *>::iterator iter = scene.getLights().begin(); iter != scene.getLights().end(); ++iter){
-		s << *(*iter) << std::endl;
+	for(std::list<Light *>::iterator iter = scene->getLights().begin(); iter != scene->getLights().end(); ++iter){
+		s << (*iter) << std::endl;
 	}
 	s << "********************************" << std::endl;
 	s << "********************************" << std::endl;
 	s << "Objects :" << std::endl;
 	s << "********************************" << std::endl;
-	for(std::list<Object *>::iterator iter = scene.getObjects().begin(); iter != scene.getObjects().end(); ++iter){
-		s << *(*iter) << std::endl;
+	for(std::list<Object *>::iterator iter = scene->getObjects().begin(); iter != scene->getObjects().end(); ++iter){
+		s << (*iter) << std::endl;
 	}
 	s << "********************************" << std::endl;
 	s << "##########################################" << std::endl;

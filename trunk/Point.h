@@ -30,11 +30,11 @@ public:
 		t = 0;
 	}
 	
-	Point(Point &point){
-		x = point.x;
-		y = point.y;
-		z = point.z;
-		t = point.t;
+	Point(Point *point){
+		x = point->x;
+		y = point->y;
+		z = point->z;
+		t = point->t;
 	}
 	
 	Point(double _x, double _y, double _z) {
@@ -96,27 +96,27 @@ public:
 	void setZ(double _z) {z = _z;}
 	void setT(double _t) {t = _t;}
 	
-	Point& operator=(const Point& a){
-		x = a.x;
-		y = a.y;
-		z = a.z;
+	Point* operator=(const Point* a){
+		x = a->x;
+		y = a->y;
+		z = a->z;
 		
-		return *this;
+		return this;
 	}
 	
-	Point& operator-(const Point& a){
+	Point* operator-(const Point* a){
 		
 		Point *res = new Point();
 		
-		res->x = x - a.x;
-		res->y = y - a.y;
-		res->z = z - a.z;
+		res->x = x - a->x;
+		res->y = y - a->y;
+		res->z = z - a->z;
 		
-		return *res;
+		return res;
 	}
 };
 
-template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Point &p){
+template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Point *p){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream
@@ -128,7 +128,7 @@ template <class charT, class traits> std::basic_ostream<charT,traits> &operator 
 	s.width(0);
 	
 	// fill string stream
-	s << "(" << p.getX() << "," << p.getY() << "," << p.getZ()  << "," << p.getT() << ")";
+	s << "(" << p->getX() << "," << p->getY() << "," << p->getZ()  << "," << p->getT() << ")";
 	
 	// print string stream
 	strm << s.str();

@@ -30,10 +30,10 @@ public:
 		points[1] = b;
 		points[2] = c;
 		
-		Vector *AB = new Vector(*a, *b);
-		Vector *AC = new Vector(*a, *c);
+		Vector *AB = new Vector(a, b);
+		Vector *AC = new Vector(a, c);
 	
-		Vector *norm = new Vector((*AB) ^ (*AC));
+		Vector *norm = new Vector((*AB) ^ (AC));
 		norm->normalize();
 		double d = - (norm->get(0) * getPoint(0)->getX())  - (norm->get(1) * getPoint(0)->getY()) - (norm->get(2) * getPoint(0)->getZ());
 	
@@ -41,7 +41,7 @@ public:
 	}
 	
 	virtual ~Triangle(void) {}
-	virtual Intersection *intersection(Ray &ray);
+	virtual Intersection *intersection(Ray *ray);
 	virtual std::string toString(void) const;
 
 	Point *getPoint(int index) const{
