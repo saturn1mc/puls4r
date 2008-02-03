@@ -16,7 +16,7 @@ void Image::writeToPic(void){
 			
 			for(int ii=0; ii<antialiasing; ii+=antialiasing){
 				for(int jj=0; jj<antialiasing; jj+=antialiasing){
-					color = (*color) + &pixels[i+ii][j+jj];
+					color = new Color((*color) + &pixels[i+ii][j+jj]);
 				}
 			}
 			

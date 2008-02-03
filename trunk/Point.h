@@ -24,8 +24,8 @@ private:
 public:
 	
 	Point(void) : x(0), y(0), z(0), t(0){}
-	
-	Point(Point *point) : x(point->x), y(point->y),	z(point->z), t(point->t) {}
+	Point(const Point& point) : x(point.x), y(point.y),	z(point.z), t(point.t) {}
+	Point(const Point* point) : x(point->x), y(point->y), z(point->z), t(point->t) {}
 	
 	Point(double _x, double _y, double _z) : x(_x), y(_y), z(_z), t(0) {}
 	
@@ -81,15 +81,56 @@ public:
 	void setZ(double _z) {z = _z;}
 	void setT(double _t) {t = _t;}
 	
-	Point* operator=(const Point* a){
+	Point& operator=(const Point& a){
+		x = a.x;
+		y = a.y;
+		z = a.z;
+		
+		return *this;
+	}
+	
+	Point& operator=(const Point* a){
 		x = a->x;
 		y = a->y;
 		z = a->z;
 		
-		return this;
+		return *this;
 	}
 	
-	Point* operator-(const Point* a){
+	Point& operator+(const Point& a){
+		
+		Point *res = new Point();
+		
+		res->x = x + a.x;
+		res->y = y + a.y;
+		res->z = z + a.z;
+		
+		return *res;
+	}
+	
+	Point& operator+(const Point* a){
+		
+		Point *res = new Point();
+		
+		res->x = x + a->x;
+		res->y = y + a->y;
+		res->z = z + a->z;
+		
+		return *res;
+	}
+	
+	Point& operator-(const Point& a){
+		
+		Point *res = new Point();
+		
+		res->x = x - a.x;
+		res->y = y - a.y;
+		res->z = z - a.z;
+		
+		return *res;
+	}
+	
+	Point& operator-(const Point* a){
 		
 		Point *res = new Point();
 		
@@ -97,11 +138,31 @@ public:
 		res->y = y - a->y;
 		res->z = z - a->z;
 		
-		return res;
+		return *res;
 	}
 };
 
-template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Point *p){
+template <class charT, class traits> std::basic_ostream<charT,traits>& operator<<(std::basic_ostream<charT,traits>& strm, const Point& p){
+	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
+	
+	/* string stream
+	* - with same format
+	* - without special field width
+	*/
+	std::basic_ostringstream<charT,traits> s;
+	s.copyfmt(strm);
+	s.width(0);
+	
+	// fill string stream
+	s << "(" << p.getX() << "," << p.getY() << "," << p.getZ()  << "," << p.getT() << ")";
+	
+	// print string stream
+	strm << s.str();
+	
+	return strm;
+}
+
+template <class charT, class traits> std::basic_ostream<charT,traits>& operator<<(std::basic_ostream<charT,traits>& strm, const Point* p){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream

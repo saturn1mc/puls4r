@@ -25,7 +25,7 @@ private:
 	
 public:
 		
-	Ray(Point *_origin, Vector *_direction) : origin(_origin), direction(_direction), t(0) {
+	Ray(Point *_origin, Vector *_direction) : origin(new Point(_origin)), direction(new Vector(_direction)), t(0) {
 		direction->normalize();
 	}
 	

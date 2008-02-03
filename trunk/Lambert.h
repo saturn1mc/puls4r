@@ -20,8 +20,8 @@ class Lambert : public Enlightment{
 	
 public:
 	
-	Lambert(Color* _od) : od(_od), kd(1.0){}
-	Lambert(Color* _od, double _kd) : od(_od), kd(_kd) {}
+	Lambert(Color* _od) : od(new Color(_od)), kd(1.0){}
+	Lambert(Color* _od, double _kd) : od(new Color(_od)), kd(_kd) {}
 	
 	Lambert(const Lambert& lambert) : od(new Color(lambert.od)), kd(lambert.kd) {}
 	Lambert(const Lambert* lambert) : od(new Color(lambert->od)), kd(lambert->kd) {}

@@ -9,11 +9,11 @@
 
 #include "Scene.h"
 
-void Scene::addObject(Object *obj){
+void Scene::addObject(Object* obj){
 	objects.push_front(obj);
 }
 
-void Scene::addLight(Light *light){
+void Scene::addLight(Light* light){
 	lights.push_front(light);
 }
 	
@@ -24,7 +24,7 @@ void Scene::rayTrace(void){
 	
 	for(int l=-getH()/2; l<getH()/2; l++){
 		
-		int done = (int)round(100 * (float)(l+(getH()/2)+1) / (float)getH());
+		int done = (int)round(100 *  (float)(l+(getH()/2)+1) / (float)getH());
 		
 		if(progress != done){
 			progress = done;
@@ -34,14 +34,14 @@ void Scene::rayTrace(void){
 		
 		for(int p=-getW()/2; p<getW()/2; p++){
 			
-			Ray *ray = observer->ray(new Point(p, l, focal));
+			Ray* ray = observer->ray(new Point(p, l, focal));
 			
-			Intersection *nearestIntersection = getNearestIntersection(ray);
+			Intersection* nearestIntersection = getNearestIntersection(ray);
 			
 			if(nearestIntersection != 0){
-				Color *color = new Color(nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNorm(), ray, lights));
+				Color* color = new Color(nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNorm(), ray, lights));
 				shadow(color, nearestIntersection);
-				Color *color2 = new Color(reflection(color, ray, nearestIntersection));
+				Color* color2 = new Color(reflection(color, ray, nearestIntersection));
 				
 				img->setPixel(l+(getH()/2), p+(getW()/2), color2);
 				
@@ -65,12 +65,12 @@ double Scene::calcFocal(void) const{
 	return ( (getW() / 2.0) / tan(observer->getAlpha()/2.0) );
 }
 
-Intersection *Scene::getNearestIntersection(Ray *ray){
+Intersection* Scene::getNearestIntersection(Ray* ray){
 	
-	Intersection *nearestIntersection = 0;
+	Intersection* nearestIntersection = 0;
 	
-	for(list<Object *>::iterator iter = objects.begin(); iter != objects.end(); ++iter){
-		Intersection *candidate = (*iter)->intersection(ray);
+	for(list<Object* >::iterator iter = objects.begin(); iter != objects.end(); ++iter){
+		Intersection* candidate = (*iter)->intersection(ray);
 		
 		if(candidate != 0){
 			if(nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()){
@@ -82,15 +82,15 @@ Intersection *Scene::getNearestIntersection(Ray *ray){
 	return nearestIntersection;
 }
 
-Intersection *Scene::getNearestIntersectionExcluding(Ray *ray, Object *object){
+Intersection* Scene::getNearestIntersectionExcluding(Ray* ray, Object* object){
 	
-	Intersection *nearestIntersection = 0;
+	Intersection* nearestIntersection = 0;
 	
-	for(list<Object *>::iterator iter = objects.begin(); iter != objects.end(); ++iter){
+	for(list<Object* >::iterator iter = objects.begin(); iter != objects.end(); ++iter){
 		
 		if((*iter) != object){
 		
-			Intersection *candidate = (*iter)->intersection(ray);
+			Intersection* candidate = (*iter)->intersection(ray);
 		
 			if(candidate != 0){
 				if(nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()){
@@ -104,13 +104,13 @@ Intersection *Scene::getNearestIntersectionExcluding(Ray *ray, Object *object){
 	return nearestIntersection;
 }
 
-void Scene::shadow(Color *color, Intersection *intersection){
-	for(std::list<Light *>::iterator iter = lights.begin(); iter != lights.end(); ++iter){
-		Vector *l = new Vector(intersection->getPoint(), (*iter)->getSource());
+void Scene::shadow(Color* color, Intersection* intersection){
+	for(std::list<Light* >::iterator iter = lights.begin(); iter != lights.end(); ++iter){
+		Vector* l = new Vector(intersection->getPoint(), (*iter)->getSource());
 		l->normalize();
 		
-		Ray *ray = new Ray(intersection->getPoint(), l);
-		Intersection *shadowIntersection = getNearestIntersectionExcluding(ray, intersection->getObject());
+		Ray* ray = new Ray(intersection->getPoint(), l);
+		Intersection* shadowIntersection = getNearestIntersectionExcluding(ray, intersection->getObject());
 		
 		if(shadowIntersection != 0 && (shadowIntersection->getObject() != intersection->getObject())){
 			color->darken(0.3);
@@ -123,13 +123,13 @@ void Scene::shadow(Color *color, Intersection *intersection){
 	color->normalize();
 }
 
-Color *Scene::reflection(Color *color, Ray *ray, Intersection *intersection){
+Color* Scene::reflection(Color* color, Ray* ray, Intersection* intersection){
 	if(intersection->getObject()->isReflecting()){
-		Vector *r = (*ray->getDirection()) - ( (*((*intersection->getNorm()) * 2.0)) * ((*intersection->getNorm()) * ray->getDirection()));
+		Vector *r = new Vector( (*ray->getDirection()) - ( ((*intersection->getNorm()) * 2.0) * ((*intersection->getNorm()) * ray->getDirection()) ) );
 		r->normalize();
 		
-		Ray *reflected = new Ray(intersection->getPoint(), r);
-		Intersection *reflectionIntersection = getNearestIntersectionExcluding(reflected, intersection->getObject());
+		Ray* reflected = new Ray(intersection->getPoint(), r);
+		Intersection* reflectionIntersection = getNearestIntersectionExcluding(reflected, intersection->getObject());
 		
 		if(reflectionIntersection != 0){
 			return reflection(reflectionIntersection->getObject()->getEnlightment()->getColor(reflectionIntersection->getPoint(), reflectionIntersection->getNorm(), reflected, lights), reflected, reflectionIntersection);

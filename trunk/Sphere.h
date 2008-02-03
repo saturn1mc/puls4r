@@ -22,7 +22,7 @@ private:
 	
 public:
 
-	Sphere(Enlightment *_enlightment, Point *_center, double _radius) : center(_center), radius(_radius) {
+	Sphere(Enlightment *_enlightment, Point *_center, double _radius) : center(new Point(_center)), radius(_radius) {
 		reflect = false;
 		enlightment = enlightment;
 	}

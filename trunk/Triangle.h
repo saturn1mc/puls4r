@@ -26,9 +26,9 @@ public:
 		reflect = false;
 		
 		enlightment = _enlightment;
-		points[0] = a;
-		points[1] = b;
-		points[2] = c;
+		points[0] = new Point(a);
+		points[1] = new Point(b);
+		points[2] = new Point(c);
 		
 		Vector *AB = new Vector(a, b);
 		Vector *AC = new Vector(a, c);
