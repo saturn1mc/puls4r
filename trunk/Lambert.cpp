@@ -17,6 +17,8 @@ Color* Lambert::getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* 
 	for(std::list<Light* >::iterator iter = lights.begin(); iter != lights.end(); ++iter){
 		Vector* L = getL(point, (*iter));
 		*color = (*color) * (*((*iter)->getColor()) * (kd * ((*L) * norm)));
+		
+		delete(L);
 	}
 	
 	color->normalize();

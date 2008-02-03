@@ -12,16 +12,25 @@ void Image::writeToPic(void){
 	for(int i=0; i<h*antialiasing; i+=antialiasing){
 		for(int j=0; j<w*antialiasing; j+=antialiasing){
 			
-			Color *color = new Color();
+			Color *color = 0;
 			
 			for(int ii=0; ii<antialiasing; ii+=antialiasing){
 				for(int jj=0; jj<antialiasing; jj+=antialiasing){
-					color = new Color((*color) + &pixels[i+ii][j+jj]);
+					
+					if(color == 0){
+						color = new Color(pixels[i+ii][j+jj]);
+					}
+					else{
+						*color = (*color) + pixels[i+ii][j+jj];
+						*color = (*color) * 0.5;
+					}
 				}
 			}
 			
+			color->normalize();
+			
 			writePixel(color);
-//			delete(color);
+			delete(color);
 		}
 	}
 }

@@ -102,7 +102,7 @@ public:
 	
 	void writeBitmap(void);
 	
-	Image& operator=(Image& image){
+	Image& operator=(const Image& image){
 
 		free(pixels);
 		free(filename);

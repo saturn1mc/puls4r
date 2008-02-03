@@ -46,8 +46,8 @@ public:
 	
 	Plan& operator=(const Plan& plan){
 		
-//		delete(enlightment);
-//		delete(norm);
+		delete(enlightment);
+		delete(norm);
 		
 		reflect = plan.reflect;
 		enlightment = plan.enlightment->clone();

@@ -23,11 +23,11 @@ public:
 	Linear(const Linear* linear) : color(new Color(linear->color)) {}
 	
 	virtual ~Linear(void) {}
-	virtual Color* getColor(Point* point, Vector* norm, Ray* ray, std::list<Light *> lights) const;
+	virtual Color* getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const;
 	virtual Enlightment* clone(void) {return new Linear(*this);}
 	
 	Linear& operator=(const Linear& linear){
-//		delete(color);
+		delete(color);
 		
 		color = new Color(linear.color);
 		

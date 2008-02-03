@@ -121,41 +121,41 @@ public:
 	}
 	
 	Vector& operator*(double coeff) const{
-		Vector *res = new Vector(x*coeff, y*coeff, z*coeff);
+		Vector* res = new Vector(x*coeff, y*coeff, z*coeff);
 		return *res;
 	}
 	
 	Vector& operator+(const Vector& v) const{
 		
-		Vector *res = new Vector(x + v.x, y + v.y, z + v.z);
+		Vector* res = new Vector(x + v.x, y + v.y, z + v.z);
 		
 		return *res;
 	}
 	
 	Vector& operator+(const Vector* v) const{
 		
-		Vector *res = new Vector(x + v->x, y + v->y, z + v->z);
+		Vector* res = new Vector(x + v->x, y + v->y, z + v->z);
 								 
 		return *res;
 	}
 	
 	Vector& operator-(const Vector& v) const{
 		
-		Vector *res = new Vector(x - v.x, y - v.y, z - v.z);
+		Vector* res = new Vector(x - v.x, y - v.y, z - v.z);
 		
 		return *res;
 	}
 	
 	Vector& operator-(const Vector* v) const{
 		
-		Vector *res = new Vector(x - v->x, y - v->y, z - v->z);
+		Vector* res = new Vector(x - v->x, y - v->y, z - v->z);
 		
 		return *res;
 	}
 	
 	Vector& operator^(const Vector& v) const{
 		
-		Vector *res = new Vector(
+		Vector* res = new Vector(
 								 (y*v.z) - (z*v.y),
 								 (z*v.x) - (x*v.z),
 								 (x*v.y) - (y*v.x)

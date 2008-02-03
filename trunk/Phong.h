@@ -34,17 +34,17 @@ public:
 		
 	Phong(Color* _od) : ia(1.0), oa(new Color((*_od) * ia)), od(new Color(_od)), os(new Color(1.0, 1.0, 1.0)), ka(1.0), kd(0.7), ks(0.3), n(10) {}
 	Phong(Color* _oa, Color* _od, Color* _os, double _ia, double _ka, double _kd, double _ks, int _n) : oa(new Color(_oa)), od(new Color(_od)), os(new Color(_os)), ia(_ia), ka(_ka), kd(_kd), ks(_ks), n (_n) {}
-	Phong(Phong& phong) : oa(new Color(phong.oa)), od(new Color(phong.od)), os(new Color(phong.os)), ia(phong.ia), ka(phong.ka), kd(phong.kd), ks(phong.ks), n(phong.n) {}
-	Phong(Phong* phong) : oa(new Color(phong->oa)), od(new Color(phong->od)), os(new Color(phong->os)), ia(phong->ia), ka(phong->ka), kd(phong->kd), ks(phong->ks), n(phong->n) {}
+	Phong(const Phong& phong) : oa(new Color(phong.oa)), od(new Color(phong.od)), os(new Color(phong.os)), ia(phong.ia), ka(phong.ka), kd(phong.kd), ks(phong.ks), n(phong.n) {}
+	Phong(const Phong* phong) : oa(new Color(phong->oa)), od(new Color(phong->od)), os(new Color(phong->os)), ia(phong->ia), ka(phong->ka), kd(phong->kd), ks(phong->ks), n(phong->n) {}
 	
 	virtual ~Phong(void) {}
 	virtual Color* getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const;
 	virtual Enlightment* clone() {return new Phong(*this);}
 	
 	Phong& operator=(const Phong& phong){
-//		delete(oa);
-//		delete(od);
-//		delete(os);
+		delete(oa);
+		delete(od);
+		delete(os);
 		
 		oa = new Color(phong.oa);
 		od = new Color(phong.od);

@@ -48,6 +48,9 @@ public:
 			case 3:
 				return t;
 				break;
+			
+			default:
+				return 0;
 		}
 	}
 	
@@ -99,7 +102,7 @@ public:
 	
 	Point& operator+(const Point& a){
 		
-		Point *res = new Point();
+		Point* res = new Point();
 		
 		res->x = x + a.x;
 		res->y = y + a.y;
@@ -110,7 +113,7 @@ public:
 	
 	Point& operator+(const Point* a){
 		
-		Point *res = new Point();
+		Point* res = new Point();
 		
 		res->x = x + a->x;
 		res->y = y + a->y;
@@ -121,7 +124,7 @@ public:
 	
 	Point& operator-(const Point& a){
 		
-		Point *res = new Point();
+		Point* res = new Point();
 		
 		res->x = x - a.x;
 		res->y = y - a.y;
@@ -132,7 +135,7 @@ public:
 	
 	Point& operator-(const Point* a){
 		
-		Point *res = new Point();
+		Point* res = new Point();
 		
 		res->x = x - a->x;
 		res->y = y - a->y;

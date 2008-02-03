@@ -45,7 +45,6 @@ public:
 	
 	void setDirection(Vector *_direction){
 		direction = _direction;
-		
 		direction->normalize();
 	}
 	
@@ -55,8 +54,8 @@ public:
 	
 	Ray& operator=(const Ray& ray){
 		
-		//delete(origin);
-		//delete(direction);
+		delete(origin);
+		delete(direction);
 		
 		origin = new Point(ray.origin);
 		direction = new Vector(ray.direction);

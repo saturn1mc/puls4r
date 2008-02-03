@@ -45,13 +45,14 @@ void Scene::rayTrace(void){
 				
 				img->setPixel(l+(getH()/2), p+(getW()/2), color2);
 				
-				//delete(color);
+				delete(color);
+				delete(color2);
 			}
 			else{
 				img->setPixel(l+(getH()/2), p+(getW()/2), background);
 			}
 			
-			//delete(ray);
+			delete(ray);
 		}
 	}
 	
@@ -74,6 +75,9 @@ Intersection* Scene::getNearestIntersection(Ray* ray){
 		
 		if(candidate != 0){
 			if(nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()){
+				if(nearestIntersection!=0){
+					delete(nearestIntersection);
+				}
 				nearestIntersection = candidate;
 			}
 		}
@@ -94,6 +98,11 @@ Intersection* Scene::getNearestIntersectionExcluding(Ray* ray, Object* object){
 		
 			if(candidate != 0){
 				if(nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()){
+					
+					if(nearestIntersection!=0){
+						delete(nearestIntersection);
+					}
+					
 					nearestIntersection = candidate;
 				}
 			}
@@ -116,8 +125,8 @@ void Scene::shadow(Color* color, Intersection* intersection){
 			color->darken(0.3);
 		}
 		
-		//delete(ray);
-		//delete(shadowIntersection);
+		delete(ray);
+		delete(shadowIntersection);
 	}
 	
 	color->normalize();
@@ -138,8 +147,8 @@ Color* Scene::reflection(Color* color, Ray* ray, Intersection* intersection){
 			return background;
 		}
 		
-		//delete(reflected);
-		//delete(reflectionIntersection);
+		delete(reflected);
+		delete(reflectionIntersection);
 	}
 	else{
 		shadow(color, intersection);

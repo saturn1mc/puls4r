@@ -33,8 +33,8 @@ public:
 	Color* getColor(void) const {return color;}
 	
 	Light& operator=(const Light& light){
-		//delete(source);
-		//delete(color);
+		delete(source);
+		delete(color);
 		
 		source = new Point(light.source);
 		color = new Color(light.color);

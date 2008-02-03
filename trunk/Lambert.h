@@ -22,7 +22,6 @@ public:
 	
 	Lambert(Color* _od) : od(new Color(_od)), kd(1.0){}
 	Lambert(Color* _od, double _kd) : od(new Color(_od)), kd(_kd) {}
-	
 	Lambert(const Lambert& lambert) : od(new Color(lambert.od)), kd(lambert.kd) {}
 	Lambert(const Lambert* lambert) : od(new Color(lambert->od)), kd(lambert->kd) {}
 	
@@ -32,7 +31,7 @@ public:
 	virtual Enlightment* clone(void) {return new Lambert(*this);}
 	
 	Lambert& operator=(const Lambert& lambert){
-//		delete(od);
+		delete(od);
 		
 		od = new Color(lambert.od);
 		kd = lambert.kd;
