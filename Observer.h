@@ -55,9 +55,9 @@ public:
 	
 	Observer& operator=(const Observer& observer){
 		
-		delete(eye);
-		delete(sight);
-		delete(view);
+		//delete(eye);
+		//delete(sight);
+		//delete(view);
 		
 		eye = new Point(observer.eye);
 		sight = new Vector(observer.sight);

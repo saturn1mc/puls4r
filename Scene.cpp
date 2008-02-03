@@ -45,13 +45,13 @@ void Scene::rayTrace(void){
 				
 				img->setPixel(l+(getH()/2), p+(getW()/2), color2);
 				
-				delete(color);
+				//delete(color);
 			}
 			else{
 				img->setPixel(l+(getH()/2), p+(getW()/2), background);
 			}
 			
-			delete(ray);
+			//delete(ray);
 		}
 	}
 	
@@ -116,8 +116,8 @@ void Scene::shadow(Color* color, Intersection* intersection){
 			color->darken(0.3);
 		}
 		
-		delete(ray);
-		delete(shadowIntersection);
+		//delete(ray);
+		//delete(shadowIntersection);
 	}
 	
 	color->normalize();
@@ -138,8 +138,8 @@ Color* Scene::reflection(Color* color, Ray* ray, Intersection* intersection){
 			return background;
 		}
 		
-		delete(reflected);
-		delete(reflectionIntersection);
+		//delete(reflected);
+		//delete(reflectionIntersection);
 	}
 	else{
 		shadow(color, intersection);

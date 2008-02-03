@@ -23,7 +23,7 @@ void Observer::initMatrix(void){
 	view = new Matrix(w, u, *sight, *eye);
 	*view = view->t();
 	
-	delete(up);
+	//delete(up);
 }
 
 Ray* Observer::ray(Point *sp){

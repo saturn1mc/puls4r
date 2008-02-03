@@ -21,7 +21,7 @@ void Image::writeToPic(void){
 			}
 			
 			writePixel(color);
-			delete(color);
+//			delete(color);
 		}
 	}
 }

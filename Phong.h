@@ -39,12 +39,12 @@ public:
 	
 	virtual ~Phong(void) {}
 	virtual Color* getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const;
-	virtual Enlightment* clone() {return new Phong(this);}
+	virtual Enlightment* clone() {return new Phong(*this);}
 	
 	Phong& operator=(const Phong& phong){
-		delete(oa);
-		delete(od);
-		delete(os);
+//		delete(oa);
+//		delete(od);
+//		delete(os);
 		
 		oa = new Color(phong.oa);
 		od = new Color(phong.od);

@@ -24,7 +24,7 @@ public:
 
 	Plan(Enlightment* _enlightment, Vector* _norm, double _d, bool _monoface) : norm(new Vector(_norm)), d(_d), monoface(_monoface) {
 		reflect = false;
-		enlightment = _enlightment;
+		enlightment = _enlightment->clone();
 		norm->normalize();
 	}
 	
@@ -46,8 +46,8 @@ public:
 	
 	Plan& operator=(const Plan& plan){
 		
-		delete(enlightment);
-		delete(norm);
+//		delete(enlightment);
+//		delete(norm);
 		
 		reflect = plan.reflect;
 		enlightment = plan.enlightment->clone();
