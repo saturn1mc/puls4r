@@ -22,16 +22,31 @@ private:
 	
 public:
 
-	Sphere(Enlightment *_enlightment, Point *_center, double _radius) {
+	Sphere(Enlightment *_enlightment, Point *_center, double _radius) : center(_center), radius(_radius) {
 		reflect = false;
-		enlightment = _enlightment;
-		center = _center;
-		radius = _radius;
+		enlightment = enlightment;
+	}
+	
+	Sphere(const Sphere& sphere) : center(new Point(sphere.center)), radius(sphere.radius){
+		reflect = sphere.reflect;
+		enlightment = sphere.enlightment->clone();
 	}
 	
 	virtual ~Sphere(void) {}
 	virtual Intersection *intersection(Ray *ray);
 	virtual std::string toString(void) const;
+	
+	Sphere& operator=(const Sphere& sphere){
+		delete(enlightment);
+		delete(center);
+		
+		reflect = sphere.reflect;
+		enlightment = sphere.enlightment->clone();
+		center = new Point(sphere.center);
+		radius = sphere.radius;
+		
+		return *this;
+	}
 };
 
 #endif //SPHERE_H

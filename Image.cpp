@@ -26,11 +26,11 @@ void Image::writeToPic(void){
 	}
 }
 
-void Image::setPixel(int _h, int _w, Color *color){
+void Image::setPixel(int _h, int _w, Color* color){
 	pixels[_h][_w] = color;
 }
 
-void Image::writePixel(Color *color){
+void Image::writePixel(Color* color){
 	
 	pic[writingPos] = (unsigned char) ((int)(255 * color->getR()));
 	pic[writingPos+1] = (unsigned char) ((int)(255 * color->getG()));
@@ -40,7 +40,7 @@ void Image::writePixel(Color *color){
 }
 
 // Ecrit un short dans un fichier
-void Image::putshort(FILE *file, int i){
+void Image::putshort(FILE* file, int i){
 	int c, c1;
 	
 	c = ((unsigned int ) i) & 0xff;  
@@ -51,7 +51,7 @@ void Image::putshort(FILE *file, int i){
 
 
 // Ecrit un int dans un fichier
-void Image::putint(FILE *file, int i){
+void Image::putint(FILE* file, int i){
 	int c, c1, c2, c3;
 	
 	c  = ((unsigned int ) i)      & 0xff;  
@@ -66,9 +66,9 @@ void Image::putint(FILE *file, int i){
 }
 
 // write bmp 24 bits in file
-void Image::writeBMP24(FILE *file, unsigned char *pic24, int w, int h){
+void Image::writeBMP24(FILE* file, unsigned char* pic24, int w, int h){
 	int   i, j, pad_bytes;
-	unsigned char *pp;
+	unsigned char* pp;
 	
 	pad_bytes = (4 - ((w*3) % 4)) & 0x03;  // # of pad bytes to write at EOscanline 
 	
@@ -95,7 +95,7 @@ void Image::writeBitmap(void){
 	writeToPic();
 	
 	int i, nbits = 24, bperlin, cmaplen = 0;
-	FILE *file;
+	FILE* file;
 	
 	file=fopen(filename, "wb");
 	
