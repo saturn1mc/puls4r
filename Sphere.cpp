@@ -9,13 +9,13 @@
 
 #include "Sphere.h"
 
-Intersection *Sphere::createIntersection(Ray *ray){
-	Point *m =  new Point(	ray->getOrigin()->getX() + (ray->getDirection()->getX() * ray->getT()),
+Intersection* Sphere::createIntersection(Ray* ray){
+	Point* m =  new Point(	ray->getOrigin()->getX() + (ray->getDirection()->getX() * ray->getT()),
 							ray->getOrigin()->getY() + (ray->getDirection()->getY() * ray->getT()),
 							ray->getOrigin()->getZ() + (ray->getDirection()->getZ() * ray->getT())
 						);
 	
-	Vector *nm = new Vector(	(m->getX() - center->getX()) / radius,
+	Vector* nm = new Vector(	(m->getX() - center->getX()) / radius,
 								(m->getY() - center->getY()) / radius,
 								(m->getZ() - center->getZ()) / radius
 							);
@@ -25,7 +25,7 @@ Intersection *Sphere::createIntersection(Ray *ray){
 	return new Intersection(m, nm, this, ray->getT());
 }
 
-Intersection *Sphere::intersection(Ray *ray){
+Intersection* Sphere::intersection(Ray* ray){
 	
 	double A = pow(ray->getDirection()->getX(), 2.0) + pow(ray->getDirection()->getY(), 2.0) + pow(ray->getDirection()->getZ(), 2.0);
 	double B = 2.0 * ( (ray->getDirection()->getX() * (ray->getOrigin()->getX() - center->getX())) + (ray->getDirection()->getY() * (ray->getOrigin()->getY() - center->getY())) + (ray->getDirection()->getZ() * (ray->getOrigin()->getZ() - center->getZ())));

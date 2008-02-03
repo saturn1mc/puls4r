@@ -41,8 +41,8 @@ public:
 	double getT(void) const {return t;}
 	
 	Intersection& operator=(const Intersection& intersection){
-		//delete(point);
-		//delete(norm);
+		delete(point);
+		delete(norm);
 		
 		point = new Point(intersection.point);
 		norm = new Vector(intersection.norm);

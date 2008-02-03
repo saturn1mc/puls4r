@@ -16,12 +16,12 @@
 class Triangle : public Object{
 private:
 	
-	Point *points[3];
-	Plan *plan;
+	Point* points[3];
+	Plan* plan;
 	
 public:
 
-	Triangle(Enlightment *_enlightment, Point *a, Point *b, Point *c) : plan(0){
+	Triangle(Enlightment* _enlightment, Point* a, Point* b, Point* c) : plan(0){
 		
 		reflect = false;
 		
@@ -66,7 +66,7 @@ public:
 	virtual Intersection *intersection(Ray *ray);
 	virtual std::string toString(void) const;
 
-	Point *getPoint(int index) const{
+	Point* getPoint(int index) const{
 		if(index < 0 || index > 2){
 			return 0;
 		}
@@ -77,10 +77,10 @@ public:
 	
 	Triangle& operator=(const Triangle& triangle){
 		
-//		delete(plan);
-//		delete(points[0]);
-//		delete(points[1]);
-//		delete(points[2]);
+		delete(plan);
+		delete(points[0]);
+		delete(points[1]);
+		delete(points[2]);
 		
 		reflect = triangle.reflect;
 		

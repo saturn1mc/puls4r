@@ -9,7 +9,7 @@
 
 #include "Plan.h"
 
-Intersection *Plan::intersection(Ray *ray){
+Intersection* Plan::intersection(Ray* ray){
 	
 	double vd = (norm->getX() * ray->getDirection()->getX()) + (norm->getY() * ray->getDirection()->getY()) + (norm->getZ() * ray->getDirection()->getZ());
 	double t = -((norm->getX() * ray->getOrigin()->getX()) + (norm->getY() * ray->getOrigin()->getY()) + (norm->getZ() * ray->getOrigin()->getZ()) + d) / vd;

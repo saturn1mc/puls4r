@@ -30,7 +30,7 @@ void generateTestScene(){
 	Color* purple = new Color(1.0, 0.0, 1.0);
 	
 	Observer* obs = new Observer(new Point(0.0, 6.0, 30.0), new Point(0.0, 0.0, 0.0), M_PI/4.0);
-	Scene* scene = new Scene(obs, new Image("test.bmp", 400, 300, 2), black);
+	Scene* scene = new Scene(obs, new Image("test.bmp", 400, 300, 1), black);
 	
 	scene->addLight(new Light(new Point(10.0, 30.0, 40.0), white));
 	
@@ -49,6 +49,17 @@ void generateTestScene(){
 	cout << scene << endl;
 	
 	scene->rayTrace();
+	
+	delete(white);
+	delete(black);
+	delete(red);
+	delete(green);
+	delete(blue);
+	delete(yellow);
+	delete(purple);
+	delete(obs);
+	delete(scene);
+	delete(reflectingSphere);
 }
 
 int main (int argc, char*  const argv[]) {

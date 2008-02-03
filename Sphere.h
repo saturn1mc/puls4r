@@ -37,8 +37,8 @@ public:
 	virtual std::string toString(void) const;
 	
 	Sphere& operator=(const Sphere& sphere){
-		//delete(enlightment);
-		//delete(center);
+		delete(enlightment);
+		delete(center);
 		
 		reflect = sphere.reflect;
 		enlightment = sphere.enlightment->clone();
