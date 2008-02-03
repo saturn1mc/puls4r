@@ -61,9 +61,9 @@ public:
 	Scene& operator=(const Scene& scene){
 		objects.clear();
 		lights.clear();
-		delete(observer);
-		delete(img);
-		delete(background);
+		//delete(observer);
+		//delete(img);
+		//delete(background);
 		
 		objects = scene.objects;
 		lights = scene.lights;

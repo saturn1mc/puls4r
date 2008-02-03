@@ -21,7 +21,7 @@ class Object{
 
 protected:
 	
-	Object(void) : reflect(false), enlightment(0) {}
+	Object(void) : reflect(false) {}
 	bool reflect;
 	Enlightment *enlightment;
 	
@@ -43,11 +43,11 @@ public:
 		enlightment = _enlightment;
 	}
 	
-	Object(const Object& object) : reflect(object.reflect), enlightment(object.enlightment->clone()) {}
+	Object(const Object& object) : reflect(object.reflect) {}
 	virtual ~Object(void) {}
 	virtual Object& operator=(const Object& object){
 
-		delete(enlightment);
+		//delete(enlightment);
 		
 		reflect = object.reflect;
 		enlightment = object.enlightment->clone();

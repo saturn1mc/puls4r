@@ -29,10 +29,10 @@ public:
 	virtual ~Lambert(void) {}
 	
 	virtual Color* getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const;
-	virtual Enlightment* clone(void) {return new Lambert(this);}
+	virtual Enlightment* clone(void) {return new Lambert(*this);}
 	
 	Lambert& operator=(const Lambert& lambert){
-		delete(od);
+//		delete(od);
 		
 		od = new Color(lambert.od);
 		kd = lambert.kd;

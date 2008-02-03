@@ -25,7 +25,7 @@ public:
 		
 		reflect = false;
 		
-		enlightment = _enlightment;
+		enlightment = _enlightment->clone();
 		points[0] = new Point(a);
 		points[1] = new Point(b);
 		points[2] = new Point(c);
@@ -77,10 +77,10 @@ public:
 	
 	Triangle& operator=(const Triangle& triangle){
 		
-		delete(plan);
-		delete(points[0]);
-		delete(points[1]);
-		delete(points[2]);
+//		delete(plan);
+//		delete(points[0]);
+//		delete(points[1]);
+//		delete(points[2]);
 		
 		reflect = triangle.reflect;
 		
