@@ -18,7 +18,7 @@ class Linear : public Enlightment{
 
 public:
 	
-	Linear(Color* _color): color(_color) {}
+	Linear(Color* _color): color(new Color(_color)) {}
 	Linear(const Linear& linear) : color(new Color(linear.color)) {}
 	Linear(const Linear* linear) : color(new Color(linear->color)) {}
 	

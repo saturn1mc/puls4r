@@ -18,9 +18,9 @@
 
 #include "Color.h"
 
-#define MALLOC(ptr, type, n) { ptr=(type *)malloc(sizeof(type)*((size_t)(n))); }
-#define CALLOC(ptr, type, n) { ptr=(type *)calloc(1,sizeof(type)*((size_t)(n))); }
-#define REALLOC(ptr, type, n) { ptr=(type *)realloc(ptr,sizeof(type)*((size_t)(n))); }
+#define MALLOC(ptr, type, n) { ptr=(type* )malloc(sizeof(type)*((size_t)(n))); }
+#define CALLOC(ptr, type, n) { ptr=(type* )calloc(1,sizeof(type)*((size_t)(n))); }
+#define REALLOC(ptr, type, n) { ptr=(type* )realloc(ptr,sizeof(type)*((size_t)(n))); }
 #define FREE(ptr) free(ptr);
 
 class Image{

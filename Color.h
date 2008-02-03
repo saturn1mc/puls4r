@@ -74,15 +74,34 @@ public:
 		b *= intensity;
 	}
 	
-	Color* operator=(const Color* c){
+	Color& operator=(const Color& c){
+		r = c.r;
+		g = c.g;
+		b = c.b;
+		
+		return *this;
+	}
+	
+	Color& operator=(const Color* c){
 		r = c->r;
 		g = c->g;
 		b = c->b;
 		
-		return this;
+		return *this;
 	}
 	
-	Color* operator+(const Color* c){
+	Color& operator+(const Color& c){
+		
+		Color* res = new Color();
+		
+		res->r = (c.r + r);
+		res->g = (c.g + g);
+		res->b = (c.b + b);
+		
+		return *res;
+	}
+	
+	Color& operator+(const Color* c){
 		
 		Color* res = new Color();
 		
@@ -90,10 +109,21 @@ public:
 		res->g = (c->g + g);
 		res->b = (c->b + b);
 		
-		return res;
+		return *res;
 	}
 	
-	Color* operator-(const Color* c){
+	Color& operator-(const Color& c){
+		
+		Color* res = new Color();
+		
+		res->r = (c.r - r);
+		res->g = (c.g - g);
+		res->b = (c.b - b);
+		
+		return *res;
+	}
+	
+	Color& operator-(const Color* c){
 		
 		Color* res = new Color();
 		
@@ -101,10 +131,10 @@ public:
 		res->g = (c->g - g);
 		res->b = (c->b - b);
 		
-		return res;
+		return *res;
 	}
 	
-	Color* operator*(double coeff){
+	Color& operator*(double coeff){
 		
 		Color* res = new Color();
 		
@@ -112,10 +142,21 @@ public:
 		res->g = g * coeff;
 		res->b = b * coeff;
 		
-		return res;
+		return *res;
 	}
 	
-	Color* operator*(Color* color){
+	Color& operator*(Color& color){
+		
+		Color* res = new Color();
+		
+		res->r = r * color.r;
+		res->g = g * color.g;
+		res->b = b * color.b;
+		
+		return *res;
+	}
+	
+	Color& operator*(Color* color){
 		
 		Color* res = new Color();
 		
@@ -123,11 +164,11 @@ public:
 		res->g = g * color->g;
 		res->b = b * color->b;
 		
-		return res;
+		return *res;
 	}
 };
 
-template <class charT, class traits> std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>& strm, const Color& c){
+template <class charT, class traits> std::basic_ostream<charT,traits>& operator<<(std::basic_ostream<charT,traits>& strm, const Color& c){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream
@@ -147,7 +188,7 @@ template <class charT, class traits> std::basic_ostream<charT,traits>& operator 
 	return strm;
 }
 
-template <class charT, class traits> std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>& strm, const Color* c){
+template <class charT, class traits> std::basic_ostream<charT,traits>& operator<<(std::basic_ostream<charT,traits>& strm, const Color* c){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream

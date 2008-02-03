@@ -22,7 +22,7 @@ private:
 
 public:
 
-	Plan(Enlightment* _enlightment, Vector* _norm, double _d, bool _monoface) : norm(_norm), d(_d), monoface(_monoface) {
+	Plan(Enlightment* _enlightment, Vector* _norm, double _d, bool _monoface) : norm(new Vector(_norm)), d(_d), monoface(_monoface) {
 		reflect = false;
 		enlightment = _enlightment;
 		norm->normalize();

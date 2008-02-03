@@ -17,21 +17,20 @@
 #include "Phong.h"
 #include "Linear.h"
 #include "Lambert.h"
-#include "C3dsParser.h"
 
 using namespace std;
 
 void generateTestScene(){
-	Color *white = new Color(1.0, 1.0, 1.0);
-	Color *black = new Color(0.0, 0.0, 0.0);
-	Color *red = new Color(1.0, 0.0, 0.0);
-	Color *green = new Color(0.0, 1.0, 0.0);
-	Color *blue = new Color(0.0, 0.0, 1.0);
-	Color *yellow = new Color(1.0, 1.0, 0.0);
-	Color *purple = new Color(1.0, 0.0, 1.0);
+	Color* white = new Color(1.0, 1.0, 1.0);
+	Color* black = new Color(0.0, 0.0, 0.0);
+	Color* red = new Color(1.0, 0.0, 0.0);
+	Color* green = new Color(0.0, 1.0, 0.0);
+	Color* blue = new Color(0.0, 0.0, 1.0);
+	Color* yellow = new Color(1.0, 1.0, 0.0);
+	Color* purple = new Color(1.0, 0.0, 1.0);
 	
-	Observer *obs = new Observer(new Point(0.0, 6.0, 30.0), new Point(0.0, 0.0, 0.0), M_PI/4.0);
-	Scene *scene = new Scene(obs, new Image("test.bmp", 400, 300, 2), black);
+	Observer* obs = new Observer(new Point(0.0, 6.0, 30.0), new Point(0.0, 0.0, 0.0), M_PI/4.0);
+	Scene* scene = new Scene(obs, new Image("test.bmp", 400, 300, 2), black);
 	
 	scene->addLight(new Light(new Point(10.0, 30.0, 40.0), white));
 	
@@ -41,7 +40,7 @@ void generateTestScene(){
 	scene->addObject(new Sphere(new Phong(blue), new Point(2.0, 3.0, 0.0), 1.0));
 	scene->addObject(new Sphere(new Phong(yellow), new Point(4.0, 3.0, 0.0), 1.0));
 	
-	Sphere *reflectingSphere = new Sphere(new Phong(white), new Point(0.0, -1.0, 0.0), 2.0);
+	Sphere* reflectingSphere = new Sphere(new Phong(white), new Point(0.0, -1.0, 0.0), 2.0);
 	reflectingSphere->setReflectance(true);
 	scene->addObject(reflectingSphere);
 	
@@ -52,6 +51,6 @@ void generateTestScene(){
 	scene->rayTrace();
 }
 
-int main (int argc, char * const argv[]) {
+int main (int argc, char*  const argv[]) {
 	generateTestScene();
 }

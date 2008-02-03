@@ -23,7 +23,7 @@ private:
 	Color* color;
 	
 public:
-	Light(Point* _source, Color* _color) : source(_source), color(_color) {}
+	Light(Point* _source, Color* _color) : source(new Point(_source)), color(new Color(_color)) {}
 	
 	Light(const Light& light) : source(new Point(light.source)), color(new Color(light.color)) {}
 	
