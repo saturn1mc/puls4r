@@ -21,7 +21,7 @@ private:
 	
 public:
 
-	Triangle(Enlightment *_enlightment, Point *a, Point *b, Point *c) {
+	Triangle(Enlightment *_enlightment, Point *a, Point *b, Point *c) : plan(0){
 		
 		reflect = false;
 		
@@ -35,9 +35,31 @@ public:
 	
 		Vector *norm = new Vector((*AB) ^ (AC));
 		norm->normalize();
-		double d = - (norm->get(0) * getPoint(0)->getX())  - (norm->get(1) * getPoint(0)->getY()) - (norm->get(2) * getPoint(0)->getZ());
+		double d = - (norm->get(0) * points[0]->getX())  - (norm->get(1) * points[0]->getY()) - (norm->get(2) * points[0]->getZ());
 	
 		plan = new Plan(enlightment, norm, d, true);
+	}
+	
+	Triangle(const Triangle& triangle) : plan(0){
+		reflect = triangle.reflect;
+		
+		enlightment = triangle.enlightment->clone();
+		points[0] = new Point(triangle.points[0]);
+		points[1] = new Point(triangle.points[1]);
+		points[2] = new Point(triangle.points[2]);
+		
+		plan = new Plan(triangle.plan);
+	}
+	
+	Triangle(const Triangle* triangle) : plan(0){
+		reflect = triangle->reflect;
+		
+		enlightment = triangle->enlightment->clone();
+		points[0] = new Point(triangle->points[0]);
+		points[1] = new Point(triangle->points[1]);
+		points[2] = new Point(triangle->points[2]);
+		
+		plan = new Plan(triangle->plan);
 	}
 	
 	virtual ~Triangle(void) {}
@@ -51,6 +73,25 @@ public:
 		else{
 			return points[index];
 		}
+	}
+	
+	Triangle& operator=(const Triangle& triangle){
+		
+		delete(plan);
+		delete(points[0]);
+		delete(points[1]);
+		delete(points[2]);
+		
+		reflect = triangle.reflect;
+		
+		enlightment = triangle.enlightment->clone();
+		points[0] = new Point(triangle.points[0]);
+		points[1] = new Point(triangle.points[1]);
+		points[2] = new Point(triangle.points[2]);
+		
+		plan = new Plan(triangle.plan);
+		
+		return *this;
 	}
 };
 

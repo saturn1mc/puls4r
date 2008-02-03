@@ -26,33 +26,13 @@ private:
 	
 public:
 	
-	Vector(void){
-		x = 0;
-		y = 0;
-		z = 0;
-		t = 1;
-	}
+		Vector(void) : x(0), y(0), z(0), t(1) {}
 	
-	Vector(Vector *vector){
-		x = vector->x;
-		y = vector->y;
-		z = vector->z;
-		t = vector->t;
-	}
+	Vector(Vector *vector) : x(vector->x), y(vector->y), z(vector->z), t(vector->t) {}
 		
-	Vector(double _x, double _y, double _z) {
-		x = _x; 
-		y = _y; 
-		z = _z; 
-		t = 1;
-	}	
+	Vector(double _x, double _y, double _z) : x(_x), y(_y), z(_z), t(1) {}
 	
-	Vector(Point *a, Point *b) {
-		x = b->getX() - a->getX(); 
-		y = b->getY() - a->getY(); 
-		z = b->getZ() - a->getZ(); 
-		t = 1;
-	}
+	Vector(Point *a, Point *b) : x (b->getX() - a->getX()), y(b->getY() - a->getY()), z(b->getZ() - a->getZ()), t(1) {}
 	
 	~Vector(){}
 	
@@ -81,7 +61,7 @@ public:
 	double getZ(void) const { return z; }
 	double getT(void) const { return t; }
 	
-	double set(int d, double val){
+	void set(int d, double val){
 		switch(d){
 			case 0:
 				x = val;
@@ -111,7 +91,7 @@ public:
 		y = v.y;
 		z = v.z;
 		
-		return v;
+		return *this;
 	}
 	
 	void normalize(void){

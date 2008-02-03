@@ -23,26 +23,11 @@ private:
 	
 public:
 	
-	Point(void){
-		x = 0;
-		y = 0;
-		z = 0;
-		t = 0;
-	}
+	Point(void) : x(0), y(0), z(0), t(0){}
 	
-	Point(Point *point){
-		x = point->x;
-		y = point->y;
-		z = point->z;
-		t = point->t;
-	}
+	Point(Point *point) : x(point->x), y(point->y),	z(point->z), t(point->t) {}
 	
-	Point(double _x, double _y, double _z) {
-		x = _x; 
-		y = _y; 
-		z = _z; 
-		t = 0;
-	}
+	Point(double _x, double _y, double _z) : x(_x), y(_y), z(_z), t(0) {}
 	
 	~Point(){}
 	
@@ -71,7 +56,7 @@ public:
 	double getZ(void) const { return z; }
 	double getT(void) const { return t; }
 	
-	double set(int d, double val){
+	void set(int d, double val){
 		switch(d){
 			case 0:
 				x = val;

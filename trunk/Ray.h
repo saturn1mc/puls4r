@@ -25,12 +25,11 @@ private:
 	
 public:
 		
-	Ray(Point *_origin, Vector *_direction){
-		origin = _origin;
-		direction = _direction;
-		
+	Ray(Point *_origin, Vector *_direction) : origin(_origin), direction(_direction), t(0) {
 		direction->normalize();
 	}
+	
+	Ray(const Ray& ray) : origin(new Point(ray.origin)), direction(new Vector(ray.direction)), t(ray.t) {}
 	
 	~Ray(){}
 	
@@ -52,6 +51,17 @@ public:
 	
 	void setT(double _t){
 		t = _t;
+	}
+	
+	Ray& operator=(const Ray& ray){
+		
+		delete(origin);
+		delete(direction);
+		
+		origin = new Point(ray.origin);
+		direction = new Vector(ray.direction);
+		
+		return *this;
 	}
 };
 

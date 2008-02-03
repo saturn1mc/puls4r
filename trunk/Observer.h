@@ -21,47 +21,55 @@
 class Observer{
 private:
 	
-	Point *eye;
-	Vector *sight;
-	Matrix *view;
+	Point* eye;
+	Vector* sight;
+	Matrix* view;
 	double alpha;
 	
 	void initMatrix(void);
 	
 public:
 
-	Observer(Point *_eye, Point *_sight, double _alpha){
-		eye = _eye;
-		sight = new Vector(eye, _sight);
-		alpha = _alpha;
-		
+	Observer(Point* _eye, Point* _sight, double _alpha) : eye(_eye), sight(new Vector(eye, _sight)), alpha(_alpha), view(0){
 		sight->normalize();
-		
 		initMatrix();
 	}
 	
-	Observer(Point *_eye, Vector *_sight, double _alpha){
-		eye = _eye;
-		sight = _sight;
-		alpha = _alpha;
-		
+	Observer(Point* _eye, Vector* _sight, double _alpha) : eye(_eye), sight(_sight), alpha(_alpha), view(0) {	
 		sight->normalize();
-		
 		initMatrix();
 	}
+	
+	Observer(const Observer& observer) : eye(new Point(observer.eye)), sight(new Vector(observer.sight)), alpha(observer.alpha), view(new Matrix(observer.view)) {}
+	
+	Observer(const Observer* observer) : eye(new Point(observer->eye)), sight(new Vector(observer->sight)), alpha(observer->alpha), view(new Matrix(observer->view)) {}
 	
 	~Observer(){}
 	
-	Ray *ray(Point *sp);
+	Ray* ray(Point* sp);
 	
-	Point *getEye(void) const {return eye;}	
-	Vector *getSight(void) const {return sight;}
-	Matrix *getView(void) const {return view;}
+	Point* getEye(void) const {return eye;}	
+	Vector* getSight(void) const {return sight;}
+	Matrix* getView(void) const {return view;}
 	double getAlpha(void) const {return alpha;}
 	void setAlpha(int _alpha) {alpha=_alpha;}
+	
+	Observer& operator=(const Observer& observer){
+		
+		delete(eye);
+		delete(sight);
+		delete(view);
+		
+		eye = new Point(observer.eye);
+		sight = new Vector(observer.sight);
+		alpha = observer.alpha;
+		view = new Matrix(observer.view);
+		
+		return *this;
+	}
 };
 
-template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Observer *obs){
+template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Observer* obs){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream

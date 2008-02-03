@@ -21,12 +21,12 @@ class Object{
 
 protected:
 	
-	Object(void) {}
+	Object(void) : reflect(false), enlightment(0) {}
 	bool reflect;
 	Enlightment *enlightment;
 	
 public:
-	
+		
 	bool isReflecting(void) const{
 		return reflect;
 	}
@@ -43,7 +43,18 @@ public:
 		enlightment = _enlightment;
 	}
 	
+	Object(const Object& object) : reflect(object.reflect), enlightment(object.enlightment->clone()) {}
 	virtual ~Object(void) {}
+	virtual Object& operator=(const Object& object){
+
+		delete(enlightment);
+		
+		reflect = object.reflect;
+		enlightment = object.enlightment->clone();
+		
+		return *this;
+	}
+	
 	virtual Intersection *intersection(Ray *ray) = 0;
 	virtual std::string toString(void) const = 0;
 };

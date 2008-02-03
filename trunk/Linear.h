@@ -14,18 +14,25 @@
 
 class Linear : public Enlightment{
 	
-	Color *color;
+	Color* color;
 
 public:
 	
-	Linear(Color *_color){
-		color = _color;
-	}
+	Linear(Color* _color): color(_color) {}
+	Linear(const Linear& linear) : color(new Color(linear.color)) {}
+	Linear(const Linear* linear) : color(new Color(linear->color)) {}
 	
-	Linear(Linear *linear) {}
 	virtual ~Linear(void) {}
-	virtual Color *getColor(Point *point, Vector *norm, Ray *ray, std::list<Light *> lights) const;
+	virtual Color* getColor(Point* point, Vector* norm, Ray* ray, std::list<Light *> lights) const;
 	virtual Enlightment *clone(void) {return new Linear(this);}
+	
+	Linear& operator=(const Linear& linear){
+		delete(color);
+		
+		color = new Color(linear.color);
+		
+		return *this;
+	}
 };
 
 #endif //LINEAR_H

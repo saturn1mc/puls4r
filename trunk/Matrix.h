@@ -31,7 +31,7 @@ public:
 		}
 	}
 	
-	Matrix(Matrix &matrix){
+	Matrix(const Matrix& matrix){
 		for(int i =0; i<4; i++){
 			for(int j=0; j<4; j++){
 				content[i][j] = matrix.content[i][j];
@@ -39,7 +39,16 @@ public:
 		}
 	}
 	
-	Matrix(const Vector &l1, const Vector &l2, const Vector &l3, const Point &l4){
+	Matrix(Matrix* matrix){
+		for(int i =0; i<4; i++){
+			for(int j=0; j<4; j++){
+				content[i][j] = matrix->content[i][j];
+			}
+		}
+	}
+	
+	
+	Matrix(const Vector& l1, const Vector& l2, const Vector& l3, const Point& l4){
 		content[0][0] = l1.getX();
 		content[0][1] = l1.getY();
 		content[0][2] = l1.getZ();
@@ -181,7 +190,7 @@ public:
 		content[3][3] = 1;
 	}
 	
-	void loadTranslation(const Vector &v){
+	void loadTranslation(const Vector& v){
 		loadTranslation(v.getX(), v.getY(), v.getZ());
 	}
 
@@ -189,8 +198,8 @@ public:
 		return content[l][c];
 	}
 	
-	Matrix *t(void){
-		Matrix *res = new Matrix();
+	Matrix* t(void){
+		Matrix* res = new Matrix();
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
@@ -201,9 +210,9 @@ public:
 		return res;
 	}
 	
-	Matrix *operator*(const Matrix *m){
+	Matrix* operator*(const Matrix* m){
 		
-		Matrix *res = new Matrix();
+		Matrix* res = new Matrix();
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
@@ -216,9 +225,9 @@ public:
 		return res;
 	}
 	
-	Point *operator*(const Point *p){
+	Point* operator*(const Point* p){
 		
-		Point *res = new Point();
+		Point* res = new Point();
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
@@ -229,9 +238,9 @@ public:
 		return res;
 	}
 	
-	Vector *operator*(const Vector *v){
+	Vector* operator*(const Vector* v){
 		
-		Vector *res = new Vector();
+		Vector* res = new Vector();
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
@@ -243,7 +252,7 @@ public:
 	}
 };
 
-template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Matrix *m){
+template <class charT, class traits> std::basic_ostream<charT,traits>& operator<<(std::basic_ostream<charT,traits>& strm, const Matrix* m){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream
