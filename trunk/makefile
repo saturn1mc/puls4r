@@ -1,6 +1,6 @@
 CC = g++
-CC_OPTIONS = -O3
-LNK_OPTIONS = 
+CC_OPTIONS = -O3 -Wall -pedantic
+LNK_OPTIONS =
 INCLUDE = -I.
 PROJ=pulsar
 

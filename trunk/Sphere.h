@@ -15,14 +15,14 @@
 class Sphere : public Object{
 private:
 	
-	Point *center;
+	Point* center;
 	double radius;
 	
-	Intersection *Sphere::createIntersection(Ray *ray);
+	Intersection* createIntersection(Ray* ray);
 	
 public:
 
-	Sphere(Enlightment *_enlightment, Point *_center, double _radius) : center(new Point(_center)), radius(_radius) {
+	Sphere(Enlightment* _enlightment, Point* _center, double _radius) : center(new Point(_center)), radius(_radius) {
 		reflect = false;
 		enlightment = _enlightment->clone();
 	}
@@ -36,7 +36,7 @@ public:
 		delete(enlightment);
 		delete(center);
 	}
-	virtual Intersection *intersection(Ray *ray);
+	virtual Intersection* intersection(Ray* ray);
 	virtual std::string toString(void) const;
 	
 	Sphere& operator=(const Sphere& sphere){
