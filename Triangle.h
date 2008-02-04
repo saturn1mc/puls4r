@@ -38,6 +38,10 @@ public:
 		double d = - (norm->get(0) * points[0]->getX())  - (norm->get(1) * points[0]->getY()) - (norm->get(2) * points[0]->getZ());
 	
 		plan = new Plan(enlightment, norm, d, true);
+		
+		delete(AB);
+		delete(AC);
+		delete(norm);
 	}
 	
 	Triangle(const Triangle& triangle) : plan(0){
@@ -63,6 +67,7 @@ public:
 	}
 	
 	virtual ~Triangle(void) {
+		delete(enlightment);
 		delete(plan);
 		delete(points[0]);
 		delete(points[1]);

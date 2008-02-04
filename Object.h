@@ -44,9 +44,9 @@ public:
 	}
 	
 	Object(const Object& object) : reflect(object.reflect), enlightment(0) {}
-	virtual ~Object(void) {
-		delete(enlightment);
-	}
+	
+	virtual ~Object(void) {}
+	
 	virtual Object& operator=(const Object& object){
 
 		delete(enlightment);

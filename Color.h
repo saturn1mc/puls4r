@@ -36,9 +36,7 @@ private:
 public:
 	
 	Color(void) : r(0), g(0), b(0) {}
-	
 	Color(const Color& color) : r(color.r), g(color.g), b(color.b) {}
-	
 	Color(const Color* color) : r(color->r), g(color->g), b(color->b) {}
 		
 	Color(double _r, double _g, double _b) throw(exception) : r(0), g(0), b(0){
@@ -147,7 +145,7 @@ public:
 	
 	Color operator*(Color& color){
 		
-		Color res = new Color();
+		Color res;
 		
 		res.r = r * color.r;
 		res.g = g * color.g;
@@ -158,7 +156,7 @@ public:
 	
 	Color operator*(Color* color){
 		
-		Color res = new Color();
+		Color res;
 		
 		res.r = r * color->r;
 		res.g = g * color->g;

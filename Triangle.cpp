@@ -24,6 +24,10 @@ Intersection* Triangle::intersection(Ray* ray){
 		double u = ((p->getY() * c->getX()) - (p->getX() * c->getY())) / ((b->getY() * c->getX()) - (b->getX() * c->getY()));
 		double v = ((p->getY() * b->getX()) - (p->getX() * b->getY())) / ((c->getY() * b->getX()) - (c->getX() * b->getY()));
 		
+		delete(b);
+		delete(c);
+		delete(p);
+		
 		if(u>=0 && v >= 0 && (u+v) <= 1){
 			intersection->setObject(this);
 			return intersection;

@@ -33,6 +33,7 @@ public:
 	}
 	
 	virtual ~Sphere(void) {
+		delete(enlightment);
 		delete(center);
 	}
 	virtual Intersection *intersection(Ray *ray);

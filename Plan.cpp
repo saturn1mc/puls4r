@@ -30,7 +30,11 @@ Intersection* Plan::intersection(Ray* ray){
 									ray->getOrigin()->getZ() + (ray->getDirection()->getZ() * ray->getT())
 								);
 		
-			return new Intersection(m, norm, this, ray->getT());
+			Intersection *intersection = new Intersection(m, norm, this, ray->getT());
+			
+			delete(m);
+			
+			return intersection;
 		}
 	}
 }
