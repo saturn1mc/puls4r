@@ -22,7 +22,12 @@ Intersection* Sphere::createIntersection(Ray* ray){
 	
 	nm->normalize();
 	
-	return new Intersection(m, nm, this, ray->getT());
+	Intersection *intersection = new Intersection(m, nm, this, ray->getT());
+	
+	delete(m);
+	delete(nm);
+	
+	return intersection;
 }
 
 Intersection* Sphere::intersection(Ray* ray){

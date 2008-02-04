@@ -199,7 +199,7 @@ public:
 	}
 	
 	Matrix t(void){
-		Matrix res = new Matrix();
+		Matrix res;
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){

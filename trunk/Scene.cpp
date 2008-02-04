@@ -56,7 +56,9 @@ void Scene::rayTrace(void){
 }
 
 Color* Scene::colorAt(double l, double p){
-	Ray* ray = observer->ray(new Point(p, l, focal));
+
+	Point* target = new Point(p, l, focal);
+	Ray* ray = observer->ray(target);
 	
 	Intersection* nearestIntersection = getNearestIntersection(ray);
 	
@@ -69,12 +71,13 @@ Color* Scene::colorAt(double l, double p){
 		delete(color);
 		delete(nearestIntersection);
 		delete(ray);
+		delete(target);
 		
 		return reflectedColor;
 	}
 	else{
 		delete(ray);
-		
+		delete(target);
 		return new Color(background);
 	}
 }

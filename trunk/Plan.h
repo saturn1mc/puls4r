@@ -41,6 +41,7 @@ public:
 	}
 
 	virtual ~Plan(void) {
+		delete(enlightment);
 		delete(norm);
 	}
 	virtual Intersection* intersection(Ray* ray);
