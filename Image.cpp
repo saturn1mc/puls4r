@@ -62,7 +62,7 @@ void Image::writeBMP24(FILE* file, unsigned char* pic24, int w, int h){
 // Ecriture d'un buffer image dans un fichier au format BMP
 void Image::writeBitmap(void){
 	
-	int i, nbits = 24, bperlin, cmaplen = 0;
+	int i, nbits = 24, bperlin;
 	FILE* file;
 	
 	file=fopen(filename, "wb");

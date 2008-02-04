@@ -30,18 +30,18 @@ private:
 	
 public:
 
-	Observer(Point* _eye, Point* _sight, double _alpha) : eye(new Point(_eye)), sight(new Vector(eye, _sight)), alpha(_alpha), view(0){
+	Observer(Point* _eye, Point* _sight, double _alpha) : eye(new Point(_eye)), sight(new Vector(eye, _sight)), view(0), alpha(_alpha){
 		sight->normalize();
 		initMatrix();
 	}
 	
-	Observer(Point* _eye, Vector* _sight, double _alpha) : eye(new Point(_eye)), sight(new Vector(_sight)), alpha(_alpha), view(0) {	
+	Observer(Point* _eye, Vector* _sight, double _alpha) : eye(new Point(_eye)), sight(new Vector(_sight)), view(0), alpha(_alpha) {	
 		sight->normalize();
 		initMatrix();
 	}
 	
-	Observer(const Observer& observer) : eye(new Point(observer.eye)), sight(new Vector(observer.sight)), alpha(observer.alpha), view(new Matrix(observer.view)) {}
-	Observer(const Observer* observer) : eye(new Point(observer->eye)), sight(new Vector(observer->sight)), alpha(observer->alpha), view(new Matrix(observer->view)) {}
+	Observer(const Observer& observer) : eye(new Point(observer.eye)), sight(new Vector(observer.sight)), view(new Matrix(observer.view)), alpha(observer.alpha) {}
+	Observer(const Observer* observer) : eye(new Point(observer->eye)), sight(new Vector(observer->sight)), view(new Matrix(observer->view)), alpha(observer->alpha) {}
 	
 	~Observer(){
 		delete(eye);

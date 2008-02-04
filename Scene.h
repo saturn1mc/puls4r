@@ -43,8 +43,8 @@ private:
 	
 public:
 	
-	Scene(Observer* _observer, Image* _img, Color* _background) : objects(0), lights(0), observer(new Observer(_observer)), img(new Image(_img)), background(new Color(_background)), focal(calcFocal()) {}
-	Scene(const Scene& scene) : objects(scene.objects), lights(scene.lights), observer(new Observer(scene.observer)), img(new Image(scene.img)), background(new Color(scene.background)), focal(scene.focal) {}
+	Scene(Observer* _observer, Image* _img, Color* _background) : observer(new Observer(_observer)), img(new Image(_img)), background(new Color(_background)), objects(0), lights(0), focal(calcFocal()) {}
+	Scene(const Scene& scene) : observer(new Observer(scene.observer)), img(new Image(scene.img)), background(new Color(scene.background)), objects(scene.objects), lights(scene.lights), focal(scene.focal) {}
 	
 	~Scene(){
 		delete(observer);

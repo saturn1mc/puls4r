@@ -26,10 +26,10 @@
 class Image{
 private:
 	
-	unsigned char* pic;
-	int antialiasing;
 	int w;
 	int h;
+	int antialiasing;
+	unsigned char* pic;
 	char* filename;
 	int writingPos;
 	

@@ -10,6 +10,7 @@
 #ifndef POINT_H
 #define POINT_H
 
+#include <exception>
 #include <iostream>
 #include <sstream>
 
@@ -31,7 +32,7 @@ public:
 	
 	~Point(){}
 	
-	double get(int d) const{
+	double get(int d) const throw(std::exception){
 		switch(d){
 			case 0:
 				return x;
@@ -48,10 +49,9 @@ public:
 			case 3:
 				return t;
 				break;
-			
-			default:
-				return 0;
 		}
+		
+		throw new std::exception();
 	}
 	
 	double getX(void) const { return x; }
