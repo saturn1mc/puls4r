@@ -1,44 +1,5 @@
 #include "Image.h"
 
-void Image::initPixels(void){
-	pixels = new Color*[h*antialiasing];
-	
-	for (int i = 0; i<(h*antialiasing); ++i) {
-		pixels[i] = new Color[w*antialiasing];
-	}
-}
-
-void Image::writeToPic(void){
-	for(int i=0; i<h*antialiasing; i+=antialiasing){
-		for(int j=0; j<w*antialiasing; j+=antialiasing){
-			
-			Color *color = 0;
-			
-			for(int ii=0; ii<antialiasing; ii+=antialiasing){
-				for(int jj=0; jj<antialiasing; jj+=antialiasing){
-					
-					if(color == 0){
-						color = new Color(pixels[i+ii][j+jj]);
-					}
-					else{
-						*color = (*color) + pixels[i+ii][j+jj];
-						*color = (*color) * 0.5;
-					}
-				}
-			}
-			
-			color->normalize();
-			
-			writePixel(color);
-			delete(color);
-		}
-	}
-}
-
-void Image::setPixel(int _h, int _w, Color* color){
-	pixels[_h][_w] = color;
-}
-
 void Image::writePixel(Color* color){
 	
 	pic[writingPos] = (unsigned char) ((int)(255 * color->getR()));
@@ -101,8 +62,6 @@ void Image::writeBMP24(FILE* file, unsigned char* pic24, int w, int h){
 // Ecriture d'un buffer image dans un fichier au format BMP
 void Image::writeBitmap(void){
 	
-	writeToPic();
-	
 	int i, nbits = 24, bperlin, cmaplen = 0;
 	FILE* file;
 	
@@ -138,7 +97,7 @@ void Image::writeBitmap(void){
 	// Ecriture du buffer image dans un fichier
 	writeBMP24(file, pic, w, h);
 	
-	fprintf(stdout, "Saved in file: %s\n", filename);
+	fprintf(stdout, "\tSaved in file: %s\n", filename);
 	
 	fclose(file);
 }

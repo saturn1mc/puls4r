@@ -22,7 +22,10 @@ public:
 	Linear(const Linear& linear) : color(new Color(linear.color)) {}
 	Linear(const Linear* linear) : color(new Color(linear->color)) {}
 	
-	virtual ~Linear(void) {}
+	virtual ~Linear(void) {
+		delete(color);
+	}
+	
 	virtual Color* getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const;
 	virtual Enlightment* clone(void) {return new Linear(*this);}
 	

@@ -32,7 +32,9 @@ public:
 		enlightment = sphere.enlightment->clone();
 	}
 	
-	virtual ~Sphere(void) {}
+	virtual ~Sphere(void) {
+		delete(center);
+	}
 	virtual Intersection *intersection(Ray *ray);
 	virtual std::string toString(void) const;
 	

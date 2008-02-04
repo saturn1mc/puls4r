@@ -43,7 +43,11 @@ public:
 	Observer(const Observer& observer) : eye(new Point(observer.eye)), sight(new Vector(observer.sight)), alpha(observer.alpha), view(new Matrix(observer.view)) {}
 	Observer(const Observer* observer) : eye(new Point(observer->eye)), sight(new Vector(observer->sight)), alpha(observer->alpha), view(new Matrix(observer->view)) {}
 	
-	~Observer(){}
+	~Observer(){
+		delete(eye);
+		delete(sight);
+		delete(view);
+	}
 	
 	Ray* ray(Point* sp);
 	

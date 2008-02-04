@@ -27,7 +27,10 @@ public:
 	
 	Light(const Light& light) : source(new Point(light.source)), color(new Color(light.color)) {}
 	
-	~Light(){}
+	~Light(){
+		delete(source);
+		delete(color);
+	}
 	
 	Point* getSource(void) const {return source;}
 	Color* getColor(void) const {return color;}

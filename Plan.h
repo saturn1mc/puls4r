@@ -40,7 +40,9 @@ public:
 		norm->normalize();
 	}
 
-	virtual ~Plan(void) {}
+	virtual ~Plan(void) {
+		delete(norm);
+	}
 	virtual Intersection* intersection(Ray* ray);
 	virtual std::string toString(void) const;
 	

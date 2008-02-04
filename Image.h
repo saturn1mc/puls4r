@@ -32,68 +32,53 @@ private:
 	int h;
 	char* filename;
 	int writingPos;
-	Color** pixels;
-	
-	void initPixels(void);
-	void writeToPic(void);
-	void writePixel(Color* color);
-	void setPixels(Color** pxs){
-		for(int i=0; i<h*antialiasing; i++){
-			for(int j=0; j<w*antialiasing; j++){
-				pixels[i][j] = new Color(pxs[i][j]);
-			}
-		}
-	}
 	
 public:
 	
-	Image(char* _filename, int _w, int _h) : w(_w), h(_h), antialiasing(1), pic(0), filename(0), pixels(0), writingPos(0){
+	Image(char* _filename, int _w, int _h) : w(_w), h(_h), antialiasing(1), pic(0), filename(0), writingPos(0){
 		
 		MALLOC(filename, char, strlen(_filename)+1);
 		strcpy(filename, _filename);
 			
 		MALLOC(pic, unsigned char, _w*_h*3);
-		
-		initPixels();
 	}	
 	
-	Image(char* _filename, int _w, int _h, int _antialiasing) : w(_w), h(_h), antialiasing(_antialiasing), pic(0), filename(0), pixels(0), writingPos(0){
+	Image(char* _filename, int _w, int _h, int _antialiasing) : w(_w), h(_h), antialiasing(_antialiasing), pic(0), filename(0), writingPos(0){
 		
 		MALLOC(filename, char, strlen(_filename)+1);
 		strcpy(filename, _filename);
 		
 		MALLOC(pic, unsigned char, _w*_h*3);
 		
-		initPixels();
+		if(antialiasing <= 0){
+			antialiasing = 1;
+		}
 	}
 	
-	Image(const Image& image) : w(image.w), h(image.h), antialiasing(image.antialiasing), pic(0), filename(0), pixels(0), writingPos(image.writingPos){
+	Image(const Image& image) : w(image.w), h(image.h), antialiasing(image.antialiasing), pic(0), filename(0), writingPos(image.writingPos){
 		MALLOC(filename, char, strlen(image.filename)+1);
 		strcpy(filename, image.filename);
 		
 		MALLOC(pic, unsigned char, image.w*image.h*3);
-		
-		initPixels();
-		setPixels(image.pixels);
 	}
 	
-	Image(const Image* image) : w(image->w), h(image->h), antialiasing(image->antialiasing), pic(0), filename(0), pixels(0), writingPos(image->writingPos){
+	Image(const Image* image) : w(image->w), h(image->h), antialiasing(image->antialiasing), pic(0), filename(0), writingPos(image->writingPos){
 		MALLOC(filename, char, strlen(image->filename)+1);
 		strcpy(filename, image->filename);
 		
 		MALLOC(pic, unsigned char, image->w*image->h*3);
-		
-		initPixels();
-		setPixels(image->pixels);
 	}
 	
-	~Image(){}
+	~Image(){
+		free(pic);
+		free(filename);
+	}
 	
-	void setPixel(int _h, int _w, Color* color);
+	void writePixel(Color* color);
 	
-	int getW(void) const {return w*antialiasing;}
-	int getH(void) const {return h*antialiasing;}
-	
+	int getW(void) const {return w;}
+	int getH(void) const {return h;}
+	int getAntialiasing(void) const {return antialiasing;}
 	char* getFilename(void) const {return filename;}
 	
 	static void putshort(FILE* file, int i);
@@ -103,8 +88,7 @@ public:
 	void writeBitmap(void);
 	
 	Image& operator=(const Image& image){
-
-		free(pixels);
+		
 		free(filename);
 		free(pic);
 		
@@ -117,9 +101,6 @@ public:
 		strcpy(filename, image.filename);
 		
 		MALLOC(pic, unsigned char, image.w*image.h*3);
-		
-		initPixels();
-		setPixels(image.pixels);
 		
 		return *this;
 	}
