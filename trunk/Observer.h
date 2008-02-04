@@ -55,6 +55,17 @@ public:
 	Vector* getSight(void) const {return sight;}
 	Matrix* getView(void) const {return view;}
 	double getAlpha(void) const {return alpha;}
+	
+	void setEye(Point *_eye){
+		
+		delete(eye);
+		delete(view);
+		
+		eye = new Point(_eye);
+		
+		initMatrix();
+	}
+	
 	void setAlpha(int _alpha) {alpha=_alpha;}
 	
 	Observer& operator=(const Observer& observer){

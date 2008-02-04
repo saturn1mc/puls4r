@@ -63,6 +63,12 @@ public:
 	std::list<Object* > &getObjects(void) {return objects;}
 	std::list<Light* > &getLights(void) {return lights;}
 	
+	void setImage(Image* _img){
+		delete(img);
+		
+		img = new Image(_img);
+	}
+	
 	void addObject(Object* obj);
 	void addLight(Light* light);
 	void rayTrace(void);

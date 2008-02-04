@@ -14,8 +14,6 @@
 #include <sstream>
 #include <exception>
 
-using namespace std;
-
 class Color{
 private:
 	
@@ -39,10 +37,10 @@ public:
 	Color(const Color& color) : r(color.r), g(color.g), b(color.b) {}
 	Color(const Color* color) : r(color->r), g(color->g), b(color->b) {}
 		
-	Color(double _r, double _g, double _b) throw(exception) : r(0), g(0), b(0){
+	Color(double _r, double _g, double _b) throw(std::exception) : r(0), g(0), b(0){
 		
 		if(_r < 0 || _r > 1 || _g < 0 || _g > 1 || _b < 0 || _b > 1){
-			throw new exception();
+			throw new std::exception();
 		}
 		
 		r = _r;
