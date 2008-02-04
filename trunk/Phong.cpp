@@ -19,8 +19,7 @@ Color* Phong::getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > 
 		Vector* R = getR(L, norm);
 		
 		Color* diffuse = new Color( (*od) * (kd * ((*L) * norm)) );
-		
-		Color* specular;
+		Color* specular = 0;
 		
 		if((*R)*V < 0){
 			specular = new Color();

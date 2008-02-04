@@ -1,5 +1,5 @@
 CC = g++
-CC_OPTIONS = 
+CC_OPTIONS = -O3
 LNK_OPTIONS = 
 INCLUDE = -I.
 PROJ=pulsar

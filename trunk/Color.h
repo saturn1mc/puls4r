@@ -90,81 +90,81 @@ public:
 		return *this;
 	}
 	
-	Color& operator+(const Color& c){
+	Color operator+(const Color& c){
 		
-		Color* res = new Color();
+		Color res;
 		
-		res->r = (c.r + r);
-		res->g = (c.g + g);
-		res->b = (c.b + b);
+		res.r = (c.r + r);
+		res.g = (c.g + g);
+		res.b = (c.b + b);
 		
-		return *res;
+		return res;
 	}
 	
-	Color& operator+(const Color* c){
+	Color operator+(const Color* c){
 		
-		Color* res = new Color();
+		Color res;
 		
-		res->r = (c->r + r);
-		res->g = (c->g + g);
-		res->b = (c->b + b);
+		res.r = (c->r + r);
+		res.g = (c->g + g);
+		res.b = (c->b + b);
 		
-		return *res;
+		return res;
 	}
 	
-	Color& operator-(const Color& c){
+	Color operator-(const Color& c){
 		
-		Color* res = new Color();
+		Color res;
 		
-		res->r = (c.r - r);
-		res->g = (c.g - g);
-		res->b = (c.b - b);
+		res.r = (c.r - r);
+		res.g = (c.g - g);
+		res.b = (c.b - b);
 		
-		return *res;
+		return res;
 	}
 	
-	Color& operator-(const Color* c){
+	Color operator-(const Color* c){
 		
-		Color* res = new Color();
+		Color res;
 		
-		res->r = (c->r - r);
-		res->g = (c->g - g);
-		res->b = (c->b - b);
+		res.r = (c->r - r);
+		res.g = (c->g - g);
+		res.b = (c->b - b);
 		
-		return *res;
+		return res;
 	}
 	
-	Color& operator*(double coeff){
+	Color operator*(double coeff){
 		
-		Color* res = new Color();
+		Color res;
 		
-		res->r = r * coeff;
-		res->g = g * coeff;
-		res->b = b * coeff;
+		res.r = r * coeff;
+		res.g = g * coeff;
+		res.b = b * coeff;
 		
-		return *res;
+		return res;
 	}
 	
-	Color& operator*(Color& color){
+	Color operator*(Color& color){
 		
-		Color* res = new Color();
+		Color res = new Color();
 		
-		res->r = r * color.r;
-		res->g = g * color.g;
-		res->b = b * color.b;
+		res.r = r * color.r;
+		res.g = g * color.g;
+		res.b = b * color.b;
 		
-		return *res;
+		return res;
 	}
 	
-	Color& operator*(Color* color){
+	Color operator*(Color* color){
 		
-		Color* res = new Color();
+		Color res = new Color();
 		
-		res->r = r * color->r;
-		res->g = g * color->g;
-		res->b = b * color->b;
+		res.r = r * color->r;
+		res.g = g * color->g;
+		res.b = b * color->b;
 		
-		return *res;
+		return res;
 	}
 };
 

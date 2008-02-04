@@ -198,16 +198,16 @@ public:
 		return content[l][c];
 	}
 	
-	Matrix& t(void){
-		Matrix* res = new Matrix();
+	Matrix t(void){
+		Matrix res = new Matrix();
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
-				res->content[i][j] = content[j][i];
+				res.content[i][j] = content[j][i];
 			}
 		}
 		
-		return *res;
+		return res;
 	}
 	
 	Matrix &operator=(const Matrix& m){
@@ -230,86 +230,86 @@ public:
 		return *this;
 	}
 	
-	Matrix& operator*(const Matrix& m){
+	Matrix operator*(const Matrix& m){
 		
-		Matrix* res = new Matrix();
-		
-		for(int i=0; i<4; i++){
-			for(int j=0; j<4; j++){
-				for(int k=0; k<4; k++){
-					res->content[i][j] += content[i][k] * m.content[k][j];
-				}	
-			}
-		}
-		
-		return *res;
-	}
-	
-	Matrix& operator*(const Matrix* m){
-		
-		Matrix* res = new Matrix();
+		Matrix res;
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
 				for(int k=0; k<4; k++){
-					res->content[i][j] += content[i][k] * m->content[k][j];
+					res.content[i][j] += content[i][k] * m.content[k][j];
 				}	
 			}
 		}
 		
-		return *res;
+		return res;
 	}
 	
-	Point& operator*(const Point& p){
+	Matrix operator*(const Matrix* m){
 		
-		Point* res = new Point();
+		Matrix res;
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
-				res->set(i, res->get(i) + content[i][j] * p.get(j));
+				for(int k=0; k<4; k++){
+					res.content[i][j] += content[i][k] * m->content[k][j];
+				}	
 			}
 		}
 		
-		return *res;
+		return res;
 	}
 	
-	Point& operator*(const Point* p){
+	Point operator*(const Point& p){
 		
-		Point* res = new Point();
+		Point res;
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
-				res->set(i, res->get(i) + content[i][j] * p->get(j));
+				res.set(i, res.get(i) + content[i][j] * p.get(j));
 			}
 		}
 		
-		return *res;
+		return res;
 	}
 	
-	Vector& operator*(const Vector& v){
+	Point operator*(const Point* p){
 		
-		Vector* res = new Vector();
+		Point res;
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
-				res->set(i, res->get(i) + content[i][j] * v.get(j));
+				res.set(i, res.get(i) + content[i][j] * p->get(j));
 			}
 		}
 		
-		return *res;
+		return res;
 	}
 	
-	Vector& operator*(const Vector* v){
+	Vector operator*(const Vector& v){
 		
-		Vector* res = new Vector();
+		Vector res;
 		
 		for(int i=0; i<4; i++){
 			for(int j=0; j<4; j++){
-				res->set(i, res->get(i) + content[i][j] * v->get(j));
+				res.set(i, res.get(i) + content[i][j] * v.get(j));
 			}
 		}
 		
-		return *res;
+		return res;
+	}
+	
+	Vector operator*(const Vector* v){
+		
+		Vector res;
+		
+		for(int i=0; i<4; i++){
+			for(int j=0; j<4; j++){
+				res.set(i, res.get(i) + content[i][j] * v->get(j));
+			}
+		}
+		
+		return res;
 	}
 };
 

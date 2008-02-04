@@ -14,10 +14,10 @@ void Observer::initMatrix(void){
 	Vector* up = new Vector(0,1,0);
 	up->normalize();
 	
-	Vector& w = (*sight) ^ up;
+	Vector w = (*sight) ^ up;
 	w.normalize();
 	
-	Vector& u = (*sight) ^ w;
+	Vector u = (*sight) ^ w;
 	u.normalize();
 	
 	view = new Matrix(w, u, *sight, *eye);
