@@ -100,48 +100,48 @@ public:
 		return *this;
 	}
 	
-	Point& operator+(const Point& a){
+	Point operator+(const Point& a){
 		
-		Point* res = new Point();
+		Point res;
 		
-		res->x = x + a.x;
-		res->y = y + a.y;
-		res->z = z + a.z;
+		res.x = x + a.x;
+		res.y = y + a.y;
+		res.z = z + a.z;
 		
-		return *res;
+		return res;
 	}
 	
-	Point& operator+(const Point* a){
+	Point operator+(const Point* a){
 		
-		Point* res = new Point();
+		Point res;
 		
-		res->x = x + a->x;
-		res->y = y + a->y;
-		res->z = z + a->z;
+		res.x = x + a->x;
+		res.y = y + a->y;
+		res.z = z + a->z;
 		
-		return *res;
+		return res;
 	}
 	
-	Point& operator-(const Point& a){
+	Point operator-(const Point& a){
 		
-		Point* res = new Point();
+		Point res;
 		
-		res->x = x - a.x;
-		res->y = y - a.y;
-		res->z = z - a.z;
+		res.x = x - a.x;
+		res.y = y - a.y;
+		res.z = z - a.z;
 		
-		return *res;
+		return res;
 	}
 	
-	Point& operator-(const Point* a){
+	Point operator-(const Point* a){
 		
-		Point* res = new Point();
+		Point res;
 		
-		res->x = x - a->x;
-		res->y = y - a->y;
-		res->z = z - a->z;
+		res.x = x - a->x;
+		res.y = y - a->y;
+		res.z = z - a->z;
 		
-		return *res;
+		return res;
 	}
 };
 

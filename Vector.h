@@ -30,8 +30,9 @@ public:
 	Vector(double _x, double _y, double _z) : x(_x), y(_y), z(_z), t(1) {}
 	Vector(const Vector& vector) : x(vector.x), y(vector.y), z(vector.z), t(vector.t) {}
 	Vector(const Vector* vector) : x(vector->x), y(vector->y), z(vector->z), t(vector->t) {}
-	Vector(Point &a, Point &b) : x (b.getX() - a.getX()), y(b.getY() - a.getY()), z(b.getZ() - a.getZ()), t(1) {}
-	Vector(Point *a, Point *b) : x (b->getX() - a->getX()), y(b->getY() - a->getY()), z(b->getZ() - a->getZ()), t(1) {}
+	Vector(Point &a, Point &b) : x(b.getX() - a.getX()), y(b.getY() - a.getY()), z(b.getZ() - a.getZ()), t(1) {}
+	Vector(Point a, Point b) : x(b.getX() - a.getX()), y(b.getY() - a.getY()), z(b.getZ() - a.getZ()), t(1) {}
+	Vector(Point *a, Point *b) : x(b->getX() - a->getX()), y(b->getY() - a->getY()), z(b->getZ() - a->getZ()), t(1) {}
 	
 	~Vector(){}
 	
@@ -120,59 +121,59 @@ public:
 		return (x * v->x) + (y * v->y) + (z * v->z);
 	}
 	
-	Vector& operator*(double coeff) const{
-		Vector* res = new Vector(x*coeff, y*coeff, z*coeff);
-		return *res;
+	Vector operator*(double coeff) const{
+		Vector res(x*coeff, y*coeff, z*coeff);
+		return res;
 	}
 	
-	Vector& operator+(const Vector& v) const{
+	Vector operator+(const Vector& v) const{
 		
-		Vector* res = new Vector(x + v.x, y + v.y, z + v.z);
+		Vector res(x + v.x, y + v.y, z + v.z);
 		
-		return *res;
+		return res;
 	}
 	
-	Vector& operator+(const Vector* v) const{
+	Vector operator+(const Vector* v) const{
 		
-		Vector* res = new Vector(x + v->x, y + v->y, z + v->z);
+		Vector res(x + v->x, y + v->y, z + v->z);
 								 
-		return *res;
+		return res;
 	}
 	
-	Vector& operator-(const Vector& v) const{
+	Vector operator-(const Vector& v) const{
 		
-		Vector* res = new Vector(x - v.x, y - v.y, z - v.z);
+		Vector res(x - v.x, y - v.y, z - v.z);
 		
-		return *res;
+		return res;
 	}
 	
-	Vector& operator-(const Vector* v) const{
+	Vector operator-(const Vector* v) const{
 		
-		Vector* res = new Vector(x - v->x, y - v->y, z - v->z);
+		Vector res(x - v->x, y - v->y, z - v->z);
 		
-		return *res;
+		return res;
 	}
 	
-	Vector& operator^(const Vector& v) const{
+	Vector operator^(const Vector& v) const{
 		
-		Vector* res = new Vector(
-								 (y*v.z) - (z*v.y),
-								 (z*v.x) - (x*v.z),
-								 (x*v.y) - (y*v.x)
-								 );
+		Vector res(
+					 (y*v.z) - (z*v.y),
+					 (z*v.x) - (x*v.z),
+					 (x*v.y) - (y*v.x)
+				 );
 		
-		return *res;
+		return res;
 	}
 	
-	Vector& operator^(const Vector* v) const{
+	Vector operator^(const Vector* v) const{
 	
-		Vector *res = new Vector(
+		Vector res(
 					(y*v->z) - (z*v->y),
 					(z*v->x) - (x*v->z),
 					(x*v->y) - (y*v->x)
 				);
 		
-		return *res;
+		return res;
 	}
 };
 
