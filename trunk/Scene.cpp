@@ -19,7 +19,7 @@ void Scene::addLight(Light* light){
 	
 void Scene::rayTrace(void){
 	
-	cout << "Tracing..." << endl;
+	cout << "---> Tracing..." << endl;
 	int progress = 0;
 	
 	for(int l=-getH()/2; l<getH()/2; l++){
@@ -28,38 +28,79 @@ void Scene::rayTrace(void){
 		
 		if(progress != done){
 			progress = done;
-			cout << progress << "% ";
+			cout << "\t" << progress << "%";
 			cout.flush();
 		}
 		
 		for(int p=-getW()/2; p<getW()/2; p++){
 			
-			Ray* ray = observer->ray(new Point(p, l, focal));
+			Color* color = 0;
 			
-			Intersection* nearestIntersection = getNearestIntersection(ray);
-			
-			if(nearestIntersection != 0){
-				Color* color = new Color(nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNorm(), ray, lights));
-				shadow(color, nearestIntersection);
-				Color* color2 = new Color(reflection(color, ray, nearestIntersection));
-				
-				img->setPixel(l+(getH()/2), p+(getW()/2), color2);
-				
-				delete(color);
-				delete(color2);
+			if(img->getAntialiasing() > 1){
+				color = antialiasedColor(l, p);
 			}
 			else{
-				img->setPixel(l+(getH()/2), p+(getW()/2), background);
+				color = colorAt(l, p);
 			}
 			
-			delete(ray);
+			img->writePixel(color);
+			
+			delete(color);
 		}
 	}
 	
 	cout << endl;
-	cout << "Writing image to " << img->getFilename() << endl;
+	cout << "\tWriting image to " << img->getFilename() << endl;
 	img->writeBitmap();
-	cout << "Tracing over" << endl;
+	cout << "---> End of tracing" << endl;
+}
+
+Color* Scene::colorAt(double l, double p){
+	Ray* ray = observer->ray(new Point(p, l, focal));
+	
+	Intersection* nearestIntersection = getNearestIntersection(ray);
+	
+	if(nearestIntersection != 0){
+		Color* color = nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNorm(), ray, lights);
+		shadow(color, nearestIntersection);
+		
+		Color *reflectedColor = new Color(reflection(color, ray, nearestIntersection));
+		
+		delete(color);
+		delete(nearestIntersection);
+		delete(ray);
+		
+		return reflectedColor;
+	}
+	else{
+		delete(ray);
+		
+		return new Color(background);
+	}
+}
+
+Color* Scene::antialiasedColor(double l, double p){
+	
+	Color* finalColor = 0;
+	double aa = 1.0 / ((double)img->getAntialiasing());
+	
+	for(double l2 = (l - aa); l2 <= (l + aa); l2+=aa){
+		for(double p2 = (p - aa); p2 <= (p + aa); p2+=aa){
+			if(finalColor == 0){
+				finalColor = colorAt(l2, p2);
+			}
+			else{
+				Color* nearColor = colorAt(l2, p2);
+				
+				*finalColor = (*finalColor) + nearColor;
+				*finalColor = (*finalColor) * 0.5;
+				
+				delete(nearColor);
+			}
+		}
+	}
+	
+	return finalColor;
 }
 
 double Scene::calcFocal(void) const{
@@ -125,6 +166,7 @@ void Scene::shadow(Color* color, Intersection* intersection){
 			color->darken(0.3);
 		}
 		
+		delete(l);
 		delete(ray);
 		delete(shadowIntersection);
 	}
@@ -140,15 +182,14 @@ Color* Scene::reflection(Color* color, Ray* ray, Intersection* intersection){
 		Ray* reflected = new Ray(intersection->getPoint(), r);
 		Intersection* reflectionIntersection = getNearestIntersectionExcluding(reflected, intersection->getObject());
 		
+		delete(r);
+		
 		if(reflectionIntersection != 0){
 			return reflection(reflectionIntersection->getObject()->getEnlightment()->getColor(reflectionIntersection->getPoint(), reflectionIntersection->getNorm(), reflected, lights), reflected, reflectionIntersection);
 		}
 		else{
 			return background;
 		}
-		
-		delete(reflected);
-		delete(reflectionIntersection);
 	}
 	else{
 		shadow(color, intersection);

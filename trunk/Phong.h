@@ -37,7 +37,12 @@ public:
 	Phong(const Phong& phong) : oa(new Color(phong.oa)), od(new Color(phong.od)), os(new Color(phong.os)), ia(phong.ia), ka(phong.ka), kd(phong.kd), ks(phong.ks), n(phong.n) {}
 	Phong(const Phong* phong) : oa(new Color(phong->oa)), od(new Color(phong->od)), os(new Color(phong->os)), ia(phong->ia), ka(phong->ka), kd(phong->kd), ks(phong->ks), n(phong->n) {}
 	
-	virtual ~Phong(void) {}
+	virtual ~Phong(void) {
+		delete(oa);
+		delete(od);
+		delete(os);		
+	}
+	
 	virtual Color* getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const;
 	virtual Enlightment* clone() {return new Phong(*this);}
 	

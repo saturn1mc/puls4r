@@ -32,7 +32,11 @@ public:
 		norm->normalize();
 	}
 	Intersection(const Intersection& intersection) : point(new Point(intersection.point)), norm(new Vector(intersection.norm)), object(object), t(intersection.t) {}
-	~Intersection(){}
+	
+	~Intersection(){
+		delete(point);
+		delete(norm);
+	}
 	
 	Point* getPoint(void) const {return point;}
 	Vector* getNorm(void) const {return norm;}

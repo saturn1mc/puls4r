@@ -62,7 +62,12 @@ public:
 		plan = new Plan(triangle->plan);
 	}
 	
-	virtual ~Triangle(void) {}
+	virtual ~Triangle(void) {
+		delete(plan);
+		delete(points[0]);
+		delete(points[1]);
+		delete(points[2]);		
+	}
 	virtual Intersection *intersection(Ray *ray);
 	virtual std::string toString(void) const;
 

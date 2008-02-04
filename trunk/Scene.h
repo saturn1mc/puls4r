@@ -36,6 +36,8 @@ private:
 	Intersection* getNearestIntersection(Ray* ray);
 	Intersection* getNearestIntersectionExcluding(Ray* ray, Object* object);
 	double calcFocal(void) const;
+	Color* colorAt(double l, double p);
+	Color* antialiasedColor(double l, double p);
 	void shadow(Color* color, Intersection* intersection);
 	Color* reflection(Color* color, Ray* ray, Intersection* intersection);
 	
@@ -43,7 +45,13 @@ public:
 	
 	Scene(Observer* _observer, Image* _img, Color* _background) : objects(0), lights(0), observer(new Observer(_observer)), img(new Image(_img)), background(new Color(_background)), focal(calcFocal()) {}
 	Scene(const Scene& scene) : objects(scene.objects), lights(scene.lights), observer(new Observer(scene.observer)), img(new Image(scene.img)), background(new Color(scene.background)), focal(scene.focal) {}
-	~Scene(){}
+	~Scene(){
+		delete(observer);
+		delete(img);
+		delete(background);
+		objects.clear();
+		lights.clear();
+	}
 	
 	int getH(void) const {return img->getH();}
 	int getW(void) const {return img->getW();}
