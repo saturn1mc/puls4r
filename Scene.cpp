@@ -19,7 +19,7 @@ void Scene::addLight(Light* light){
 	
 void Scene::rayTrace(void){
 	
-	cout << "---> Tracing..." << endl;
+	std::cout << "---> Tracing..." << std::endl;
 	int progress = 0;
 	
 	for(int l=-getH()/2; l<getH()/2; l++){
@@ -28,8 +28,8 @@ void Scene::rayTrace(void){
 		
 		if(progress != done){
 			progress = done;
-			cout << "\t" << progress << "%";
-			cout.flush();
+			std::cout << "\t" << progress << "%";
+			std::cout.flush();
 		}
 		
 		for(int p=-getW()/2; p<getW()/2; p++){
@@ -49,10 +49,10 @@ void Scene::rayTrace(void){
 		}
 	}
 	
-	cout << endl;
-	cout << "\tWriting image to " << img->getFilename() << endl;
+	std::cout << std::endl;
+	std::cout << "\tWriting image to " << img->getFilename() << std::endl;
 	img->writeBitmap();
-	cout << "---> End of tracing" << endl;
+	std::cout << "---> End of tracing" << std::endl;
 }
 
 Color* Scene::colorAt(double l, double p){
@@ -114,7 +114,7 @@ Intersection* Scene::getNearestIntersection(Ray* ray){
 	
 	Intersection* nearestIntersection = 0;
 	
-	for(list<Object* >::iterator iter = objects.begin(); iter != objects.end(); ++iter){
+	for(std::list<Object* >::iterator iter = objects.begin(); iter != objects.end(); ++iter){
 		Intersection* candidate = (*iter)->intersection(ray);
 		
 		if(candidate != 0){
@@ -134,7 +134,7 @@ Intersection* Scene::getNearestIntersectionExcluding(Ray* ray, Object* object){
 	
 	Intersection* nearestIntersection = 0;
 	
-	for(list<Object* >::iterator iter = objects.begin(); iter != objects.end(); ++iter){
+	for(std::list<Object* >::iterator iter = objects.begin(); iter != objects.end(); ++iter){
 		
 		if((*iter) != object){
 		

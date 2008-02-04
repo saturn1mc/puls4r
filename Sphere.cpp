@@ -41,7 +41,7 @@ Intersection* Sphere::intersection(Ray* ray){
 	
 	if(t0 > 0 && t1 > 0){
 		
-		ray->setT(min(t0, t1));
+		ray->setT(std::min(t0, t1));
 		return createIntersection(ray);
 	}
 	else{
