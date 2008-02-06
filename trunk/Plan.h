@@ -23,19 +23,16 @@ private:
 public:
 
 	Plan(Enlightment* _enlightment, Vector* _norm, double _d, bool _monoface) : norm(new Vector(_norm)), d(_d), monoface(_monoface) {
-		reflect = false;
 		enlightment = _enlightment->clone();
 		norm->normalize();
 	}
 	
 	Plan(const Plan& plan) : norm(new Vector(plan.norm)), d(plan.d), monoface(plan.monoface){
-		reflect = plan.reflect;
 		enlightment = plan.enlightment->clone();
 		norm->normalize();
 	}
 	
 	Plan(const Plan* plan) : norm(new Vector(plan->norm)), d(plan->d), monoface(plan->monoface){
-		reflect = plan->reflect;
 		enlightment = plan->enlightment->clone();
 		norm->normalize();
 	}
@@ -52,7 +49,6 @@ public:
 		delete(enlightment);
 		delete(norm);
 		
-		reflect = plan.reflect;
 		enlightment = plan.enlightment->clone();
 		norm = new Vector(plan.norm);
 		d = plan.d;

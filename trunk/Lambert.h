@@ -35,6 +35,9 @@ public:
 	Lambert& operator=(const Lambert& lambert){
 		delete(od);
 		
+		reflect = lambert.reflect;
+		kr = lambert.kr;
+		
 		od = new Color(lambert.od);
 		kd = lambert.kd;
 		

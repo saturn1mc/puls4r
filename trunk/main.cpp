@@ -27,24 +27,53 @@ void runTestScene(){
 	Color* green = new Color(0.0, 1.0, 0.0);
 	Color* blue = new Color(0.0, 0.0, 1.0);
 	Color* yellow = new Color(1.0, 1.0, 0.0);
+	Color* orange = new Color(1.0, 0.3, 0.0);
 	Color* purple = new Color(1.0, 0.0, 1.0);
 	
-	Observer* obs = new Observer(new Point(0.0, 6.0, 30.0), new Point(0.0, -6.0, 0.0), M_PI/4.0);
-	Scene* scene = new Scene(obs, new Image("test.bmp", 1024, 768, 16), black);
+	Observer* obs = new Observer(new Point(0.0, 10.0, 50.0), new Point(0.0, 0.0, 0.0), M_PI/4.0);
+	Scene* scene = new Scene(obs, new Image("test.bmp", 400, 300, 1), black);
 	
-	scene->addLight(new Light(new Point(10.0, 30.0, 40.0), white));
+	scene->addLight(new Light(new Point(20.0, 15.0, 20.0), white));
 	
-	scene->addObject(new Sphere(new Phong(red), new Point(0.0, -10.0, 0.0), 1.0));
-	scene->addObject(new Sphere(new Phong(purple), new Point(0.0, -8.0, 0.0), 1.0));
-	scene->addObject(new Sphere(new Phong(green), new Point(0.0, -6.0, 0.0), 1.0));
-	scene->addObject(new Sphere(new Phong(blue), new Point(0.0, -4.0, 0.0), 1.0));
-	scene->addObject(new Sphere(new Phong(yellow), new Point(0.0,-2.0, 0.0), 1.0));
+	Sphere* sphere1 = new Sphere(new Phong(red), new Point (0, 0, 0), 2.0);
+	sphere1->setReflecting(false);
+	scene->addObject(sphere1);
 	
-	Sphere* reflectingSphere = new Sphere(new Phong(white), new Point(5.0, 1.0, -2.0), 2.0);
-	reflectingSphere->setReflectance(true);
-	scene->addObject(reflectingSphere);
+	Sphere* sphere2 = new Sphere(new Phong(green), new Point (0, 4, 0), 2.0);
+	sphere2->setReflecting(false);
+	scene->addObject(sphere2);
 	
-	scene->addObject(new Plan(new Phong(white), new Vector(0.0, 1.0, 0.0), 12.0, true));
+	Sphere* sphere3 = new Sphere(new Phong(blue), new Point (4, 0, 0), 2.0);
+	sphere3->setReflecting(false);
+	scene->addObject(sphere3);
+	
+	Sphere* sphere4 = new Sphere(new Phong(yellow), new Point (0, 0, 4), 2.0);
+	sphere4->setReflecting(false);
+	scene->addObject(sphere4);
+
+	Plan* plan1 = new Plan(new Phong(blue), new Vector(1, 0, 0), 20.0, true);
+	plan1->setReflecting(true);
+	scene->addObject(plan1);
+	
+	Plan* plan2 = new Plan(new Phong(green), new Vector(0, 1, 0), 4.0, true);
+	plan2->setReflecting(true);
+	scene->addObject(plan2);
+	
+	Plan* plan3 = new Plan(new Phong(red), new Vector(0, 0, 1), 50.0, true);
+	plan3->setReflecting(true);
+	scene->addObject(plan3);
+	
+	Plan* plan5 = new Plan(new Phong(purple), new Vector(-1, 0, 0), 50.0, true);
+	plan5->setReflecting(false);
+	scene->addObject(plan5);
+	
+	Plan* plan4 = new Plan(new Phong(yellow), new Vector(0, -1, 0), 20.0, false);
+	plan4->setReflecting(false);
+	scene->addObject(plan4);
+	
+	Plan* plan6 = new Plan(new Phong(orange), new Vector(0, 0, -1), 60.0, true);
+	plan6->setReflecting(false);
+	scene->addObject(plan6);
 	
 	cout << scene << endl;
 	
@@ -59,7 +88,6 @@ void runTestScene(){
 	delete(purple);
 	delete(obs);
 	delete(scene);
-	delete(reflectingSphere);
 }
 
 int main (int argc, char*  const argv[]) {

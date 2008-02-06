@@ -32,6 +32,9 @@ public:
 	Linear& operator=(const Linear& linear){
 		delete(color);
 		
+		reflect = linear.reflect;
+		kr = linear.kr;
+		
 		color = new Color(linear.color);
 		
 		return *this;

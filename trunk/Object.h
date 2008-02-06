@@ -21,18 +21,21 @@ class Object{
 
 protected:
 	
-	Object(void) : reflect(false), enlightment(0){}
-	bool reflect;
+	Object(void) : enlightment(0){}
 	Enlightment *enlightment;
 	
 public:
 		
 	bool isReflecting(void) const{
-		return reflect;
+		return enlightment->isReflecting();
 	}
 	
-	void setReflectance(bool _reflect){
-		reflect = _reflect;
+	double getKR(void) const{
+		return enlightment->getKR();
+	}
+	
+	void setReflecting(bool _reflect, double _kr = 1.0){
+		enlightment->setReflecting(_reflect, _kr);
 	}
 		
 	Enlightment *getEnlightment(void) const {
@@ -43,7 +46,7 @@ public:
 		enlightment = _enlightment;
 	}
 	
-	Object(const Object& object) : reflect(object.reflect), enlightment(0) {}
+	Object(const Object& object) : enlightment(0) {}
 	
 	virtual ~Object(void) {}
 	
@@ -51,7 +54,6 @@ public:
 
 		delete(enlightment);
 		
-		reflect = object.reflect;
 		enlightment = object.enlightment->clone();
 		
 		return *this;

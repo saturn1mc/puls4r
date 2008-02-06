@@ -10,6 +10,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <exception>
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -36,7 +37,7 @@ public:
 	
 	~Vector(){}
 	
-	double get(int d) const{
+	double get(int d) const throw(std::exception){
 		switch(d){
 			case 0:
 				return x;
@@ -54,6 +55,8 @@ public:
 				return t;
 				break;
 		}
+		
+		throw new std::exception();
 	}
 	
 	double getX(void) const { return x; }
