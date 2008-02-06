@@ -30,6 +30,7 @@ public:
 	}
 	
 	Ray(const Ray& ray) : origin(new Point(ray.origin)), direction(new Vector(ray.direction)), t(ray.t) {}
+	Ray(const Ray* ray) : origin(new Point(ray->origin)), direction(new Vector(ray->direction)), t(ray->t) {}
 	
 	~Ray(){
 		delete(origin);

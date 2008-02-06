@@ -31,7 +31,9 @@ public:
 	Intersection(Point* _point, Vector* _norm, Object* _object, double _t) : point(new Point(_point)), norm(new Vector(_norm)), object(_object), t(_t) {
 		norm->normalize();
 	}
-	Intersection(const Intersection& intersection) : point(new Point(intersection.point)), norm(new Vector(intersection.norm)), object(object), t(intersection.t) {}
+	
+	Intersection(const Intersection& intersection) : point(new Point(intersection.point)), norm(new Vector(intersection.norm)), object(0), t(intersection.t) { object = intersection.object; }
+	Intersection(const Intersection* intersection) : point(new Point(intersection->point)), norm(new Vector(intersection->norm)), object(0), t(intersection->t) { object = intersection->object; }
 	
 	~Intersection(){
 		delete(point);
