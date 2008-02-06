@@ -28,7 +28,7 @@ void Scene::rayTrace(void){
 		
 		if(progress != done){
 			progress = done;
-			std::cout << "\t" << progress << "%";
+			std::cout << "\r\t" << progress << "%";
 			std::cout.flush();
 		}
 		
@@ -64,7 +64,10 @@ Color* Scene::colorAt(double l, double p){
 	
 	if(nearestIntersection != 0){
 		Color* color = nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNorm(), ray, lights);
-		shadow(color, nearestIntersection);
+		
+		if(!nearestIntersection->getObject()->isReflecting()){
+			shadow(color, nearestIntersection);
+		}
 		
 		Color *reflectedColor = new Color(reflection(color, ray, nearestIntersection));
 		
@@ -87,8 +90,8 @@ Color* Scene::antialiasedColor(double l, double p){
 	Color* finalColor = 0;
 	double aa = 1.0 / ((double)img->getAntialiasing());
 	
-	for(double l2 = (l - aa); l2 <= (l + aa); l2+=aa){
-		for(double p2 = (p - aa); p2 <= (p + aa); p2+=aa){
+	for(double l2 = (l - 1); l2 <= (l + 1); l2+=aa){
+		for(double p2 = (p - 1); p2 <= (p + 1); p2+=aa){
 			if(finalColor == 0){
 				finalColor = colorAt(l2, p2);
 			}
@@ -160,13 +163,21 @@ Intersection* Scene::getNearestIntersectionExcluding(Ray* ray, Object* object){
 void Scene::shadow(Color* color, Intersection* intersection){
 	for(std::list<Light* >::iterator iter = lights.begin(); iter != lights.end(); ++iter){
 		Vector* l = new Vector(intersection->getPoint(), (*iter)->getSource());
+		double distanceToLight = l->norm();
 		l->normalize();
 		
 		Ray* ray = new Ray(intersection->getPoint(), l);
 		Intersection* shadowIntersection = getNearestIntersectionExcluding(ray, intersection->getObject());
 		
 		if(shadowIntersection != 0 && (shadowIntersection->getObject() != intersection->getObject())){
-			color->darken(0.3);
+			
+			Vector *shadowVect = new Vector(intersection->getPoint(), shadowIntersection->getPoint());
+			
+			if(shadowVect->norm() <= distanceToLight){
+				color->darken(0.3);
+			}
+			
+			delete(shadowVect);
 		}
 		
 		delete(l);
@@ -179,7 +190,7 @@ void Scene::shadow(Color* color, Intersection* intersection){
 
 Color* Scene::reflection(Color* color, Ray* ray, Intersection* intersection){
 	if(intersection->getObject()->isReflecting()){
-		Vector *r = new Vector( (*ray->getDirection()) - ( ((*intersection->getNorm()) * 2.0) * ((*intersection->getNorm()) * ray->getDirection()) ) );
+		Vector* r = new Vector( (*ray->getDirection()) - ( ((*intersection->getNorm()) * 2.0) * ((*intersection->getNorm()) * ray->getDirection()) ) );
 		r->normalize();
 		
 		Ray* reflected = new Ray(intersection->getPoint(), r);
@@ -188,9 +199,17 @@ Color* Scene::reflection(Color* color, Ray* ray, Intersection* intersection){
 		delete(r);
 		
 		if(reflectionIntersection != 0){
-			return reflection(reflectionIntersection->getObject()->getEnlightment()->getColor(reflectionIntersection->getPoint(), reflectionIntersection->getNorm(), reflected, lights), reflected, reflectionIntersection);
+			
+			Color* reflectedColor = reflection(reflectionIntersection->getObject()->getEnlightment()->getColor(reflectionIntersection->getPoint(), reflectionIntersection->getNorm(), reflected, lights), reflected, reflectionIntersection);
+			
+			delete(reflectionIntersection);
+			delete(reflected);
+			
+			return reflectedColor;
 		}
 		else{
+			
+			delete(reflected);
 			return background;
 		}
 	}

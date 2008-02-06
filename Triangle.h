@@ -23,8 +23,6 @@ public:
 
 	Triangle(Enlightment* _enlightment, Point* a, Point* b, Point* c) : plan(0){
 		
-		reflect = false;
-		
 		enlightment = _enlightment->clone();
 		points[0] = new Point(a);
 		points[1] = new Point(b);
@@ -37,7 +35,7 @@ public:
 		norm->normalize();
 		double d = - (norm->get(0) * points[0]->getX())  - (norm->get(1) * points[0]->getY()) - (norm->get(2) * points[0]->getZ());
 	
-		plan = new Plan(enlightment, norm, d, true);
+		plan = new Plan(enlightment, norm, d, false);
 		
 		delete(AB);
 		delete(AC);
@@ -45,7 +43,6 @@ public:
 	}
 	
 	Triangle(const Triangle& triangle) : plan(0){
-		reflect = triangle.reflect;
 		
 		enlightment = triangle.enlightment->clone();
 		points[0] = new Point(triangle.points[0]);
@@ -56,7 +53,6 @@ public:
 	}
 	
 	Triangle(const Triangle* triangle) : plan(0){
-		reflect = triangle->reflect;
 		
 		enlightment = triangle->enlightment->clone();
 		points[0] = new Point(triangle->points[0]);
@@ -91,8 +87,6 @@ public:
 		delete(points[0]);
 		delete(points[1]);
 		delete(points[2]);
-		
-		reflect = triangle.reflect;
 		
 		enlightment = triangle.enlightment->clone();
 		points[0] = new Point(triangle.points[0]);

@@ -51,6 +51,9 @@ public:
 		delete(od);
 		delete(os);
 		
+		reflect = phong.reflect;
+		kr = phong.kr;
+		
 		oa = new Color(phong.oa);
 		od = new Color(phong.od);
 		os = new Color(phong.os);

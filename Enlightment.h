@@ -24,7 +24,10 @@ class Enlightment{
 	
 protected:
 	
-	Enlightment(void) {}
+	bool reflect;
+	double kr;
+	
+	Enlightment(void) : reflect(false), kr(0.0){}
 	
 	Vector* getV(Ray* ray) const{
 		Vector* v = new Vector((*ray->getDirection()) * -1.0);
@@ -48,10 +51,26 @@ protected:
 	}
 	
 public:
-	Enlightment(Enlightment &enlightment) {}
+	Enlightment(Enlightment &enlightment) : reflect(enlightment.reflect), kr(enlightment.kr) {}
 	virtual ~Enlightment(void) {}
 	virtual Color* getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const = 0;
 	virtual Enlightment *clone(void) = 0;
+	
+	bool isReflecting(void) const { return reflect; }
+	double getKR(void) const { return kr; }
+	
+	void setReflecting(bool _reflect, double _kr = 1.0) { 
+		
+		if(kr < 0){
+			kr = 0;
+		}
+		
+		if(kr > 1.0){
+			kr = 1.0;
+		}
+		
+		reflect = _reflect; kr = _kr; 
+	}
 };
 
 #endif //ENLIGHTMENT_H
