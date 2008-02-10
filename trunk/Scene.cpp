@@ -115,10 +115,14 @@ Intersection* Scene::getNearestIntersection(Ray* ray){
 		
 		if(candidate != 0){
 			if(nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()){
-				if(nearestIntersection!=0){
+				if(nearestIntersection != 0){
 					delete(nearestIntersection);
 				}
+				
 				nearestIntersection = candidate;
+			}
+			else{
+				delete(candidate);
 			}
 		}
 	}
@@ -138,12 +142,14 @@ Intersection* Scene::getNearestIntersectionExcluding(Ray* ray, Object* object){
 		
 			if(candidate != 0){
 				if(nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()){
-					
-					if(nearestIntersection!=0){
+					if(nearestIntersection != 0){
 						delete(nearestIntersection);
 					}
 					
 					nearestIntersection = candidate;
+				}
+				else{
+					delete(candidate);
 				}
 			}
 		
@@ -214,10 +220,11 @@ Color* Scene::reflection(Ray* ray, Intersection* intersection){
 		}
 		else{
 			*color = objectColor;
+			shadow(color, intersection);
 		}
 		
 		delete(objectColor);
 	}
-
+	
 	return color;
 }

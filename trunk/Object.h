@@ -38,11 +38,11 @@ public:
 		enlightment->setReflecting(_reflect, _kr);
 	}
 		
-	Enlightment *getEnlightment(void) const {
+	Enlightment* getEnlightment(void) const {
 		return enlightment;
 	}
 	
-	void setEnlightment(Enlightment *_enlightment){
+	void setEnlightment(Enlightment* _enlightment){
 		enlightment = _enlightment;
 	}
 	
@@ -59,11 +59,11 @@ public:
 		return *this;
 	}
 	
-	virtual Intersection *intersection(Ray *ray) = 0;
+	virtual Intersection* intersection(Ray* ray) = 0;
 	virtual std::string toString(void) const = 0;
 };
 
-template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Object *obj){
+template <class charT, class traits> std::basic_ostream<charT,traits>& operator<<(std::basic_ostream<charT,traits>& strm, const Object* obj){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream

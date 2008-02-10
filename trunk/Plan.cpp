@@ -25,12 +25,12 @@ Intersection* Plan::intersection(Ray* ray){
 			
 			ray->setT(t);
 		
-			Point *m = new Point(	ray->getOrigin()->getX() + (ray->getDirection()->getX() * ray->getT()),
+			Point* m = new Point(	ray->getOrigin()->getX() + (ray->getDirection()->getX() * ray->getT()),
 									ray->getOrigin()->getY() + (ray->getDirection()->getY() * ray->getT()),
 									ray->getOrigin()->getZ() + (ray->getDirection()->getZ() * ray->getT())
 								);
 		
-			Intersection *intersection = new Intersection(m, norm, this, ray->getT());
+			Intersection* intersection = new Intersection(m, norm, this, ray->getT());
 			
 			delete(m);
 			
