@@ -81,6 +81,19 @@ public:
 	int getAntialiasing(void) const {return antialiasing;}
 	char* getFilename(void) const {return filename;}
 	
+	void setFilename(char* _filename){
+		free(filename);
+		
+		MALLOC(filename, char, strlen(_filename)+1);
+		strcpy(filename, _filename);
+	}
+	
+	void reset(void){
+		free(pic);
+		MALLOC(pic, unsigned char, w*h*3);
+		writingPos = 0;
+	}
+	
 	static void putshort(FILE* file, int i);
 	static void putint(FILE* file, int i);
 	static void writeBMP24(FILE* file, unsigned char* pic24, int w, int h);

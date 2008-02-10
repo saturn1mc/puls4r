@@ -65,8 +65,12 @@ public:
 	
 	void setImage(Image* _img){
 		delete(img);
-		
 		img = new Image(_img);
+	}
+	
+	void setObserver(Observer* _observer){
+		delete(observer);
+		observer = new Observer(_observer);
 	}
 	
 	void addObject(Object* obj);

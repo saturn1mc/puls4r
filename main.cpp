@@ -30,8 +30,10 @@ void runTestScene(){
 	Color* orange = new Color(1.0, 0.3, 0.0);
 	Color* purple = new Color(1.0, 0.0, 1.0);
 	
-	Observer* obs = new Observer(new Point(40.0, 10.0, 10.0), new Point(0.0, 0.0, 0.0), M_PI/4.0);
-	Scene* scene = new Scene(obs, new Image("test.bmp", 1900, 1200, 1), black);
+	
+	Point* eye = new Point(0.0, 10.0, 30.0);
+	Observer* obs = new Observer(eye, new Point(0.0, 0.0, 0.0), M_PI/4.0);
+	Scene* scene = new Scene(obs, new Image("test.bmp", 400, 300, 1), black);
 	
 	scene->addLight(new Light(new Point(20.0, 15.0, 20.0), white));
 	
@@ -81,7 +83,31 @@ void runTestScene(){
 	
 	cout << scene << endl;
 	
-	scene->rayTrace();
+	
+	double nbImages = 20;
+	double rotation = M_PI * 2.0;
+	double delta = rotation / nbImages;
+	
+	Matrix* rotateY = new Matrix();
+	rotateY->loadRotateY(delta);
+	
+	for(int i = 0; i<nbImages; i++){
+	
+		cout << "Generating image " << (i+1) << "/" << nbImages << endl;
+	
+		char* filename = (char*) malloc(strlen("img") + 4);
+		sprintf(filename, "img%d.bmp", i);
+		scene->getImage()->setFilename(filename);
+		scene->getImage()->reset();
+		scene->rayTrace();
+		
+		*eye = (*rotateY) * eye ;
+		delete(obs);
+		obs = new Observer(eye, new Point(0.0, 0.0, 0.0), M_PI/4.0);
+		scene->setObserver(obs);
+		
+		cout << "Image " << (i+1) << "/" << nbImages << " generated" << endl;
+	}
 }
 
 int main (int argc, char*  const argv[]) {
