@@ -30,7 +30,6 @@ void runTestScene(){
 	Color* orange = new Color(1.0, 0.3, 0.0);
 	Color* purple = new Color(1.0, 0.0, 1.0);
 	
-	
 	Point* eye = new Point(0.0, 10.0, 30.0);
 	Observer* obs = new Observer(eye, new Point(0.0, 0.0, 0.0), M_PI/4.0);
 	Scene* scene = new Scene(obs, new Image("test.bmp", 400, 300, 1), black);
@@ -58,7 +57,7 @@ void runTestScene(){
 	scene->addObject(sphere4);
 
 	Plan* plan1 = new Plan(new Phong(red), new Vector(1, 0, 0), 20.0, false);
-	plan1->setReflecting(true, 1.0);
+	plan1->setReflecting(false, 0);
 	scene->addObject(plan1);
 	
 	Plan* plan2 = new Plan(new Phong(green), new Vector(0, 1, 0), 4.0, false);
@@ -81,10 +80,13 @@ void runTestScene(){
 	plan6->setReflecting(false);
 	scene->addObject(plan6);
 	
+	Triangle* triangle = new Triangle(new Linear(orange), new Point(0,0,0), new Point(0,100, 0), new Point(0,0, 100));
+	triangle->setReflecting(false);
+//	scene->addObject(triangle);
+	
 	cout << scene << endl;
 	
-	
-	double nbImages = 20;
+	double nbImages = 50;
 	double rotation = M_PI * 2.0;
 	double delta = rotation / nbImages;
 	
