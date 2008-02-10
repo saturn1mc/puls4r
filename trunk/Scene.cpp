@@ -63,16 +63,13 @@ Color* Scene::colorAt(double l, double p){
 	Intersection* nearestIntersection = getNearestIntersection(ray);
 	
 	if(nearestIntersection != 0){
-		Color* color = nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNorm(), ray, lights);
-		Color *reflectedColor = reflection(color, ray, nearestIntersection);
-		shadow(reflectedColor, nearestIntersection);
+		Color* color = reflection(ray, nearestIntersection);
 		
-		delete(color);
 		delete(nearestIntersection);
 		delete(ray);
 		delete(target);
 		
-		return reflectedColor;
+		return color;
 	}
 	else{
 		delete(ray);
@@ -184,35 +181,43 @@ void Scene::shadow(Color* color, Intersection* intersection){
 	color->normalize();
 }
 
-Color* Scene::reflection(Color* color, Ray* ray, Intersection* intersection){
+Color* Scene::reflection(Ray* ray, Intersection* intersection){
 	
-	Color* reflectedColor = 0;
-	Ray* reflected = new Ray(ray);
-	Intersection* reflectionIntersection = new Intersection(intersection);
+	Color* color = new Color();
 	
-	while(reflectionIntersection->getObject()->isReflecting()){
-		Vector* r = new Vector( (*reflected->getDirection()) - ( ((*reflectionIntersection->getNorm()) * 2.0) * ((*reflectionIntersection->getNorm()) * reflected->getDirection()) ) );
-		r->normalize();
-		
-		delete(reflected);
-		reflected = new Ray(reflectionIntersection->getPoint(), r);
-		delete(r);
-		
-		Object *toAvoid = reflectionIntersection->getObject();
-		delete(reflectionIntersection);
-		reflectionIntersection = getNearestIntersectionExcluding(reflected, toAvoid);
-	}
-	
-	if(reflectionIntersection !=0){
-		reflectedColor = reflectionIntersection->getObject()->getEnlightment()->getColor(reflectionIntersection->getPoint(), reflectionIntersection->getNorm(), reflected, lights);
-		shadow(color, reflectionIntersection);
-		delete(reflectionIntersection);
+	if(intersection == 0){
+		*color = background;
 	}
 	else{
-		reflectedColor = new Color(background);
+		
+		Color* objectColor = intersection->getObject()->getEnlightment()->getColor(intersection->getPoint(), intersection->getNorm(), ray, lights);
+		
+		if(intersection->getObject()->isReflecting()){
+			
+			Vector *reflectDirection = new Vector( (*ray->getDirection()) - ( ((*intersection->getNorm()) * 2.0) * ((*intersection->getNorm()) * ray->getDirection()) ) );
+			reflectDirection->normalize();
+			
+			Ray* reflected = new Ray(intersection->getPoint(), reflectDirection);
+			
+			Object *currentObject = intersection->getObject();
+			
+			Intersection* reflectionIntersection = getNearestIntersectionExcluding(reflected, currentObject);
+			
+			Color* reflectedColor = reflection(ray, reflectionIntersection);
+			
+			*color = ((*objectColor) * (1.0 - currentObject->getKR())) + ((*reflectedColor) * currentObject->getKR());
+			
+			delete(reflectDirection);
+			delete(reflected);
+			delete(reflectionIntersection);
+			delete(reflectedColor);
+		}
+		else{
+			*color = objectColor;
+		}
+		
+		delete(objectColor);
 	}
-	
-	delete(reflected);
 
-	return reflectedColor;
+	return color;
 }
