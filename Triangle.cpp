@@ -17,9 +17,9 @@ Intersection* Triangle::intersection(Ray* ray){
 		return 0;
 	}
 	else{
-		Point* b = new Point(*getPoint(1) - getPoint(0));
-		Point* c = new Point(*getPoint(2) - getPoint(0));
-		Point* p = new Point(*intersection->getPoint() - getPoint(0));
+		Point* b = new Point(*points[1] - points[0]);
+		Point* c = new Point(*points[2] - points[0]);
+		Point* p = new Point(*intersection->getPoint() - points[0]);
 		
 		double u = ((p->getY() * c->getX()) - (p->getX() * c->getY())) / ((b->getY() * c->getX()) - (b->getX() * c->getY()));
 		double v = ((p->getY() * b->getX()) - (p->getX() * b->getY())) / ((c->getY() * b->getX()) - (c->getX() * b->getY()));
