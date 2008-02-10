@@ -39,7 +39,7 @@ private:
 	Color* colorAt(double l, double p);
 	Color* antialiasedColor(double l, double p);
 	void shadow(Color* color, Intersection* intersection);
-	Color* reflection(Color* color, Ray* ray, Intersection* intersection);
+	Color* reflection(Ray* ray, Intersection* intersection);
 	
 public:
 	
