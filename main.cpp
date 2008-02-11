@@ -152,8 +152,6 @@ Scene* createTestScene(){
 	
 	delete(tempVector);
 	
-	cout << scene << endl;
-	
 	delete(white);
 	delete(black);
 	delete(red);
@@ -200,21 +198,23 @@ void viewY360(Scene* scene){
 	
 		cout << "Generating image " << (i+1) << "/" << images << endl;
 	
+		//Changing filename
 		char* filename = (char*) malloc(strlen("images/img000.bmp") + 1);
 		sprintf(filename, "images/img%d.bmp", i+1);
 		scene->getImage()->reset();
 		scene->getImage()->setFilename(filename);
+		free(filename);
+		
+		//Tracing new scene
 		scene->rayTrace();
 		
-		*eye = (*rotateY) * eye ;
-		
+		//Observer rotation
+		*eye = (*rotateY) * eye;
 		delete(obs);
 		obs = new Observer(eye, new Point(0.0, 0.0, 0.0), M_PI/4.0);
 		scene->setObserver(obs);
 		
 		cout << "Image " << (i+1) << "/" << images << " generated" << endl;
-		
-		free(filename);
 	}
 	
 	cout << "Generating AVI" << endl;
