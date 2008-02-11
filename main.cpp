@@ -30,38 +30,38 @@ void runTestScene(){
 	Color* orange = new Color(1.0, 0.3, 0.0);
 	Color* purple = new Color(1.0, 0.0, 1.0);
 	
-	Point* eye = new Point(0.0, 10.0, 30.0);
+	Point* eye = new Point(0.0, 10.0, 45.0);
 	Observer* obs = new Observer(eye, new Point(0.0, 0.0, 0.0), M_PI/4.0);
 	Scene* scene = new Scene(obs, new Image("test.bmp", 400, 300, 1), black);
 	
 	scene->addLight(new Light(new Point(20.0, 15.0, 20.0), white));
 	
 	Sphere* reflectingSphere = new Sphere(new Phong(white), new Point (-10.0, 10, 0), 3.0);
-	reflectingSphere->setReflecting(false);
+	reflectingSphere->setReflecting(true, 0.5);
 	scene->addObject(reflectingSphere);
 	
 	Sphere* sphere1 = new Sphere(new Phong(red), new Point (0, 0, 0), 2.0);
-	sphere1->setReflecting(false, 0.5);
+	sphere1->setReflecting(false);
 	scene->addObject(sphere1);
 	
 	Sphere* sphere2 = new Sphere(new Phong(green), new Point (0, 4, 0), 2.0);
-	sphere2->setReflecting(false, 0.5);
+	sphere2->setReflecting(false);
 	scene->addObject(sphere2);
 	
 	Sphere* sphere3 = new Sphere(new Phong(blue), new Point (4, 0, 0), 2.0);
-	sphere3->setReflecting(false, 0.5);
+	sphere3->setReflecting(false);
 	scene->addObject(sphere3);
 	
 	Sphere* sphere4 = new Sphere(new Phong(yellow), new Point (0, 0, 4), 2.0);
-	sphere4->setReflecting(false, 0.5);
+	sphere4->setReflecting(false);
 	scene->addObject(sphere4);
 
 	Plan* plan1 = new Plan(new Phong(red), new Vector(1, 0, 0), 50.0, false);
-	plan1->setReflecting(false, 0);
+	plan1->setReflecting(false);
 	scene->addObject(plan1);
 	
-	Plan* plan2 = new Plan(new Phong(green), new Vector(0, 1, 0), 10.0, false);
-	plan2->setReflecting(false);
+	Plan* plan2 = new Plan(new Phong(green), new Vector(0, 1, 0), 4.0, false);
+	plan2->setReflecting(true, 1.0);
 	scene->addObject(plan2);
 	
 	Plan* plan3 = new Plan(new Phong(blue), new Vector(0, 0, 1), 50.0, false);
@@ -86,7 +86,7 @@ void runTestScene(){
 	
 	cout << scene << endl;
 	
-	double images = 20;
+	double images = 200.0;
 	double rotation = M_PI * 2.0;
 	double delta = rotation / images;
 	
@@ -111,13 +111,26 @@ void runTestScene(){
 		scene->setObserver(obs);
 		
 		cout << "Image " << (i+1) << "/" << images << " generated" << endl;
+		
+		free(filename);
 	}
 	
 	cout << "Generating AVI" << endl;
 	
 	char* cmd = (char*)malloc(strlen("java -jar BmpSeq.jar -CMD images/img000.bmp images/img000.bmp 00 images/seq.avi") + 1);
-	sprintf(cmd, "java -jar BmpSeq.jar -CMD images/img%d.bmp images/img%d.bmp %d images/seq.avi", 0, images-1, 30);
+	sprintf(cmd, "java -jar BmpSeq.jar -CMD images/img%d.bmp images/img%d.bmp %d images/seq.avi", 0, (int)images-1, 30);
 	system(cmd);
+	
+	free(cmd);
+	
+	delete(white);
+	delete(black);
+	delete(red);
+	delete(green);
+	delete(blue);
+	delete(yellow);
+	delete(orange);
+	delete(purple);
 }
 
 int main (int argc, char*  const argv[]) {
