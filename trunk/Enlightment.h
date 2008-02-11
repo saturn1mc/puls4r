@@ -27,7 +27,11 @@ protected:
 	bool reflect;
 	double kr;
 	
-	Enlightment(void) : reflect(false), kr(0.0){}
+	bool refract;
+	double n;
+	double kt;
+	
+	Enlightment(void) : reflect(false), kr(1.0), refract(false), n(1.0), kt(1.0){}
 	
 	Vector* getV(Ray* ray) const{
 		Vector* v = new Vector((*ray->getDirection()) * -1.0);
@@ -51,7 +55,7 @@ protected:
 	}
 	
 public:
-	Enlightment(Enlightment &enlightment) : reflect(enlightment.reflect), kr(enlightment.kr) {}
+	Enlightment(Enlightment &enlightment) : reflect(enlightment.reflect), kr(enlightment.kr), refract(enlightment.refract), n(enlightment.n), kt(enlightment.kt) {}
 	virtual ~Enlightment(void) {}
 	virtual Color* getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const = 0;
 	virtual Enlightment *clone(void) = 0;
@@ -61,6 +65,9 @@ public:
 	
 	void setReflecting(bool _reflect, double _kr = 1.0) { 
 		
+		reflect = _reflect; 
+		kr = _kr; 
+		
 		if(kr < 0){
 			kr = 0;
 		}
@@ -68,8 +75,32 @@ public:
 		if(kr > 1.0){
 			kr = 1.0;
 		}
+	}
+	
+	bool isRefracting(void) const { return refract; }
+	double getN(void) const { return n; }
+	double getKT(void) const { return kt; }
+	
+	void setRefracting(bool _refract, double _n, double _kt = 1.0){
+		refract = _refract; 
+		n = _n;
+		kt = _kt;
 		
-		reflect = _reflect; kr = _kr; 
+		if(n < 0){
+			n = 0;
+		}
+		
+		if(n > 1.0){
+			n = 1.0;
+		}
+		
+		if(kt < 0){
+			kt = 0;
+		}
+		
+		if(kt > 1.0){
+			kt = 1.0;
+		}
 	}
 };
 
