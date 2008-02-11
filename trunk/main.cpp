@@ -56,11 +56,11 @@ void runTestScene(){
 	sphere4->setReflecting(false, 0.5);
 	scene->addObject(sphere4);
 
-	Plan* plan1 = new Plan(new Phong(red), new Vector(1, 0, 0), 20.0, false);
+	Plan* plan1 = new Plan(new Phong(red), new Vector(1, 0, 0), 50.0, false);
 	plan1->setReflecting(false, 0);
 	scene->addObject(plan1);
 	
-	Plan* plan2 = new Plan(new Phong(green), new Vector(0, 1, 0), 4.0, false);
+	Plan* plan2 = new Plan(new Phong(green), new Vector(0, 1, 0), 10.0, false);
 	plan2->setReflecting(false);
 	scene->addObject(plan2);
 	
@@ -72,11 +72,11 @@ void runTestScene(){
 	plan5->setReflecting(false);
 	scene->addObject(plan5);
 	
-	Plan* plan4 = new Plan(new Phong(orange), new Vector(0, -1, 0), 20.0, false);
+	Plan* plan4 = new Plan(new Phong(orange), new Vector(0, -1, 0), 50.0, false);
 	plan4->setReflecting(false);
 	scene->addObject(plan4);
 	
-	Plan* plan6 = new Plan(new Phong(yellow), new Vector(0, 0, -1), 60.0, false);
+	Plan* plan6 = new Plan(new Phong(yellow), new Vector(0, 0, -1), 50.0, false);
 	plan6->setReflecting(false);
 	scene->addObject(plan6);
 	
@@ -86,19 +86,21 @@ void runTestScene(){
 	
 	cout << scene << endl;
 	
-	double nbImages = 50;
+	double images = 20;
 	double rotation = M_PI * 2.0;
-	double delta = rotation / nbImages;
+	double delta = rotation / images;
 	
 	Matrix* rotateY = new Matrix();
 	rotateY->loadRotateY(delta);
 	
-	for(int i = 0; i<nbImages; i++){
+	system("mkdir images");
 	
-		cout << "Generating image " << (i+1) << "/" << nbImages << endl;
+	for(int i = 0; i<images; i++){
 	
-		char* filename = (char*) malloc(strlen("img") + 4);
-		sprintf(filename, "img%d.bmp", i);
+		cout << "Generating image " << (i+1) << "/" << images << endl;
+	
+		char* filename = (char*) malloc(strlen("images/img000.bmp") + 1);
+		sprintf(filename, "images/img%d.bmp", i);
 		scene->getImage()->setFilename(filename);
 		scene->getImage()->reset();
 		scene->rayTrace();
@@ -108,8 +110,14 @@ void runTestScene(){
 		obs = new Observer(eye, new Point(0.0, 0.0, 0.0), M_PI/4.0);
 		scene->setObserver(obs);
 		
-		cout << "Image " << (i+1) << "/" << nbImages << " generated" << endl;
+		cout << "Image " << (i+1) << "/" << images << " generated" << endl;
 	}
+	
+	cout << "Generating AVI" << endl;
+	
+	char* cmd = (char*)malloc(strlen("java -jar BmpSeq.jar -CMD images/img000.bmp images/img000.bmp 00 images/seq.avi") + 1);
+	sprintf(cmd, "java -jar BmpSeq.jar -CMD images/img%d.bmp images/img%d.bmp %d images/seq.avi", 0, images-1, 30);
+	system(cmd);
 }
 
 int main (int argc, char*  const argv[]) {
