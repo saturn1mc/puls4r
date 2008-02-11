@@ -228,3 +228,8 @@ Color* Scene::reflection(Ray* ray, Intersection* intersection){
 	
 	return color;
 }
+
+Color* Scene::refraction(Ray* ray, Intersection* intersection){
+	//TODO
+	return 0;
+}

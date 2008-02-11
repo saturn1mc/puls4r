@@ -20,7 +20,9 @@
 
 using namespace std;
 
-void runTestScene(){
+Scene* createTestScene(){
+	
+	/* Colors */
 	Color* white = new Color(1.0, 1.0, 1.0);
 	Color* black = new Color(0.0, 0.0, 0.0);
 	Color* red = new Color(1.0, 0.0, 0.0);
@@ -30,63 +32,162 @@ void runTestScene(){
 	Color* orange = new Color(1.0, 0.3, 0.0);
 	Color* purple = new Color(1.0, 0.0, 1.0);
 	
+	/* Enlightments */
+	Enlightment* enl1 = new Phong(white);
+	Enlightment* enl2 = new Phong(red);
+	Enlightment* enl3 = new Phong(green);
+	Enlightment* enl4 = new Phong(blue);
+	Enlightment* enl5 = new Phong(yellow);
+	Enlightment* enl6 = new Phong(purple);
+	Enlightment* enl7 = new Phong(orange);
+	
+	/* Points */
+	Point* tempPoint;
 	Point* eye = new Point(0.0, 10.0, 45.0);
-	Observer* obs = new Observer(eye, new Point(0.0, 0.0, 0.0), M_PI/4.0);
-	Scene* scene = new Scene(obs, new Image("test.bmp", 400, 300, 1), black);
+	Point* sight = new Point(0.0, 0.0, 0.0);
+	Point* lightPos = new Point(20.0, 15.0, 20.0);
 	
-	scene->addLight(new Light(new Point(20.0, 15.0, 20.0), white));
+	/* Vectors */
+	Vector* tempVector;
 	
-	Sphere* reflectingSphere = new Sphere(new Phong(white), new Point (-10.0, 10, 0), 3.0);
+	/* Image */
+	Image* image = new Image("test.bmp", 400, 300, 1);
+	
+	/* Observer */
+	Observer* obs = new Observer(eye, sight, M_PI/4.0);
+	
+	/* Scene */
+	Scene* scene = new Scene(obs, image, black);
+	
+	//Lights
+	Light* light1 = new Light(lightPos, white);
+	scene->addLight(light1);
+	
+	//Objects
+	tempPoint = new Point (-10.0, 10, 0);
+	
+	Sphere* reflectingSphere = new Sphere(enl1, tempPoint, 3.0);
 	reflectingSphere->setReflecting(true, 0.5);
 	scene->addObject(reflectingSphere);
 	
-	Sphere* sphere1 = new Sphere(new Phong(red), new Point (0, 0, 0), 2.0);
+	delete(tempPoint);
+	
+	tempPoint = new Point (0, 0, 0);
+	
+	Sphere* sphere1 = new Sphere(enl2, tempPoint, 2.0);
 	sphere1->setReflecting(false);
 	scene->addObject(sphere1);
 	
-	Sphere* sphere2 = new Sphere(new Phong(green), new Point (0, 4, 0), 2.0);
+	delete(tempPoint);
+	
+	tempPoint = new Point (0, 4, 0);
+	
+	Sphere* sphere2 = new Sphere(enl3, tempPoint, 2.0);
 	sphere2->setReflecting(false);
 	scene->addObject(sphere2);
 	
-	Sphere* sphere3 = new Sphere(new Phong(blue), new Point (4, 0, 0), 2.0);
+	delete(tempPoint);
+	
+	tempPoint = new Point (4, 0, 0);
+	
+	Sphere* sphere3 = new Sphere(enl4, tempPoint, 2.0);
 	sphere3->setReflecting(false);
 	scene->addObject(sphere3);
 	
-	Sphere* sphere4 = new Sphere(new Phong(yellow), new Point (0, 0, 4), 2.0);
+	delete(tempPoint);
+	
+	tempPoint = new Point (0, 0, 4);
+	
+	Sphere* sphere4 = new Sphere(enl5, tempPoint, 2.0);
 	sphere4->setReflecting(false);
 	scene->addObject(sphere4);
-
-	Plan* plan1 = new Plan(new Phong(red), new Vector(1, 0, 0), 50.0, false);
+	
+	delete(tempPoint);
+	
+	tempVector = new Vector(1, 0, 0);
+	
+	Plan* plan1 = new Plan(enl2, tempVector, 50.0, false);
 	plan1->setReflecting(false);
 	scene->addObject(plan1);
 	
-	Plan* plan2 = new Plan(new Phong(green), new Vector(0, 1, 0), 4.0, false);
+	delete(tempVector);
+	
+	tempVector = new Vector(0, 1, 0);
+	
+	Plan* plan2 = new Plan(enl3, tempVector, 4.0, false);
 	plan2->setReflecting(true, 1.0);
 	scene->addObject(plan2);
 	
-	Plan* plan3 = new Plan(new Phong(blue), new Vector(0, 0, 1), 50.0, false);
+	delete(tempVector);
+	
+	tempVector = new Vector(0, 0, 1);
+	
+	Plan* plan3 = new Plan(enl4, tempVector, 50.0, false);
 	plan3->setReflecting(false);
 	scene->addObject(plan3);
 	
-	Plan* plan5 = new Plan(new Phong(purple), new Vector(-1, 0, 0), 50.0, false);
+	delete(tempVector);
+	
+	tempVector = new Vector(-1, 0, 0);
+	
+	Plan* plan5 = new Plan(enl6, tempVector, 50.0, false);
 	plan5->setReflecting(false);
 	scene->addObject(plan5);
 	
-	Plan* plan4 = new Plan(new Phong(orange), new Vector(0, -1, 0), 50.0, false);
+	delete(tempVector);
+	
+	tempVector = new Vector(0, -1, 0);
+	
+	Plan* plan4 = new Plan(enl7, tempVector, 50.0, false);
 	plan4->setReflecting(false);
 	scene->addObject(plan4);
 	
-	Plan* plan6 = new Plan(new Phong(yellow), new Vector(0, 0, -1), 50.0, false);
+	delete(tempVector);
+	
+	tempVector = new Vector(0, 0, -1);
+	
+	Plan* plan6 = new Plan(enl5, tempVector, 50.0, false);
 	plan6->setReflecting(false);
 	scene->addObject(plan6);
 	
-	Triangle* triangle = new Triangle(new Linear(orange), new Point(0,0,0), new Point(0,100, 0), new Point(0,0, 100));
-	triangle->setReflecting(false);
-//	scene->addObject(triangle);
+	delete(tempVector);
 	
 	cout << scene << endl;
 	
-	double images = 200.0;
+	delete(white);
+	delete(black);
+	delete(red);
+	delete(green);
+	delete(blue);
+	delete(yellow);
+	delete(orange);
+	delete(purple);
+	
+	delete(enl1);
+	delete(enl2);
+	delete(enl3);
+	delete(enl4);
+	delete(enl5);
+	delete(enl6);
+	delete(enl7);
+	
+	delete(eye);
+	delete(sight);
+	delete(lightPos);
+	
+	delete(image);
+	
+	delete(obs);
+	
+	return scene;
+}
+
+void viewY360(Scene* scene){
+	
+	Observer* obs = new Observer(scene->getObserver());
+	Point* eye = new Point(scene->getObserver()->getEye());
+	
+	double images = 4;
 	double rotation = M_PI * 2.0;
 	double delta = rotation / images;
 	
@@ -100,12 +201,13 @@ void runTestScene(){
 		cout << "Generating image " << (i+1) << "/" << images << endl;
 	
 		char* filename = (char*) malloc(strlen("images/img000.bmp") + 1);
-		sprintf(filename, "images/img%d.bmp", i);
-		scene->getImage()->setFilename(filename);
+		sprintf(filename, "images/img%d.bmp", i+1);
 		scene->getImage()->reset();
+		scene->getImage()->setFilename(filename);
 		scene->rayTrace();
 		
 		*eye = (*rotateY) * eye ;
+		
 		delete(obs);
 		obs = new Observer(eye, new Point(0.0, 0.0, 0.0), M_PI/4.0);
 		scene->setObserver(obs);
@@ -118,21 +220,18 @@ void runTestScene(){
 	cout << "Generating AVI" << endl;
 	
 	char* cmd = (char*)malloc(strlen("java -jar BmpSeq.jar -CMD images/img000.bmp images/img000.bmp 00 images/seq.avi") + 1);
-	sprintf(cmd, "java -jar BmpSeq.jar -CMD images/img%d.bmp images/img%d.bmp %d images/seq.avi", 0, (int)images-1, 30);
+	sprintf(cmd, "java -jar BmpSeq.jar -CMD images/img%d.bmp images/img%d.bmp %d images/seq.avi", 1, (int)images, 30);
 	system(cmd);
 	
 	free(cmd);
-	
-	delete(white);
-	delete(black);
-	delete(red);
-	delete(green);
-	delete(blue);
-	delete(yellow);
-	delete(orange);
-	delete(purple);
+	delete(obs);
+	delete(eye);
+	delete(rotateY);
 }
 
 int main (int argc, char*  const argv[]) {
-	runTestScene();
+	Scene* scene = createTestScene();
+	viewY360(scene);
+	
+	delete(scene);
 }

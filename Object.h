@@ -34,7 +34,19 @@ public:
 		return enlightment->getKR();
 	}
 	
+	bool isRefracting(void) const{
+		return enlightment->isRefracting();
+	}
+	
+	double getKT(void) const{
+		return enlightment->getKT();
+	}
+	
 	void setReflecting(bool _reflect, double _kr = 1.0){
+		enlightment->setReflecting(_reflect, _kr);
+	}
+	
+	void setRefracting(bool _reflect, double _kr = 1.0){
 		enlightment->setReflecting(_reflect, _kr);
 	}
 		

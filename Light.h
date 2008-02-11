@@ -24,8 +24,8 @@ private:
 	
 public:
 	Light(Point* _source, Color* _color) : source(new Point(_source)), color(new Color(_color)) {}
-	
 	Light(const Light& light) : source(new Point(light.source)), color(new Color(light.color)) {}
+	Light(const Light* light) : source(new Point(light->source)), color(new Color(light->color)) {}
 	
 	~Light(){
 		delete(source);
