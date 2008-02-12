@@ -81,17 +81,13 @@ public:
 	double getN(void) const { return n; }
 	double getKT(void) const { return kt; }
 	
-	void setRefracting(bool _refract, double _n, double _kt = 1.0){
+	void setRefracting(bool _refract, double _n, double _kt){
 		refract = _refract; 
 		n = _n;
 		kt = _kt;
 		
 		if(n < 0){
 			n = 0;
-		}
-		
-		if(n > 1.0){
-			n = 1.0;
 		}
 		
 		if(kt < 0){

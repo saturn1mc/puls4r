@@ -143,6 +143,14 @@ public:
 		
 		return res;
 	}
+	
+	bool equals(Point& a){
+		return (x == a.x && y == a.y && z == a.z);
+	}
+	
+	bool equals(Point* a){
+		return (x == a->x && y == a->y && z == a->z);
+	}
 };
 
 template <class charT, class traits> std::basic_ostream<charT,traits>& operator<<(std::basic_ostream<charT,traits>& strm, const Point& p){

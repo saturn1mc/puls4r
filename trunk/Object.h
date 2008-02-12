@@ -38,6 +38,10 @@ public:
 		return enlightment->isRefracting();
 	}
 	
+	double getN(void) const{
+		return enlightment->getN();
+	}
+	
 	double getKT(void) const{
 		return enlightment->getKT();
 	}
@@ -46,8 +50,8 @@ public:
 		enlightment->setReflecting(_reflect, _kr);
 	}
 	
-	void setRefracting(bool _reflect, double _kr = 1.0){
-		enlightment->setReflecting(_reflect, _kr);
+	void setRefracting(bool _refract, double _n, double _kt){
+		enlightment->setRefracting(_refract, _n, _kt);
 	}
 		
 	Enlightment* getEnlightment(void) const {
