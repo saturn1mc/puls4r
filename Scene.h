@@ -35,12 +35,14 @@ private:
 	
 	Intersection* getNearestIntersection(Ray* ray);
 	Intersection* getNearestIntersectionExcluding(Ray* ray, Object* object);
+	Intersection* getNearestIntersectionExcluding(Ray* ray, Point* point);
 	double calcFocal(void) const;
 	Color* colorAt(double l, double p);
 	Color* antialiasedColor(double l, double p);
 	void shadow(Color* color, Intersection* intersection);
 	Color* reflection(Ray* ray, Intersection* intersection);
-	Color* refraction(Ray* ray, Intersection* intersection);
+	Ray* getRefractedRay(Ray* ray, Intersection* intersection, double n1, double n2);
+	Color* refraction(Ray* ray, Intersection* intersection, double n1, double n2);
 	
 public:
 	

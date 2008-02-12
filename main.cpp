@@ -51,7 +51,7 @@ Scene* createTestScene(){
 	Vector* tempVector;
 	
 	/* Image */
-	Image* image = new Image("test.bmp", 400, 300, 1);
+	Image* image = new Image("test.bmp", 800, 600, 1);
 	
 	/* Observer */
 	Observer* obs = new Observer(eye, sight, M_PI/4.0);
@@ -64,10 +64,28 @@ Scene* createTestScene(){
 	scene->addLight(light1);
 	
 	//Objects
+	tempPoint = new Point (10.0, 10, 0);
+	
+	Sphere* specialSphere = new Sphere(enl1, tempPoint, 3.0);
+	specialSphere->setReflecting(true, 1.0);
+	specialSphere->setRefracting(true, 1.5, 1.0);
+	scene->addObject(specialSphere);
+	
+	delete(tempPoint);
+	
+	tempPoint = new Point (0.0, 10, 0);
+	
+	Sphere* refractingSphere = new Sphere(enl1, tempPoint, 3.0);
+	refractingSphere->setRefracting(true, 2.5, 1.0);
+	scene->addObject(refractingSphere);
+	
+	delete(tempPoint);
+	
+	
 	tempPoint = new Point (-10.0, 10, 0);
 	
 	Sphere* reflectingSphere = new Sphere(enl1, tempPoint, 3.0);
-	reflectingSphere->setReflecting(true, 0.5);
+	reflectingSphere->setReflecting(true, 1.0);
 	scene->addObject(reflectingSphere);
 	
 	delete(tempPoint);
@@ -87,7 +105,7 @@ Scene* createTestScene(){
 	scene->addObject(sphere2);
 	
 	delete(tempPoint);
-	
+
 	tempPoint = new Point (4, 0, 0);
 	
 	Sphere* sphere3 = new Sphere(enl4, tempPoint, 2.0);
@@ -104,6 +122,15 @@ Scene* createTestScene(){
 	
 	delete(tempPoint);
 	
+	tempVector = new Vector(0, 0, 1);
+	
+	Plan* specialPlan = new Plan(enl2, tempVector, -2.0, false);
+	specialPlan->setReflecting(false);
+	specialPlan->setRefracting(true, 4.0, 1.0);
+	//scene->addObject(specialPlan);
+	
+	delete(tempVector);
+	
 	tempVector = new Vector(1, 0, 0);
 	
 	Plan* plan1 = new Plan(enl2, tempVector, 50.0, false);
@@ -115,7 +142,7 @@ Scene* createTestScene(){
 	tempVector = new Vector(0, 1, 0);
 	
 	Plan* plan2 = new Plan(enl3, tempVector, 4.0, false);
-	plan2->setReflecting(true, 1.0);
+	plan2->setReflecting(false);
 	scene->addObject(plan2);
 	
 	delete(tempVector);
@@ -232,6 +259,7 @@ void viewY360(Scene* scene){
 int main (int argc, char*  const argv[]) {
 	Scene* scene = createTestScene();
 	viewY360(scene);
+	//scene->rayTrace();
 	
 	delete(scene);
 }

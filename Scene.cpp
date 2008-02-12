@@ -63,7 +63,42 @@ Color* Scene::colorAt(double l, double p){
 	Intersection* nearestIntersection = getNearestIntersection(ray);
 	
 	if(nearestIntersection != 0){
-		Color* color = reflection(ray, nearestIntersection);
+		
+		Color* color = new Color();
+		
+		if(nearestIntersection->getObject()->isReflecting() || nearestIntersection->getObject()->isRefracting()){
+			
+			Color* reflectionColor;
+			Color* refractionColor;
+			
+			if(nearestIntersection->getObject()->isReflecting()){
+				reflectionColor = reflection(ray, nearestIntersection);
+			}
+			else{
+				reflectionColor = new Color(); //black
+			}
+			
+			if(nearestIntersection->getObject()->isRefracting()){
+				refractionColor = refraction(ray, nearestIntersection, 1.0, nearestIntersection->getObject()->getN());
+			}
+			else{
+				refractionColor = new Color(); //black
+			}
+			
+			*color = (*refractionColor) + reflectionColor;
+			if(nearestIntersection->getObject()->isReflecting() && nearestIntersection->getObject()->isRefracting()){
+				*color = (*color) * 0.5;
+			}
+			
+			delete(reflectionColor);
+			delete(refractionColor);
+		}
+		else{
+			Color* objectColor = nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNorm(), ray, lights);
+			*color = *objectColor;
+			
+			delete(objectColor);
+		}
 		
 		delete(nearestIntersection);
 		delete(ray);
@@ -159,6 +194,29 @@ Intersection* Scene::getNearestIntersectionExcluding(Ray* ray, Object* object){
 	return nearestIntersection;
 }
 
+Intersection* Scene::getNearestIntersectionExcluding(Ray* ray, Point* point){
+	Intersection* nearestIntersection = 0;
+	
+	for(std::list<Object* >::iterator iter = objects.begin(); iter != objects.end(); ++iter){
+		Intersection* candidate = (*iter)->intersection(ray);
+		
+		if(candidate != 0){
+			if((!point->equals(candidate->getPoint())) && (nearestIntersection == 0 || (nearestIntersection->getT() > candidate->getT()))){
+				if(nearestIntersection != 0){
+					delete(nearestIntersection);
+				}
+				
+				nearestIntersection = candidate;
+			}
+			else{
+				delete(candidate);
+			}
+		}
+	}
+	
+	return nearestIntersection;
+}
+
 void Scene::shadow(Color* color, Intersection* intersection){
 	for(std::list<Light* >::iterator iter = lights.begin(); iter != lights.end(); ++iter){
 		Vector* l = new Vector(intersection->getPoint(), (*iter)->getSource());
@@ -205,20 +263,25 @@ Color* Scene::reflection(Ray* ray, Intersection* intersection){
 			
 			Ray* reflected = new Ray(intersection->getPoint(), reflectDirection);
 			
-			Object *currentObject = intersection->getObject();
+			Intersection* reflectionIntersection = getNearestIntersectionExcluding(reflected, intersection->getObject());
 			
-			Intersection* reflectionIntersection = getNearestIntersectionExcluding(reflected, currentObject);
+			Color* reflectedColor = reflection(reflected, reflectionIntersection);
 			
-			Color* reflectedColor = reflection(ray, reflectionIntersection);
-			
-			*color = ((*objectColor) * (1.0 - currentObject->getKR())) + ((*reflectedColor) * currentObject->getKR());
+			*color = ((*objectColor) * (1.0 - intersection->getObject()->getKR())) + ((*reflectedColor) * intersection->getObject()->getKR());
 			
 			delete(reflectDirection);
 			delete(reflected);
 			delete(reflectionIntersection);
 			delete(reflectedColor);
 		}
-		else{
+			
+		if(intersection->getObject()->isRefracting() && !intersection->getObject()->isReflecting()){
+			Color* refractedColor = refraction(ray, intersection, 1.0, intersection->getObject()->getN());
+			*color = (*color) + refractedColor;
+			delete(refractedColor);
+		}
+		
+		if(!intersection->getObject()->isReflecting() && !intersection->getObject()->isRefracting()){
 			*color = objectColor;
 			shadow(color, intersection);
 		}
@@ -229,7 +292,70 @@ Color* Scene::reflection(Ray* ray, Intersection* intersection){
 	return color;
 }
 
-Color* Scene::refraction(Ray* ray, Intersection* intersection){
-	//TODO
-	return 0;
+Ray* Scene::getRefractedRay(Ray* ray, Intersection* intersection, double n1, double n2){
+	
+	double n = n1 / n2;
+	double cosT = (*intersection->getNorm()) * ray->getDirection();
+	double sinT2 = pow(n, 2.0) * (1.0 - pow(cosT, 2.0));
+	
+	if(sinT2 > 1.0){
+		return 0;
+	}
+	
+	Vector* refractDirection = new Vector(((*ray->getDirection()) * n) - ( (*intersection->getNorm()) * ( (n*cosT) + sqrt(1 - sinT2))));
+	refractDirection->normalize();
+	Ray* refracted = new Ray(intersection->getPoint(), refractDirection);
+	
+	delete(refractDirection);
+	
+	return refracted;
+}
+
+Color* Scene::refraction(Ray* ray, Intersection* intersection, double n1, double n2){
+	Color* color = new Color();
+	
+	if(intersection == 0){
+		*color = background;
+	}
+	else{
+		Color* objectColor = intersection->getObject()->getEnlightment()->getColor(intersection->getPoint(), intersection->getNorm(), ray, lights);
+		
+		if(intersection->getObject()->isRefracting()){
+			Ray* refracted = getRefractedRay(ray, intersection, 1.0, intersection->getObject()->getN());
+			
+			if(refracted != 0){
+			
+				Intersection* refractionIntersection = getNearestIntersectionExcluding(refracted, intersection->getObject());
+				
+				double n = ((refractionIntersection == 0) ? 0.0 : refractionIntersection->getObject()->getN());
+			
+				Color* refractedColor = refraction(refracted, refractionIntersection, 1.0, n);
+			
+				*color = ((*objectColor) * (1.0 - intersection->getObject()->getKT())) + ((*refractedColor) * intersection->getObject()->getKT());;
+
+				delete(refractedColor);
+			}
+			else{
+				*color = objectColor;
+				shadow(color, intersection);
+			}
+			
+			delete(refracted);
+		}
+		
+		if(intersection->getObject()->isReflecting() && !intersection->getObject()->isRefracting()){
+			Color* reflectedColor = reflection(ray, intersection);
+			*color = (*color) + reflectedColor;
+			delete(reflectedColor);
+		}
+		
+		if(!intersection->getObject()->isReflecting() && !intersection->getObject()->isRefracting()){
+			*color = objectColor;
+			shadow(color, intersection);
+		}
+		
+		delete(objectColor);
+	}
+	
+	return color;
 }
