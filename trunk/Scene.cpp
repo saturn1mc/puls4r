@@ -97,6 +97,8 @@ Color* Scene::colorAt(double l, double p){
 			Color* objectColor = nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNorm(), ray, lights);
 			*color = *objectColor;
 			
+			shadow(color, nearestIntersection);
+			
 			delete(objectColor);
 		}
 		
