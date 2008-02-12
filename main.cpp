@@ -207,12 +207,11 @@ Scene* createTestScene(){
 	return scene;
 }
 
-void viewY360(Scene* scene){
+void viewY360(Scene* scene, int images){
 	
 	Observer* obs = new Observer(scene->getObserver());
 	Point* eye = new Point(scene->getObserver()->getEye());
 	
-	double images = 4;
 	double rotation = M_PI * 2.0;
 	double delta = rotation / images;
 	
@@ -258,7 +257,7 @@ void viewY360(Scene* scene){
 
 int main (int argc, char*  const argv[]) {
 	Scene* scene = createTestScene();
-	viewY360(scene);
+	viewY360(scene, 100);
 	//scene->rayTrace();
 	
 	delete(scene);
