@@ -112,6 +112,12 @@ public:
 		z /= n;
 	}
 	
+	void invert(void){
+		x *= -1.0;
+		y *= -1.0;
+		z *= -1.0;
+	}
+	
 	double norm(void) const{
 		return sqrt((x * x) + (y * y) + (z * z));
 	}
@@ -175,6 +181,26 @@ public:
 					(z*v->x) - (x*v->z),
 					(x*v->y) - (y*v->x)
 				);
+		
+		return res;
+	}
+	
+	Point operator+(Point& point){
+		Point res;
+		
+		res.setX(x + point.getX());
+		res.setY(y + point.getY());
+		res.setZ(point.getZ());
+		
+		return res;
+	}
+	
+	Point operator+(Point* point){
+		Point res;
+		
+		res.setX(x + point->getX());
+		res.setY(y + point->getY());
+		res.setZ(z + point->getZ());
 		
 		return res;
 	}

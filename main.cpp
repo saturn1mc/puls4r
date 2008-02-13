@@ -51,7 +51,7 @@ Scene* createTestScene(){
 	Vector* tempVector;
 	
 	/* Image */
-	Image* image = new Image("test.bmp", 800, 600, 1);
+	Image* image = new Image("test.bmp", 400, 300, 1);
 	
 	/* Observer */
 	Observer* obs = new Observer(eye, sight, M_PI/4.0);
@@ -68,7 +68,7 @@ Scene* createTestScene(){
 	
 	Sphere* specialSphere = new Sphere(enl1, tempPoint, 3.0);
 	specialSphere->setReflecting(true, 1.0);
-	specialSphere->setRefracting(true, 1.5, 1.0);
+	specialSphere->setRefracting(true, 2.0, 1.0);
 	scene->addObject(specialSphere);
 	
 	delete(tempPoint);
@@ -76,7 +76,7 @@ Scene* createTestScene(){
 	tempPoint = new Point (0.0, 10, 0);
 	
 	Sphere* refractingSphere = new Sphere(enl1, tempPoint, 3.0);
-	refractingSphere->setRefracting(true, 2.5, 1.0);
+	refractingSphere->setRefracting(true, 0.2, 1.0);
 	scene->addObject(refractingSphere);
 	
 	delete(tempPoint);
@@ -257,8 +257,8 @@ void viewY360(Scene* scene, int images){
 
 int main (int argc, char*  const argv[]) {
 	Scene* scene = createTestScene();
-	viewY360(scene, 100);
-	//scene->rayTrace();
+	//viewY360(scene, 100);
+	scene->rayTrace();
 	
 	delete(scene);
 }
