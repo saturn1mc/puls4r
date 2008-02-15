@@ -61,6 +61,7 @@ Scene* createTestScene(){
 	
 	//Lights
 	Light* light1 = new Light(lightPos, white);
+	light1->setRadius(0.2);
 	scene->addLight(light1);
 	
 	//Objects
@@ -76,7 +77,7 @@ Scene* createTestScene(){
 	tempPoint = new Point (0.0, 10, 0);
 	
 	Sphere* refractingSphere = new Sphere(enl1, tempPoint, 3.0);
-	refractingSphere->setRefracting(true, 0.2, 1.0);
+	refractingSphere->setRefracting(true, 1.8, 1.0);
 	scene->addObject(refractingSphere);
 	
 	delete(tempPoint);

@@ -1,5 +1,5 @@
 /*
- *  Scene.h
+ *  Scene.cpp
  *  RayTracing
  *
  *  Created by Camille on 09/01/08.
@@ -220,29 +220,55 @@ Intersection* Scene::getNearestIntersectionExcluding(Ray* ray, Object* object){
 	return nearestIntersection;
 }
 
-void Scene::shadow(Color* color, Intersection* intersection){
+void Scene::shadow(Color* color, Intersection* intersection, double smoothing){
+	
 	for(std::list<Light* >::iterator iter = lights.begin(); iter != lights.end(); ++iter){
-		Vector* l = new Vector(intersection->getPoint(), (*iter)->getSource());
-		double distanceToLight = l->norm();
-		l->normalize();
 		
-		Ray* ray = new Ray(intersection->getPoint(), l);
-		Intersection* shadowIntersection = getNearestIntersectionExcluding(ray, intersection->getObject());
+		double enlighted = 0;
+		double shadowed = 0;
+		double radius = (*iter)->getRadius();
+		double step = radius / smoothing;
 		
-		if(shadowIntersection != 0 && (shadowIntersection->getObject() != intersection->getObject())){
+		Vector* virtualSight = new Vector(intersection->getPoint(), (*iter)->getSource());
+		Observer* virtualObs = new Observer(intersection->getPoint(), virtualSight, M_PI / 4.0);
+		double focal = virtualSight->norm();
+		
+		for(double i=-radius; i<radius; i+= step){
 			
-			Vector *shadowVect = new Vector(intersection->getPoint(), shadowIntersection->getPoint());
+			Point* lightPoint = new Point(i, i, focal);
+			*lightPoint = virtualObs->getView()->t() * lightPoint;
 			
-			if(shadowVect->norm() <= distanceToLight){
-				color->darken(0.3);
+			Vector* l = new Vector(intersection->getPoint(), lightPoint);
+			double distanceToLight = l->norm();
+			l->normalize();
+		
+			Ray* ray = new Ray(intersection->getPoint(), l);
+			Intersection* shadowIntersection = getNearestIntersectionExcluding(ray, intersection->getObject());
+		
+			if(shadowIntersection != 0 && (shadowIntersection->getObject() != intersection->getObject())){
+			
+				Vector *shadowVect = new Vector(intersection->getPoint(), shadowIntersection->getPoint());
+			
+				if(shadowVect->norm() <= distanceToLight){
+					shadowed++;
+				}
+				else{
+					enlighted++;
+				}
+			
+				delete(shadowVect);
 			}
-			
-			delete(shadowVect);
+		
+			delete(l);
+			delete(ray);
+			delete(shadowIntersection);
+			delete(lightPoint);
 		}
 		
-		delete(l);
-		delete(ray);
-		delete(shadowIntersection);
+		color->darken(1.0 - (shadowed / (enlighted + shadowed)));
+		
+		delete(virtualObs);
+		delete(virtualSight);
 	}
 	
 	color->normalize();
