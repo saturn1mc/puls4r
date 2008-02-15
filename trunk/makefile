@@ -4,7 +4,7 @@ LNK_OPTIONS =
 INCLUDE = -I.
 PROJ=pulsar
 
-pulsar : main.o Observer.o Plan.o Sphere.o Triangle.o Scene.o Image.o Linear.o Phong.o Lambert.o 
+pulsar : main.o Observer.o Plan.o Sphere.o Triangle.o Scene.o Image.o Light.o Linear.o Phong.o Lambert.o 
 	$(CC) $(LNK_OPTIONS) main.o Observer.o Plan.o Sphere.o Triangle.o Scene.o Image.o Linear.o Phong.o Lambert.o -o $(PROJ)
 
 clean :
@@ -21,6 +21,9 @@ Plan.o : Object.h Plan.h
 
 Sphere.o : Object.h Sphere.h
 	$(CC) $(CC_OPTIONS) Sphere.cpp -c $(INCLUDE) -o Sphere.o
+
+Light.o : Light.h
+	$(CC) $(CC_OPTIONS) Light.cpp -c $(INCLUDE) -o Light.o
 
 Triangle.o : Object.h Triangle.h
 	$(CC) $(CC_OPTIONS) Triangle.cpp -c $(INCLUDE) -o Triangle.o

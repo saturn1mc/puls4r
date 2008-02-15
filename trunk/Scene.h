@@ -39,7 +39,7 @@ private:
 	double calcFocal(void) const;
 	Color* colorAt(double l, double p);
 	Color* antialiasedColor(double l, double p);
-	void shadow(Color* color, Intersection* intersection);
+	void shadow(Color* color, Intersection* intersection, double smoothing = 8.0);
 	Color* reflection(Ray* ray, Intersection* intersection);
 	Ray* getRefractedRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon = 0.000001);
 	Color* refraction(Ray* ray, Intersection* intersection, double n1, double n2);
@@ -63,8 +63,8 @@ public:
 	Observer* getObserver(void) const {return observer;}
 	Image* getImage(void) const {return img;}
 	Color* getBackground(void) const {return background;}
-	std::list<Object* > &getObjects(void) {return objects;}
-	std::list<Light* > &getLights(void) {return lights;}
+	std::list<Object* >& getObjects(void) {return objects;}
+	std::list<Light* >& getLights(void) {return lights;}
 	
 	void setImage(Image* _img){
 		delete(img);

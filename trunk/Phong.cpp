@@ -28,7 +28,6 @@ Color* Phong::getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > 
 			specular = new Color( (*os) * (ks * pow((*R)*V, n)) );
 		}
 		
-		
 		diffuse->normalize();
 		specular->normalize();
 		

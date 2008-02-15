@@ -21,11 +21,12 @@ private:
 	
 	Point* source;
 	Color* color;
+	double radius;
 	
 public:
-	Light(Point* _source, Color* _color) : source(new Point(_source)), color(new Color(_color)) {}
-	Light(const Light& light) : source(new Point(light.source)), color(new Color(light.color)) {}
-	Light(const Light* light) : source(new Point(light->source)), color(new Color(light->color)) {}
+	Light(Point* _source, Color* _color) : source(new Point(_source)), color(new Color(_color)), radius(1.0) {}
+	Light(const Light& light) : source(new Point(light.source)), color(new Color(light.color)), radius(light.radius) {}
+	Light(const Light* light) : source(new Point(light->source)), color(new Color(light->color)), radius(light->radius) {}
 	
 	~Light(){
 		delete(source);
@@ -34,6 +35,9 @@ public:
 	
 	Point* getSource(void) const {return source;}
 	Color* getColor(void) const {return color;}
+	double getRadius(void) const {return radius;}
+	
+	void setRadius(double _radius) {radius = _radius;}
 	
 	Light& operator=(const Light& light){
 		delete(source);
@@ -41,6 +45,7 @@ public:
 		
 		source = new Point(light.source);
 		color = new Color(light.color);
+		radius = light.radius;
 		
 		return *this;
 	}
