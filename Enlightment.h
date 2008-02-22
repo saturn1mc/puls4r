@@ -24,14 +24,18 @@ class Enlightment{
 	
 protected:
 	
+	//Reflection properties
 	bool reflect;
 	double kr;
+	double glossyFocal;
+	double glossyWidth;
 	
+	//Refraction properties
 	bool refract;
 	double n;
 	double kt;
 	
-	Enlightment(void) : reflect(false), kr(1.0), refract(false), n(1.0), kt(1.0){}
+	Enlightment(void) : reflect(false), kr(1.0), glossyFocal(0.0), glossyWidth(0.0), refract(false), n(1.0), kt(1.0){}
 	
 	Vector* getV(Ray* ray) const{
 		Vector* v = new Vector((*ray->getDirection()) * -1.0);
@@ -55,7 +59,8 @@ protected:
 	}
 	
 public:
-	Enlightment(Enlightment &enlightment) : reflect(enlightment.reflect), kr(enlightment.kr), refract(enlightment.refract), n(enlightment.n), kt(enlightment.kt) {}
+	
+	Enlightment(Enlightment &enlightment) : reflect(enlightment.reflect), kr(enlightment.kr), glossyFocal(enlightment.glossyFocal), glossyWidth(enlightment.glossyWidth), refract(enlightment.refract), n(enlightment.n), kt(enlightment.kt) {}
 	virtual ~Enlightment(void) {}
 	virtual Color* getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const = 0;
 	virtual Enlightment *clone(void) = 0;
@@ -97,6 +102,19 @@ public:
 		if(kt > 1.0){
 			kt = 1.0;
 		}
+	}
+	
+	double getGlossyFocal(void) const{
+		return glossyFocal;
+	}
+	
+	double getGlossyWidth(void) const{
+		return glossyWidth;
+	}
+	
+	void setGlossy(double _glossyFocal, double _glossyWidth){
+		glossyFocal = _glossyFocal;
+		glossyWidth = _glossyWidth;
 	}
 };
 

@@ -34,6 +34,18 @@ public:
 		return enlightment->getKR();
 	}
 	
+	void setGlossy(double _glossyFocal, double _glossyWidth){
+		enlightment->setGlossy(_glossyFocal, _glossyWidth);
+	}
+	
+	double getGlossyFocal(void) const{
+		return enlightment->getGlossyFocal();
+	}
+	
+	double getGlossyWidth(void) const{
+		return enlightment->getGlossyWidth();
+	}
+	
 	bool isRefracting(void) const{
 		return enlightment->isRefracting();
 	}

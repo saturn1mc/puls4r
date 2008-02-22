@@ -61,7 +61,7 @@ Scene* createTestScene(){
 	
 	//Lights
 	Light* light1 = new Light(lightPos, white);
-	light1->setRadius(0.2);
+	light1->setRadius(1.5);
 	scene->addLight(light1);
 	
 	//Objects
@@ -70,7 +70,7 @@ Scene* createTestScene(){
 	Sphere* specialSphere = new Sphere(enl1, tempPoint, 3.0);
 	specialSphere->setReflecting(true, 1.0);
 	specialSphere->setRefracting(true, 2.0, 1.0);
-	scene->addObject(specialSphere);
+	//scene->addObject(specialSphere);
 	
 	delete(tempPoint);
 	
@@ -78,7 +78,7 @@ Scene* createTestScene(){
 	
 	Sphere* refractingSphere = new Sphere(enl1, tempPoint, 3.0);
 	refractingSphere->setRefracting(true, 1.8, 1.0);
-	scene->addObject(refractingSphere);
+	//scene->addObject(refractingSphere);
 	
 	delete(tempPoint);
 	
@@ -87,7 +87,8 @@ Scene* createTestScene(){
 	
 	Sphere* reflectingSphere = new Sphere(enl1, tempPoint, 3.0);
 	reflectingSphere->setReflecting(true, 1.0);
-	scene->addObject(reflectingSphere);
+	reflectingSphere->setGlossy(2.0, 2.0);
+	//scene->addObject(reflectingSphere);
 	
 	delete(tempPoint);
 	
@@ -103,6 +104,7 @@ Scene* createTestScene(){
 	
 	Sphere* sphere2 = new Sphere(enl3, tempPoint, 2.0);
 	sphere2->setReflecting(false);
+	//sphere2->setGlossy(20.0, 15.0);
 	scene->addObject(sphere2);
 	
 	delete(tempPoint);
@@ -143,7 +145,8 @@ Scene* createTestScene(){
 	tempVector = new Vector(0, 1, 0);
 	
 	Plan* plan2 = new Plan(enl3, tempVector, 4.0, false);
-	plan2->setReflecting(false);
+	plan2->setReflecting(true, 1.0);
+	plan2->setGlossy(200.0, 20.0);
 	scene->addObject(plan2);
 	
 	delete(tempVector);
