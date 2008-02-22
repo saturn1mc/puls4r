@@ -22,36 +22,36 @@ class Intersection{
 private:
 	
 	Point* point;
-	Vector* norm;
+	Vector* normal;
 	Object* object;
 	double t;
 	
 public:
 	
-	Intersection(Point* _point, Vector* _norm, Object* _object, double _t) : point(new Point(_point)), norm(new Vector(_norm)), object(_object), t(_t) {
-		norm->normalize();
+	Intersection(Point* _point, Vector* _normal, Object* _object, double _t) : point(new Point(_point)), normal(new Vector(_normal)), object(_object), t(_t) {
+		normal->normalize();
 	}
 	
-	Intersection(const Intersection& intersection) : point(new Point(intersection.point)), norm(new Vector(intersection.norm)), object(0), t(intersection.t) { object = intersection.object; }
-	Intersection(const Intersection* intersection) : point(new Point(intersection->point)), norm(new Vector(intersection->norm)), object(0), t(intersection->t) { object = intersection->object; }
+	Intersection(const Intersection& intersection) : point(new Point(intersection.point)), normal(new Vector(intersection.normal)), object(0), t(intersection.t) { object = intersection.object; }
+	Intersection(const Intersection* intersection) : point(new Point(intersection->point)), normal(new Vector(intersection->normal)), object(0), t(intersection->t) { object = intersection->object; }
 	
 	~Intersection(){
 		delete(point);
-		delete(norm);
+		delete(normal);
 	}
 	
 	Point* getPoint(void) const {return point;}
-	Vector* getNorm(void) const {return norm;}
+	Vector* getNormal(void) const {return normal;}
 	Object* getObject() const {return object;}
 	void setObject(Object* _object) {object = _object;}
 	double getT(void) const {return t;}
 	
 	Intersection& operator=(const Intersection& intersection){
 		delete(point);
-		delete(norm);
+		delete(normal);
 		
 		point = new Point(intersection.point);
-		norm = new Vector(intersection.norm);
+		normal = new Vector(intersection.normal);
 		object = intersection.object;
 		t = intersection.t;
 		
@@ -75,7 +75,7 @@ template <class charT, class traits> std::basic_ostream<charT,traits>& operator<
 	s << "Intersection :" << std::endl;
 	s << "---------------------------" << std::endl;
 	s << "Point : " << inter.getPoint() << std::endl;
-	s << "Norm : " << inter.getNorm() << std::endl;
+	s << "Normal : " << inter.getNormal() << std::endl;
 	s << "t : " << inter.getT() << std::endl;
 	s << "---------------------------" << std::endl;
 	
@@ -101,7 +101,7 @@ template <class charT, class traits> std::basic_ostream<charT,traits>& operator<
 	s << "Intersection :" << std::endl;
 	s << "---------------------------" << std::endl;
 	s << "Point : " << inter->getPoint() << std::endl;
-	s << "Norm : " << inter->getNorm() << std::endl;
+	s << "Normal : " << inter->getNormal() << std::endl;
 	s << "t : " << inter->getT() << std::endl;
 	s << "---------------------------" << std::endl;
 	

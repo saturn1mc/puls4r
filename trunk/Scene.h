@@ -39,8 +39,9 @@ private:
 	double calcFocal(void) const;
 	Color* colorAt(double l, double p);
 	Color* antialiasedColor(double l, double p);
-	void shadow(Color* color, Intersection* intersection, double smoothing = 8.0);
+	void shadow(Color* color, Intersection* intersection, double smoothing = 2.0);
 	Color* reflection(Ray* ray, Intersection* intersection);
+	Color* reflectionGlossy(Ray* ray, Intersection* intersection, double smoothing = 2.0);
 	Ray* getRefractedRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon = 0.000001);
 	Color* refraction(Ray* ray, Intersection* intersection, double n1, double n2);
 	
