@@ -86,7 +86,7 @@ public:
 	double getN(void) const { return n; }
 	double getKT(void) const { return kt; }
 	
-	void setRefracting(bool _refract, double _n, double _kt){
+	void setRefracting(bool _refract, double _n = 1.0, double _kt = 1.0){
 		refract = _refract; 
 		n = _n;
 		kt = _kt;
