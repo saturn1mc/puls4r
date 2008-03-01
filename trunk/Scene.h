@@ -33,17 +33,20 @@ private:
 	std::list<Light* > lights;
 	double focal;
 	
-	Intersection* getNearestIntersection(Ray* ray);
-	Intersection* getNearestIntersection(Ray* ray, double epsilon);
-	Intersection* getNearestIntersectionExcluding(Ray* ray, Object* object);
+	Intersection* getNearestIntersection(Ray* ray, double epsilon = 0.000001);
+	
 	double calcFocal(void) const;
+	
 	Color* colorAt(double l, double p);
 	Color* antialiasedColor(double l, double p);
+	Color* observedColor(Ray* ray);
+	Color* glossyReflection(Ray* ray, Intersection* intersection, double smoothing = 2.0);
+	
+	Ray* reflectedRay(Ray* ray, Intersection* intersection);
+	Ray* refractedRay(Ray* ray, Intersection* intersection);
+	Ray* refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon = 0.000001);
+	
 	void shadow(Color* color, Intersection* intersection, double smoothing = 2.0);
-	Color* reflection(Ray* ray, Intersection* intersection);
-	Color* reflectionGlossy(Ray* ray, Intersection* intersection, double smoothing = 2.0);
-	Ray* getRefractedRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon = 0.000001);
-	Color* refraction(Ray* ray, Intersection* intersection, double n1, double n2);
 	
 public:
 	

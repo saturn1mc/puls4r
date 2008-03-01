@@ -68,7 +68,7 @@ public:
 	}
 };
 
-template <class charT, class traits> std::basic_ostream<charT,traits> &operator << (std::basic_ostream<charT,traits>& strm, const Ray &ray){
+template <class charT, class traits> std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>& strm, const Ray& ray){
 	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
 	
 	/* string stream
@@ -85,6 +85,31 @@ template <class charT, class traits> std::basic_ostream<charT,traits> &operator 
 	s << "---------------------------" << std::endl;
 	s << "Origin : " << ray.getOrigin() << std::endl;
 	s << "Direction : " << ray.getDirection() << std::endl;
+	s << "---------------------------" << std::endl;
+	
+	// print string stream
+	strm << s.str();
+	
+	return strm;
+}
+
+template <class charT, class traits> std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>& strm, const Ray* ray){
+	/* From : "C++ Standard Library, The A Tutorial And Reference - Nicolai M. Josuttis - Addison Wesley - 1999" */
+	
+	/* string stream
+	* - with same format
+	* - without special field width
+	*/
+	std::basic_ostringstream<charT,traits> s;
+	s.copyfmt(strm);
+	s.width(0);
+	
+	// fill string stream
+	s << "---------------------------" << std::endl;
+	s << "Ray :" << std::endl;
+	s << "---------------------------" << std::endl;
+	s << "Origin : " << ray->getOrigin() << std::endl;
+	s << "Direction : " << ray->getDirection() << std::endl;
 	s << "---------------------------" << std::endl;
 	
 	// print string stream

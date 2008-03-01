@@ -146,7 +146,7 @@ Scene* createTestScene(){
 	
 	Plan* plan2 = new Plan(enl3, tempVector, 4.0, false);
 	plan2->setReflecting(true, 1.0);
-	plan2->setGlossy(200.0, 20.0);
+	plan2->setGlossy(200.0, 10.0);
 	scene->addObject(plan2);
 	
 	delete(tempVector);
@@ -164,7 +164,7 @@ Scene* createTestScene(){
 	Plan* plan5 = new Plan(enl6, tempVector, 50.0, false);
 	plan5->setReflecting(false);
 	scene->addObject(plan5);
-	
+
 	delete(tempVector);
 	
 	tempVector = new Vector(0, -1, 0);
@@ -191,7 +191,7 @@ Scene* createTestScene(){
 	delete(yellow);
 	delete(orange);
 	delete(purple);
-	
+
 	delete(enl1);
 	delete(enl2);
 	delete(enl3);
@@ -225,7 +225,7 @@ void viewY360(Scene* scene, int images){
 	system("mkdir images");
 	
 	for(int i = 0; i<images; i++){
-	
+
 		cout << "Generating image " << (i+1) << "/" << images << endl;
 	
 		//Changing filename
