@@ -62,7 +62,7 @@ public:
 		enlightment->setReflecting(_reflect, _kr);
 	}
 	
-	void setRefracting(bool _refract, double _n, double _kt){
+	void setRefracting(bool _refract, double _n = 1.0, double _kt = 1.0){
 		enlightment->setRefracting(_refract, _n, _kt);
 	}
 		

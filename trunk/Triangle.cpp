@@ -28,7 +28,7 @@ Intersection* Triangle::intersection(Ray* ray){
 		delete(c);
 		delete(p);
 		
-		if(u>=0 && v >= 0 && (u+v) <= 1){
+		if((u>=0) && (v >= 0) && ((u+v) <= 1)){
 			intersection->setObject(this);
 			return intersection;
 		}

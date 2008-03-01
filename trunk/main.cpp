@@ -13,6 +13,7 @@
 #include "Scene.h"
 #include "Sphere.h"
 #include "Triangle.h"
+#include "Quadric.h"
 #include "Plan.h"
 #include "Phong.h"
 #include "Linear.h"
@@ -61,10 +62,15 @@ Scene* createTestScene(){
 	
 	//Lights
 	Light* light1 = new Light(lightPos, white);
-	light1->setRadius(1.5);
+	light1->setRadius(1.0);
 	scene->addLight(light1);
 	
 	//Objects
+	Quadric* quadric1 = new Quadric(enl1, 1, -1, 1, 0, 0, 0, 0, 0, 0, -10);
+	quadric1->setReflecting(false);
+	quadric1->setRefracting(false);
+	scene->addObject(quadric1);
+	
 	tempPoint = new Point (10.0, 10, 0);
 	
 	Sphere* specialSphere = new Sphere(enl1, tempPoint, 3.0);
@@ -87,7 +93,7 @@ Scene* createTestScene(){
 	
 	Sphere* reflectingSphere = new Sphere(enl1, tempPoint, 3.0);
 	reflectingSphere->setReflecting(true, 1.0);
-	reflectingSphere->setGlossy(2.0, 2.0);
+	//reflectingSphere->setGlossy(200.0, 20.0);
 	//scene->addObject(reflectingSphere);
 	
 	delete(tempPoint);
@@ -96,7 +102,7 @@ Scene* createTestScene(){
 	
 	Sphere* sphere1 = new Sphere(enl2, tempPoint, 2.0);
 	sphere1->setReflecting(false);
-	scene->addObject(sphere1);
+	//scene->addObject(sphere1);
 	
 	delete(tempPoint);
 	
@@ -104,8 +110,8 @@ Scene* createTestScene(){
 	
 	Sphere* sphere2 = new Sphere(enl3, tempPoint, 2.0);
 	sphere2->setReflecting(false);
-	//sphere2->setGlossy(20.0, 15.0);
-	scene->addObject(sphere2);
+	sphere2->setGlossy(20.0, 15.0);
+	//scene->addObject(sphere2);
 	
 	delete(tempPoint);
 
@@ -113,7 +119,7 @@ Scene* createTestScene(){
 	
 	Sphere* sphere3 = new Sphere(enl4, tempPoint, 2.0);
 	sphere3->setReflecting(false);
-	scene->addObject(sphere3);
+	//scene->addObject(sphere3);
 	
 	delete(tempPoint);
 	
@@ -121,7 +127,7 @@ Scene* createTestScene(){
 	
 	Sphere* sphere4 = new Sphere(enl5, tempPoint, 2.0);
 	sphere4->setReflecting(false);
-	scene->addObject(sphere4);
+	//scene->addObject(sphere4);
 	
 	delete(tempPoint);
 	
@@ -138,16 +144,15 @@ Scene* createTestScene(){
 	
 	Plan* plan1 = new Plan(enl2, tempVector, 50.0, false);
 	plan1->setReflecting(false);
-	scene->addObject(plan1);
+	//scene->addObject(plan1);
 	
 	delete(tempVector);
 	
 	tempVector = new Vector(0, 1, 0);
 	
 	Plan* plan2 = new Plan(enl3, tempVector, 4.0, false);
-	plan2->setReflecting(true, 1.0);
-	plan2->setGlossy(200.0, 10.0);
-	scene->addObject(plan2);
+	plan2->setReflecting(false);
+	//scene->addObject(plan2);
 	
 	delete(tempVector);
 	
@@ -155,7 +160,7 @@ Scene* createTestScene(){
 	
 	Plan* plan3 = new Plan(enl4, tempVector, 50.0, false);
 	plan3->setReflecting(false);
-	scene->addObject(plan3);
+	//scene->addObject(plan3);
 	
 	delete(tempVector);
 	
@@ -163,7 +168,7 @@ Scene* createTestScene(){
 	
 	Plan* plan5 = new Plan(enl6, tempVector, 50.0, false);
 	plan5->setReflecting(false);
-	scene->addObject(plan5);
+	//scene->addObject(plan5);
 
 	delete(tempVector);
 	
@@ -171,7 +176,7 @@ Scene* createTestScene(){
 	
 	Plan* plan4 = new Plan(enl7, tempVector, 50.0, false);
 	plan4->setReflecting(false);
-	scene->addObject(plan4);
+	//scene->addObject(plan4);
 	
 	delete(tempVector);
 	
@@ -179,7 +184,7 @@ Scene* createTestScene(){
 	
 	Plan* plan6 = new Plan(enl5, tempVector, 50.0, false);
 	plan6->setReflecting(false);
-	scene->addObject(plan6);
+	//scene->addObject(plan6);
 	
 	delete(tempVector);
 	
