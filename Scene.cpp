@@ -90,6 +90,7 @@ Color* Scene::colorAt(double l, double p){
 	Point* target = new Point(p, l, focal);
 	Ray* ray = observer->ray(target);
 	
+	currentRecursions = 0;
 	Color* oc = observedColor(ray);
 	
 	delete(target);
@@ -126,6 +127,8 @@ Color* Scene::observedColor(Ray* ray){
 	Color* oc = new Color(background);
 	Intersection* nearestIntersection = getNearestIntersection(ray, 0.0001);
 	
+	currentRecursions++;
+	
 	if(nearestIntersection == 0){
 		return oc;
 	}
@@ -133,7 +136,7 @@ Color* Scene::observedColor(Ray* ray){
 	
 		Color* objectColor = nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNormal(), ray, lights);
 	
-		if(!nearestIntersection->getObject()->isReflecting() && !nearestIntersection->getObject()->isRefracting()){
+		if(currentRecursions >= MAX_RECURSIONS || (!nearestIntersection->getObject()->isReflecting() && !nearestIntersection->getObject()->isRefracting())){
 			*oc = *objectColor;
 			shadow(oc, nearestIntersection);
 		}
