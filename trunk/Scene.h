@@ -26,6 +26,9 @@
 class Scene{
 private:
 	
+	static const int MAX_RECURSIONS = 1000;
+	int currentRecursions;
+	
 	Observer* observer;
 	Image* img;
 	Color* background;

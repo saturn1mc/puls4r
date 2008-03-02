@@ -44,6 +44,9 @@ Scene* createTestScene(){
 	
 	/* Points */
 	Point* tempPoint;
+	Point* A;
+	Point* B;
+	Point* C;
 	Point* eye = new Point(0.0, 10.0, 45.0);
 	Point* sight = new Point(0.0, 0.0, 0.0);
 	Point* lightPos = new Point(20.0, 15.0, 20.0);
@@ -66,11 +69,28 @@ Scene* createTestScene(){
 	scene->addLight(light1);
 	
 	//Objects
-	Quadric* quadric1 = new Quadric(enl1, 1, -1, 1, 0, 0, 0, 0, 0, 0, -10);
-	quadric1->setReflecting(false);
-	quadric1->setRefracting(false);
-	scene->addObject(quadric1);
 	
+	//TRIANGLES
+	A = new Point(0, 0, 0);
+	B = new Point(10, 0, 0);
+	C = new Point(0, 10, 0);
+	
+	Triangle* triangle1 = new Triangle(enl1, A, B, C);
+	scene->addObject(triangle1);
+	
+	delete(A);
+	delete(B);
+	delete(C);
+	
+	
+	//QUADRICS
+	Quadric* quadric1 = new Quadric(enl1, 1, 4, 2, 0, 0, 0, 0, 0, 0, -12);
+	quadric1->setReflecting(false);
+	quadric1->setRefracting(true, 1.2, 1.0);
+	//scene->addObject(quadric1);
+	
+	
+	//SPHERES
 	tempPoint = new Point (10.0, 10, 0);
 	
 	Sphere* specialSphere = new Sphere(enl1, tempPoint, 3.0);
@@ -131,15 +151,7 @@ Scene* createTestScene(){
 	
 	delete(tempPoint);
 	
-	tempVector = new Vector(0, 0, 1);
-	
-	Plan* specialPlan = new Plan(enl2, tempVector, -2.0, false);
-	specialPlan->setReflecting(false);
-	specialPlan->setRefracting(true, 4.0, 1.0);
-	//scene->addObject(specialPlan);
-	
-	delete(tempVector);
-	
+	//PLANS
 	tempVector = new Vector(1, 0, 0);
 	
 	Plan* plan1 = new Plan(enl2, tempVector, 50.0, false);
@@ -151,7 +163,8 @@ Scene* createTestScene(){
 	tempVector = new Vector(0, 1, 0);
 	
 	Plan* plan2 = new Plan(enl3, tempVector, 4.0, false);
-	plan2->setReflecting(false);
+	plan2->setReflecting(true, 0.9);
+	plan2->setGlossy(200, 20);
 	//scene->addObject(plan2);
 	
 	delete(tempVector);
