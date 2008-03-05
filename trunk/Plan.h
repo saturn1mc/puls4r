@@ -11,6 +11,7 @@
 #define PLAN_H
 
 #include "Object.h"
+#include "Perlin.h"
 
 class Plan : public Object{
 private:

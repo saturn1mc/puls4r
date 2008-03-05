@@ -15,6 +15,7 @@
 
 #include "Enlightment.h"
 #include "Intersection.h"
+#include "Perlin.h"
 #include "Ray.h"
 
 class Object{
@@ -23,6 +24,7 @@ protected:
 	
 	Object(void) : enlightment(0){}
 	Enlightment *enlightment;
+	Perlin* perlin;
 	
 public:
 		

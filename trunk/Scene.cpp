@@ -17,6 +17,10 @@ void Scene::addLight(Light* light){
 	lights.push_front(light);
 }
 
+void Scene::addBox(Box* box){
+	boxes.push_front(box);
+}
+
 double Scene::calcFocal(void) const{
 	return ( (getW() / 2.0) / tan(observer->getAlpha()/2.0) );
 }
@@ -196,7 +200,7 @@ Ray* Scene::reflectedRay(Ray* ray, Intersection* intersection){
 	return reflected;
 }
 
-Color* Scene::glossyReflection(Ray* ray, Intersection* intersection, double smoothing){
+Color* Scene::glossyReflection(Ray* ray, Intersection* intersection, bool random, double smoothing){
 	
 	Color* color = new Color();
 	double f = intersection->getObject()->getGlossyFocal();
@@ -210,7 +214,18 @@ Color* Scene::glossyReflection(Ray* ray, Intersection* intersection, double smoo
 	
 	for(double i=-radius/2.0; i<radius/2.0; i+= step){
 		for(double j=-radius/2.0; j<radius/2.0; j+= step){
-			Point* target = new Point(i, j, f);
+
+			Point* target;
+			
+			if(random){
+				double ii = ( ((double)std::rand() / (double)RAND_MAX) * radius ) - (radius/2.0);
+				double jj = ( ((double)std::rand() / (double)RAND_MAX) * radius ) - (radius/2.0);
+				target = new Point(ii, jj, f);
+			}
+			else{
+				target = new Point(i, j, f);
+			}
+			
 			Ray* glossyRay = virtualObs->ray(target);
 			Intersection* glossyIntersection = getNearestIntersection(glossyRay);
 			
@@ -290,7 +305,7 @@ Ray* Scene::refractRay(Ray* ray, Intersection* intersection, double n1, double n
 	return refracted;
 }
 
-void Scene::shadow(Color* color, Intersection* intersection, double smoothing){
+void Scene::shadow(Color* color, Intersection* intersection, bool random, double smoothing){
 	
 	for(std::list<Light* >::iterator iter = lights.begin(); iter != lights.end(); ++iter){
 		
@@ -305,7 +320,18 @@ void Scene::shadow(Color* color, Intersection* intersection, double smoothing){
 		
 		for(double i=-radius/2.0; i<radius/2.0; i+= step){
 			for(double j=-radius/2.0; j<radius/2.0; j+= step){
-				Point* target = new Point(i, j, f);
+				
+				Point* target;
+				
+				if(random){
+					double ii = ( ((double)std::rand() / (double)RAND_MAX) * radius ) - (radius/2.0);
+					double jj = ( ((double)std::rand() / (double)RAND_MAX) * radius ) - (radius/2.0);
+					target = new Point(ii, jj, f);
+				}
+				else{
+					target = new Point(i, j, f);
+				}
+				
 				Ray* ray = virtualObs->ray(target);
 				Intersection* shadowIntersection = getNearestIntersection(ray);
 				

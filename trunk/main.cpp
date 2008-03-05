@@ -14,6 +14,7 @@
 #include "Sphere.h"
 #include "Triangle.h"
 #include "Quadric.h"
+#include "Box.h"
 #include "Plan.h"
 #include "Phong.h"
 #include "Linear.h"
@@ -55,7 +56,7 @@ Scene* createTestScene(){
 	Vector* tempVector;
 	
 	/* Image */
-	Image* image = new Image("test.bmp", 400, 300, 1);
+	Image* image = new Image("test.bmp", 800, 600, 1);
 	
 	/* Observer */
 	Observer* obs = new Observer(eye, sight, M_PI/4.0);
@@ -70,13 +71,23 @@ Scene* createTestScene(){
 	
 	//Objects
 	
+	//BOX
+	A = new Point(0, 0, 0);
+	B = new Point(10, 10, 10);
+	
+	Box* box1 = new Box(A, B);
+	scene->addBox(box1);
+	
+	delete(A);
+	delete(B);
+	
 	//TRIANGLES
 	A = new Point(0, 0, 0);
 	B = new Point(10, 0, 0);
 	C = new Point(0, 10, 0);
 	
 	Triangle* triangle1 = new Triangle(enl1, A, B, C);
-	scene->addObject(triangle1);
+	//scene->addObject(triangle1);
 	
 	delete(A);
 	delete(B);
@@ -122,7 +133,7 @@ Scene* createTestScene(){
 	
 	Sphere* sphere1 = new Sphere(enl2, tempPoint, 2.0);
 	sphere1->setReflecting(false);
-	//scene->addObject(sphere1);
+	scene->addObject(sphere1);
 	
 	delete(tempPoint);
 	
@@ -162,10 +173,9 @@ Scene* createTestScene(){
 	
 	tempVector = new Vector(0, 1, 0);
 	
-	Plan* plan2 = new Plan(enl3, tempVector, 4.0, false);
-	plan2->setReflecting(true, 0.9);
-	plan2->setGlossy(200, 20);
-	//scene->addObject(plan2);
+	Plan* plan2 = new Plan(enl4, tempVector, 4.0, false);
+	plan2->setReflecting(false);
+	scene->addObject(plan2);
 	
 	delete(tempVector);
 	

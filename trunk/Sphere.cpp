@@ -23,7 +23,6 @@ Intersection* Sphere::createIntersection(Ray* ray){
 	nm->normalize();
 	
 	Intersection *intersection = new Intersection(m, nm, this, ray->getT());
-	
 	delete(m);
 	delete(nm);
 	
