@@ -12,31 +12,33 @@
 
 #include <limits>
 
-#include "Object.h"
+#include "Point.h"
+#include "Ray.h"
 
-class Box : public Object{
+class Box{
 private:
 	
 	Point* min;
 	Point* max;
 	
+	void swap(double& a, double& b);
+	
 public:
 
-	Box(Enlightment* _enlightment, Point* _min, Point* _max) : min(_min), max(_max) {
-		enlightment = _enlightment->clone();
-	}
+	Box(Point* _min, Point* _max) : min(_min), max(_max) {}
 	
 	virtual ~Box(void) {
-		delete(enlightment);
+		delete(min);
+		delete(max);
 	}
 	
-	virtual Intersection* intersection(Ray* ray);
+	virtual bool intersection(Ray* ray);
 	virtual std::string toString(void) const;
 	
 	Box& operator=(const Box& box){
-		delete(enlightment);
 		
-		enlightment = box.enlightment->clone();
+		*min = box.min;
+		*max = box.max;
 		
 		return *this;
 	}

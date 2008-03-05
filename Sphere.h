@@ -11,6 +11,7 @@
 #define SPHERE_H
 
 #include "Object.h"
+#include "Perlin.h"
 
 class Sphere : public Object{
 private:

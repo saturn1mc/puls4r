@@ -9,7 +9,7 @@
 
 #include "Box.h"
 
-Intersection* Box::intersection(Ray* ray){
+bool Box::intersection(Ray* ray){
 	
 	double tnear = -std::numeric_limits<double>::infinity();
 	double tfar = std::numeric_limits<double>::infinity();
@@ -40,14 +40,14 @@ Intersection* Box::intersection(Ray* ray){
 		}
 		
 		if(tnear > tfar || tfar < 0){
-			return 0;
+			return false;
 		}
 	}
 	
 	//Y Planes
 	if(ray->getDirection()->getY() == 0){
 		if(ray->getOrigin()->getY() < min->getY() || ray->getOrigin()->getY() > max->getY()){
-			return 0;
+			return false;
 		}
 	}
 	else{
@@ -67,14 +67,14 @@ Intersection* Box::intersection(Ray* ray){
 		}
 		
 		if(tnear > tfar || tfar < 0){
-			return 0;
+			return false;
 		}
 	}
 	
 	//Z Planes
 	if(ray->getDirection()->getZ() == 0){
 		if(ray->getOrigin()->getZ() < min->getZ() || ray->getOrigin()->getZ() > max->getZ()){
-			return 0;
+			return false;
 		}
 	}
 	else{
@@ -94,16 +94,19 @@ Intersection* Box::intersection(Ray* ray){
 		}
 		
 		if(tnear > tfar || tfar < 0){
-			return 0;
+			return false;
 		}
 	}
 	
 	//Result
-	ray->setT(tnear);
-	
-	-9
-	
-	return 0;
+	return true;
+}
+
+void Box::swap(double& a, double& b){
+	double temp;
+	temp = a;
+	a = b;
+	b = temp;
 }
 
 std::string Box::toString(void) const{

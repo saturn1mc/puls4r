@@ -20,6 +20,7 @@
 #include "Color.h"
 #include "Object.h"
 #include "Light.h"
+#include "Box.h"
 #include "Intersection.h"
 #include "Enlightment.h"
 
@@ -34,6 +35,7 @@ private:
 	Color* background;
 	std::list<Object* > objects;
 	std::list<Light* > lights;
+	std::list<Box* > boxes;
 	double focal;
 	
 	Intersection* getNearestIntersection(Ray* ray, double epsilon = 0.000001);
@@ -43,18 +45,23 @@ private:
 	Color* colorAt(double l, double p);
 	Color* antialiasedColor(double l, double p);
 	Color* observedColor(Ray* ray);
-	Color* glossyReflection(Ray* ray, Intersection* intersection, double smoothing = 2.0);
+	Color* glossyReflection(Ray* ray, Intersection* intersection, bool random = false, double smoothing = 3.0);
 	
 	Ray* reflectedRay(Ray* ray, Intersection* intersection);
 	Ray* refractedRay(Ray* ray, Intersection* intersection);
 	Ray* refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon = 0.000001);
 	
-	void shadow(Color* color, Intersection* intersection, double smoothing = 3.0);
+	void shadow(Color* color, Intersection* intersection, bool random = false, double smoothing = 3.0);
 	
 public:
 	
-	Scene(Observer* _observer, Image* _img, Color* _background) : observer(new Observer(_observer)), img(new Image(_img)), background(new Color(_background)), objects(0), lights(0), focal(calcFocal()) {}
-	Scene(const Scene& scene) : observer(new Observer(scene.observer)), img(new Image(scene.img)), background(new Color(scene.background)), objects(scene.objects), lights(scene.lights), focal(scene.focal) {}
+	Scene(Observer* _observer, Image* _img, Color* _background) : observer(new Observer(_observer)), img(new Image(_img)), background(new Color(_background)), objects(0), lights(0), boxes(0), focal(calcFocal()) {
+		std::srand(std::time(0));
+	}
+	
+	Scene(const Scene& scene) : observer(new Observer(scene.observer)), img(new Image(scene.img)), background(new Color(scene.background)), objects(scene.objects), lights(scene.lights), boxes(scene.boxes), focal(scene.focal) {
+		std::srand(std::time(0));
+	}
 	
 	~Scene(){
 		delete(observer);
@@ -62,6 +69,7 @@ public:
 		delete(background);
 		objects.clear();
 		lights.clear();
+		boxes.clear();
 	}
 	
 	int getH(void) const {return img->getH();}
@@ -70,8 +78,10 @@ public:
 	Observer* getObserver(void) const {return observer;}
 	Image* getImage(void) const {return img;}
 	Color* getBackground(void) const {return background;}
+	
 	std::list<Object* >& getObjects(void) {return objects;}
 	std::list<Light* >& getLights(void) {return lights;}
+	std::list<Box* >& getBoxes(void) {return boxes;}
 	
 	void setImage(Image* _img){
 		delete(img);
@@ -85,17 +95,22 @@ public:
 	
 	void addObject(Object* obj);
 	void addLight(Light* light);
+	void addBox(Box* box);
 	void rayTrace(void);
 	
 	Scene& operator=(const Scene& scene){
 		objects.clear();
 		lights.clear();
+		boxes.clear();
+		
 		delete(observer);
 		delete(img);
 		delete(background);
 		
 		objects = scene.objects;
 		lights = scene.lights;
+		boxes = scene.boxes;
+		
 		observer = new Observer(scene.observer);
 		img = new Image(scene.img);
 		background = new Color(scene.background);
@@ -137,6 +152,13 @@ template <class charT, class traits> std::basic_ostream<charT,traits>& operator<
 		s << (*iter) << std::endl;
 	}
 	s << "********************************" << std::endl;
+	s << "********************************" << std::endl;
+	s << "Boxes :" << std::endl;
+	s << "********************************" << std::endl;
+	for(std::list<Box *>::iterator iter = scene.getBoxes().begin(); iter != scene.getBoxes().end(); ++iter){
+		s << (*iter) << std::endl;
+	}
+	s << "********************************" << std::endl;
 	s << "##########################################" << std::endl;
 	
 	// print string stream
@@ -175,6 +197,13 @@ template <class charT, class traits> std::basic_ostream<charT,traits>& operator<
 	s << "Objects :" << std::endl;
 	s << "********************************" << std::endl;
 	for(std::list<Object *>::iterator iter = scene->getObjects().begin(); iter != scene->getObjects().end(); ++iter){
+		s << (*iter) << std::endl;
+	}
+	s << "********************************" << std::endl;
+	s << "********************************" << std::endl;
+	s << "Boxes :" << std::endl;
+	s << "********************************" << std::endl;
+	for(std::list<Box *>::iterator iter = scene->getBoxes().begin(); iter != scene->getBoxes().end(); ++iter){
 		s << (*iter) << std::endl;
 	}
 	s << "********************************" << std::endl;
