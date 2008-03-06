@@ -22,11 +22,12 @@ class PhotonShooter{
 
 private:
 	
+	int stored;
 	int nbLights;
 	int maxPhotons;
 	PhotonMap* map;
 	
-	void shootPhoton(Ray* ray, std::list<Object * > objects, float energy[3]);
+	void shootPhoton(Ray* ray, std::list<Object * > objects, float energy[3], bool indirect = false);
 	Intersection* getNearestIntersection(Ray* ray, std::list<Object * > objects, double epsilon = 0.000001);
 	
 	Ray* reflectedRay(Ray* ray, Intersection* intersection);

@@ -35,12 +35,12 @@ Scene* createTestScene(){
 	Color* purple = new Color(1.0, 0.0, 1.0);
 	
 	/* Enlightments */
-	Enlightment* enl1 = new Phong(white);
-	Enlightment* enl2 = new Phong(red);
-	Enlightment* enl3 = new Phong(green);
-	Enlightment* enl4 = new Phong(blue);
-	Enlightment* enl5 = new Phong(yellow);
-	Enlightment* enl6 = new Phong(purple);
+	Enlightment* enl1 = new Phong(red);
+	Enlightment* enl2 = new Phong(green);
+	Enlightment* enl3 = new Phong(blue);
+	Enlightment* enl4 = new Phong(yellow);
+	Enlightment* enl5 = new Phong(purple);
+	Enlightment* enl6 = new Phong(orange);
 	Enlightment* enl7 = new Phong(orange);
 	
 	/* Points */
@@ -48,15 +48,15 @@ Scene* createTestScene(){
 	Point* A;
 	Point* B;
 	Point* C;
-	Point* eye = new Point(0.0, 10.0, 45.0);
+	Point* eye = new Point(0.0, 5.0, 30.0);
 	Point* sight = new Point(0.0, 0.0, 0.0);
-	Point* lightPos = new Point(20.0, 15.0, 20.0);
+	Point* lightPos = new Point(-5.0, 10.0, 5.0);
 	
 	/* Vectors */
 	Vector* tempVector;
 	
 	/* Image */
-	Image* image = new Image("test.bmp", 800, 600, 1);
+	Image* image = new Image("test.bmp", 400, 300, 1);
 	
 	/* Observer */
 	Observer* obs = new Observer(eye, sight, M_PI/4.0);
@@ -66,7 +66,7 @@ Scene* createTestScene(){
 	
 	//Lights
 	Light* light1 = new Light(lightPos, white);
-	light1->setRadius(1.0);
+	light1->setRadius(2.5);
 	scene->addLight(light1);
 	
 	//Objects
@@ -102,6 +102,37 @@ Scene* createTestScene(){
 	
 	
 	//SPHERES
+	tempPoint = new Point (3.0, 0.2, 0);
+	
+	Sphere* sphere1 = new Sphere(enl2, tempPoint, 2.0);
+	sphere1->setRefracting(true, 1.5, 1.0);
+	scene->addObject(sphere1);
+	
+	delete(tempPoint);
+	
+	tempPoint = new Point (0, 4, 0);
+	
+	Sphere* sphere2 = new Sphere(enl3, tempPoint, 2.0);
+	//scene->addObject(sphere2);
+	
+	delete(tempPoint);
+
+	tempPoint = new Point (4, 0, 0);
+	
+	Sphere* sphere3 = new Sphere(enl4, tempPoint, 2.0);
+	sphere3->setReflecting(false);
+	//scene->addObject(sphere3);
+	
+	delete(tempPoint);
+	
+	tempPoint = new Point (0, 0, 4);
+	
+	Sphere* sphere4 = new Sphere(enl5, tempPoint, 2.0);
+	sphere4->setReflecting(false);
+	//scene->addObject(sphere4);
+	
+	delete(tempPoint);
+	
 	tempPoint = new Point (10.0, 10, 0);
 	
 	Sphere* specialSphere = new Sphere(enl1, tempPoint, 3.0);
@@ -129,85 +160,49 @@ Scene* createTestScene(){
 	
 	delete(tempPoint);
 	
-	tempPoint = new Point (0, 0, 0);
-	
-	Sphere* sphere1 = new Sphere(enl2, tempPoint, 2.0);
-	sphere1->setRefracting(true, 1.8, 1.0);
-	scene->addObject(sphere1);
-	
-	delete(tempPoint);
-	
-	tempPoint = new Point (0, 4, 0);
-	
-	Sphere* sphere2 = new Sphere(enl3, tempPoint, 2.0);
-	sphere2->setReflecting(false);
-	sphere2->setGlossy(20.0, 15.0);
-	//scene->addObject(sphere2);
-	
-	delete(tempPoint);
-
-	tempPoint = new Point (4, 0, 0);
-	
-	Sphere* sphere3 = new Sphere(enl4, tempPoint, 2.0);
-	sphere3->setReflecting(false);
-	//scene->addObject(sphere3);
-	
-	delete(tempPoint);
-	
-	tempPoint = new Point (0, 0, 4);
-	
-	Sphere* sphere4 = new Sphere(enl5, tempPoint, 2.0);
-	sphere4->setReflecting(false);
-	//scene->addObject(sphere4);
-	
-	delete(tempPoint);
-	
 	//PLANS
-	tempVector = new Vector(1, 0, 0);
+	tempVector = new Vector(0, 1, 0);
 	
-	Plan* plan1 = new Plan(enl2, tempVector, 50.0, false);
-	plan1->setReflecting(false);
-	//scene->addObject(plan1);
+	Plan* plan1 = new Plan(enl1, tempVector, 2.0, false);
+	scene->addObject(plan1);
 	
 	delete(tempVector);
 	
-	tempVector = new Vector(0, 1, 0);
+	tempVector = new Vector(1, 0, 0);
 	
-	Plan* plan2 = new Plan(enl4, tempVector, 4.0, false);
-	plan2->setReflecting(false);
+	Plan* plan2 = new Plan(enl2, tempVector, 10.0, false);
 	scene->addObject(plan2);
 	
 	delete(tempVector);
 	
 	tempVector = new Vector(0, 0, 1);
 	
-	Plan* plan3 = new Plan(enl4, tempVector, 50.0, false);
-	plan3->setReflecting(false);
-	//scene->addObject(plan3);
+	Plan* plan3 = new Plan(enl3, tempVector, 20.0, false);
+	scene->addObject(plan3);
+	
+	delete(tempVector);
+	
+	tempVector = new Vector(0, -1, 0);
+	
+	Plan* plan4 = new Plan(enl4, tempVector, 15.0, false);
+	plan4->setReflecting(false);
+	scene->addObject(plan4);
 	
 	delete(tempVector);
 	
 	tempVector = new Vector(-1, 0, 0);
 	
-	Plan* plan5 = new Plan(enl6, tempVector, 50.0, false);
+	Plan* plan5 = new Plan(enl5, tempVector, 10.0, false);
 	plan5->setReflecting(false);
-	//scene->addObject(plan5);
+	scene->addObject(plan5);
 
-	delete(tempVector);
-	
-	tempVector = new Vector(0, -1, 0);
-	
-	Plan* plan4 = new Plan(enl7, tempVector, 50.0, false);
-	plan4->setReflecting(false);
-	//scene->addObject(plan4);
-	
 	delete(tempVector);
 	
 	tempVector = new Vector(0, 0, -1);
 	
-	Plan* plan6 = new Plan(enl5, tempVector, 50.0, false);
+	Plan* plan6 = new Plan(enl6, tempVector, 50.0, false);
 	plan6->setReflecting(false);
-	//scene->addObject(plan6);
+	scene->addObject(plan6);
 	
 	delete(tempVector);
 	
@@ -293,4 +288,6 @@ int main (int argc, char*  const argv[]) {
 	scene->rayTrace();
 	
 	delete(scene);
+	
+	//while(1){}//Malloc debug
 }

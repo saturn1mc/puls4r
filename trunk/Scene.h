@@ -47,7 +47,7 @@ private:
 	Color* colorAt(double l, double p);
 	Color* antialiasedColor(double l, double p);
 	Color* observedColor(Ray* ray);
-	Color* glossyReflection(Ray* ray, Intersection* intersection, bool random = false, double smoothing = 3.0);
+	Color* glossyReflection(Ray* ray, Intersection* intersection, bool random = false, double smoothing = 1);
 	
 	Ray* reflectedRay(Ray* ray, Intersection* intersection);
 	Ray* refractedRay(Ray* ray, Intersection* intersection);

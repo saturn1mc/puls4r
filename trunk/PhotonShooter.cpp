@@ -14,10 +14,12 @@ void PhotonShooter::shootFrom(Light* light, std::list<Object * > objects){
 	int progress = 0;
 	double x, y, z;
 	
+	stored = 0;
+	
 	while(shooted < (maxPhotons / nbLights)){
-			
+		
 		int done = (int)round(100 * (shooted+1) / (maxPhotons / nbLights));
-			
+		
 		if(progress != done){
 			progress = done;
 			std::cout << "\r\tProgress " << progress << "%";
@@ -33,8 +35,8 @@ void PhotonShooter::shootFrom(Light* light, std::list<Object * > objects){
 		Vector* d = new Vector(x, y, z);
 		Ray* ray = new Ray(light->getSource(), d);
 		
-		//TODO replace "1.0" by light->totalEnergy
-		float energy[3] = {(1.0 / ((float)maxPhotons / (float)nbLights)), (1.0 / ((float)maxPhotons / (float)nbLights)), (1.0 / ((float)maxPhotons / (float)nbLights))};
+		//TODO replace "1.0" by light->totalEnergy ?
+		float energy[3] = {1.0, 1.0, 1.0};
 		//---
 		
 		shootPhoton(ray, objects, energy);
@@ -44,36 +46,39 @@ void PhotonShooter::shootFrom(Light* light, std::list<Object * > objects){
 		
 		shooted++;
 	}
+	
+	if(stored != 0){
+		map->scale_photon_power(1.0 / stored);
+	}
 }
 
-void PhotonShooter::shootPhoton(Ray* ray, std::list<Object * > objects, float energy[3]){
+void PhotonShooter::shootPhoton(Ray* ray, std::list<Object * > objects, float energy[3], bool indirect){
 	Intersection* photonIntersection = getNearestIntersection(ray, objects);
 	
 	if(photonIntersection != 0){
 		if(photonIntersection->getObject()->isReflecting()){
 			Ray* reflected = reflectedRay(ray, photonIntersection);
 			//TODO take absorption into account
-			shootPhoton(reflected, objects, energy);
+			shootPhoton(reflected, objects, energy, true);
 			delete(reflected);
 		}
 		
 		if(photonIntersection->getObject()->isRefracting()){
 			Ray* refracted = refractedRay(ray, photonIntersection, objects);
 			//TODO take absorption into account
-			shootPhoton(refracted
-						, objects, energy);
+			shootPhoton(refracted, objects, energy, true);
 			delete(refracted);
 		}
 		
-		if(!photonIntersection->getObject()->isReflecting() && !photonIntersection->getObject()->isRefracting()){
+		if(indirect && !photonIntersection->getObject()->isReflecting() && !photonIntersection->getObject()->isRefracting()){
 			
 			float* pos = photonIntersection->getPoint()->toArray();
-			
-			//ray->getDirection()->invert();
-			
 			float* dir = ray->getDirection()->toArray();
 			
 			map->store(energy, pos, dir);
+			stored++;
+			
+			//TODO take diffuse reflections into account
 			
 			free(pos);
 			free(dir);
