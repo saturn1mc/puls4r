@@ -403,7 +403,7 @@ void Scene::shadow(Color* color, Intersection* intersection, bool random, double
 		}
 		
 		if(shadowed > 0){
-			color->scale((enlighted / (shadowed + enlighted)) * 0.3);
+			color->scale(enlighted / (shadowed + enlighted));
 			color->normalize();
 		}
 		
