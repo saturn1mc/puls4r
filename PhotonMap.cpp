@@ -33,7 +33,7 @@ PhotonMap :: PhotonMap( const int max_phot )
 	//----------------------------------------
 	
 	for (int i=0; i<256; i++) {
-		double angle = double(i)*(1.0/256.0)*PI;
+		double angle = double(i)*(1.0/256.0)*M_PI;
 		costheta[i] = cos( angle );
 		sintheta[i] = sin( angle );
 		cosphi[i]   = cos( 2.0*angle );
@@ -61,6 +61,7 @@ void PhotonMap :: photon_dir( float *dir, const Photon *p ) const
 	dir[2] = costheta[p->theta];
 }
 
+
 /* irradiance_estimate computes an irradiance estimate
 * at a given surface position
 */
@@ -70,22 +71,20 @@ void PhotonMap :: irradiance_estimate(
 									   const float pos[3],            // surface position
 									   const float normal[3],         // surface normal at pos
 									   const float max_dist,          // max distance to look for photons
-									   const int nphotons,			 // number of photons to use
-									   const float plane_scl ) const  // maximum distance to plane, rel. to max-dist
+									   const int nphotons ) const     // number of photons to use
 																	  //**********************************************
 {
 	irrad[0] = irrad[1] = irrad[2] = 0.0;
 	
 	NearestPhotons np;
-	np.dist2 = (float*)alloca( sizeof(float)*(nphotons+1) );
-	np.index = (const Photon**)alloca( sizeof(Photon*)*(nphotons+1) );
+	np.dist2 = new float[nphotons+1];
+	np.index = new const Photon*[nphotons+1];
 	
 	np.pos[0] = pos[0]; np.pos[1] = pos[1]; np.pos[2] = pos[2];
 	np.max = nphotons;
 	np.found = 0;
 	np.got_heap = 0;
-	float max_dist_2 = max_dist * max_dist;
-	np.dist2[0] = max_dist_2;
+	np.dist2[0] = max_dist*max_dist;
 	
 	// locate the nearest photons
 	locate_photons( &np, 1 );
@@ -96,172 +95,29 @@ void PhotonMap :: irradiance_estimate(
 	
 	float pdir[3];
 	
-	float alpha = 0.918;
-	float beta = -1.953;
-	float d_p_temp;
-	float d_p_2;
-	float r_2 = max_dist_2;
-	float w_p_g;
-	
-	// surface plane - by Stephan Reiter
-	const float d = normal[0] * pos[0] + normal[1] * pos[1] + normal[2] * pos[2];
-	const float maxdist_toplane_2 = max_dist * max_dist * plane_scl * plane_scl;
-	
-	max_dist_2 = 0.0f; // certain photons will be rejected, so we have to re-evaluate the max squared distance
-	
 	// sum irradiance from all photons
 	for (int i=1; i<=np.found; i++) {
 		const Photon *p = np.index[i];
-		
 		// the photon_dir call and following if can be omitted (for speed)
 		// if the scene does not have any thin surfaces
 		photon_dir( pdir, p );
 		if ( (pdir[0]*normal[0]+pdir[1]*normal[1]+pdir[2]*normal[2]) < 0.0f ) {
-			
-			// check distance to surface plane
-			float dist_2 = normal[0] * p->pos[0] + normal[1] * p->pos[1] + normal[2] * p->pos[2] - d;
-			dist_2 *= dist_2;
-			if( dist_2 > maxdist_toplane_2 )
-				continue;
-			
-			d_p_temp = p->pos[0] - pos[0];
-			d_p_2 = d_p_temp * d_p_temp;
-			d_p_temp = p->pos[1] - pos[1];
-			d_p_2 += d_p_temp * d_p_temp;
-			d_p_temp = p->pos[2] - pos[2];
-			d_p_2 += d_p_temp * d_p_temp;
-			w_p_g = 1.0 - exp((beta * d_p_2) / (2.0 * r_2));
-			w_p_g /= 1.0 - exp(beta);
-			w_p_g = 1.0 - w_p_g;
-			w_p_g *= alpha;
-			
-			if( d_p_2 > max_dist_2 )
-				max_dist_2 = d_p_2;
-			
-			//printf("w_p_g = %f\n", w_p_g);
-			
-			irrad[0] += p->power[0] * w_p_g;
-			irrad[1] += p->power[1] * w_p_g;
-			irrad[2] += p->power[2] * w_p_g;
+			irrad[0] += p->power[0];
+			irrad[1] += p->power[1];
+			irrad[2] += p->power[2];
 		}
 	}
 	
-	if( max_dist_2 <= 0.0f )
-	{
-		irrad[0] = 0.0f; irrad[1] = 0.0f; irrad[2] = 0.0f;
-		return;
-	}
-	
-	const float tmp=(1.0f/PI)/(max_dist_2);	// estimate of density
+	const float tmp=(1.0f/M_PI)/(np.dist2[0]);	// estimate of density
 	
 	irrad[0] *= tmp;
 	irrad[1] *= tmp;
 	irrad[2] *= tmp;
+	
+	delete np.dist2;
+	delete np.index;
 }
 
-/* irradiance_estimate computes an irradiance estimate
-* at a given surface position and following a given direction
-* by Stephan Reiter; my be used for specular illumination.
-*/
-//**********************************************
-void PhotonMap :: specular_irradiance_estimate(
-												float irrad[3],                // returned specular irradiance
-												const float pos[3],            // surface position
-												const float normal[3],         // surface normal at pos
-												const float view[3],			 // pos to eye
-												const float max_dist,          // max distance to look for photons
-												const int nphotons,			 // number of photons to use
-												const float plane_scl ) const  // maximum distance to plane, rel. to max-dist
-																			   //**********************************************
-{
-	irrad[0] = irrad[1] = irrad[2] = 0.0;
-	
-	NearestPhotons np;
-	np.dist2 = (float*)alloca( sizeof(float)*(nphotons+1) );
-	np.index = (const Photon**)alloca( sizeof(Photon*)*(nphotons+1) );
-	
-	np.pos[0] = pos[0]; np.pos[1] = pos[1]; np.pos[2] = pos[2];
-	np.max = nphotons;
-	np.found = 0;
-	np.got_heap = 0;
-	float max_dist_2 = max_dist * max_dist;
-	np.dist2[0] = max_dist_2;
-	
-	// locate the nearest photons
-	locate_photons( &np, 1 );
-	
-	// if less than 8 photons return
-	if (np.found<8)
-		return;
-	
-	float pdir[3];
-	
-	float alpha = 0.918;
-	float beta = -1.953;
-	float d_p_temp;
-	float d_p_2;
-	float r_2 = max_dist_2;
-	float w_p_g;
-	
-	// surface plane - Stephan Reiter
-	const float d = normal[0] * pos[0] + normal[1] * pos[1] + normal[2] * pos[2];
-	const float maxdist_toplane_2 = max_dist * max_dist * plane_scl * plane_scl;
-	
-	max_dist_2 = 0.0f; // certain photons will be rejected, so we have to re-evaluate the max squared distance
-	
-	// sum irradiance from all photons
-	for (int i=1; i<=np.found; i++) {
-		const Photon *p = np.index[i];
-		// the photon_dir call and following if can be omitted (for speed)
-		// if the scene does not have any thin surfaces
-		photon_dir( pdir, p );
-		
-		// pdir is already reflected direction
-		if( pdir[0] * view[0] + pdir[1] * view[1] + pdir[2] * view[2] < 0.0f )
-			continue; /* not pointing in view direction */
-		
-		if ( (pdir[0]*normal[0]+pdir[1]*normal[1]+pdir[2]*normal[2]) > 0.0f /* outgoing */ ) {
-			
-			// check distance to surface plane
-			float dist_2 = normal[0] * p->pos[0] + normal[1] * p->pos[1] + normal[2] * p->pos[2] - d;
-			dist_2 *= dist_2;
-			if( dist_2 > maxdist_toplane_2 )
-				continue;
-			
-			d_p_temp = p->pos[0] - pos[0];
-			d_p_2 = d_p_temp * d_p_temp;
-			d_p_temp = p->pos[1] - pos[1];
-			d_p_2 += d_p_temp * d_p_temp;
-			d_p_temp = p->pos[2] - pos[2];
-			d_p_2 += d_p_temp * d_p_temp;
-			w_p_g = 1.0 - exp((beta * d_p_2) / (2.0 * r_2));
-			w_p_g /= 1.0 - exp(beta);
-			w_p_g = 1.0 - w_p_g;
-			w_p_g *= alpha;
-			
-			if( d_p_2 > max_dist_2 )
-				max_dist_2 = d_p_2;
-			
-			//printf("w_p_g = %f\n", w_p_g);
-			
-			irrad[0] += p->power[0] * w_p_g;
-			irrad[1] += p->power[1] * w_p_g;
-			irrad[2] += p->power[2] * w_p_g;
-		}
-	}
-	
-	if( max_dist_2 <= 0.0f )
-	{
-		irrad[0] = 0.0f; irrad[1] = 0.0f; irrad[2] = 0.0f;
-		return;
-	}
-	
-	const float tmp=(1.0f/PI)/(max_dist_2);	// estimate of density
-	
-	irrad[0] *= tmp;
-	irrad[1] *= tmp;
-	irrad[2] *= tmp;
-}
 
 /* locate_photons finds the nearest photons in the
 * photon map given the parameters in np
@@ -299,7 +155,7 @@ void PhotonMap :: locate_photons(
 	dist2 += dist1*dist1;
 	
 	if ( dist2 < np->dist2[0] ) {
-		// we found a photon :) Insert it in the candidate list
+		// we found a photon  [:)] Insert it in the candidate list
 		
 		if ( np->found < np->max ) {
 			// heap is not full; use array
@@ -370,7 +226,7 @@ void PhotonMap :: store(
 						 const float dir[3] )
 //***************************
 {
-	if (stored_photons>=max_photons)
+	if (stored_photons>max_photons)
 		return;
 	
 	stored_photons++;
@@ -387,13 +243,13 @@ void PhotonMap :: store(
 		node->power[i] = power[i];
 	}
 	
-	int theta = int( acos(dir[2])*(256.0/PI) );
+	int theta = int( acos(dir[2])*(256.0/M_PI) );
 	if (theta>255)
 		node->theta = 255;
 	else
 		node->theta = (unsigned char)theta;
 	
-	int phi = int( atan2(dir[1],dir[0])*(256.0/(2.0*PI)) );
+	int phi = int( atan2(dir[1],dir[0])*(256.0/(2.0*M_PI)) );
 	if (phi>255)
 		node->phi = 255;
 	else if (phi<0)
@@ -537,7 +393,7 @@ void PhotonMap :: balance_segment(
 	if ((3*median) <= (end-start+1)) {
 		median += median;
 		median += start-1;
-	} else
+	} else	
 		median = end-median+1;
 	
 	//--------------------------
@@ -579,12 +435,14 @@ void PhotonMap :: balance_segment(
 	if ( median < end ) {
 		// balance right segment
 		if ( median+1 < end ) {
-			const float tmp = bbox_min[axis];
+			const float tmp = bbox_min[axis];		
 			bbox_min[axis] = pbal[index]->pos[axis];
 			balance_segment( pbal, porg, 2*index+1, median+1, end );
 			bbox_min[axis] = tmp;
 		} else {
 			pbal[ 2*index+1 ] = porg[end];
 		}
-	}
+	}	
 }
+
+

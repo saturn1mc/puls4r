@@ -29,15 +29,19 @@ void Scene::rayTrace(void){
 	
 	std::cout << "---> Photon Tracing..." << std::endl;
 	shooter = new PhotonShooter(lights.size(), 1000000);
+	
 	int lightNum = 0;
 	for(std::list<Light* >::iterator iter = lights.begin(); iter != lights.end(); ++iter){
 		lightNum++;
 		std::cout << "Light (" << lightNum << "/" << lights.size() << ")" << std::endl;
 		shooter->shootFrom((*iter), objects);
 	}
+	
 	std::cout << std::endl;
-	std::cout << "---> Balancing photon map" << std::endl;
+	std::cout << "---> Balancing photon map..." << std::endl;
+	
 	shooter->getPhotonMap()->balance();
+	
 	std::cout << "---> End of photon tracing" << std::endl;
 	
 	std::cout << "---> Rendering..." << std::endl;
@@ -131,20 +135,28 @@ Color* Scene::observedColor(Ray* ray){
 			*oc = *objectColor;
 			shadow(oc, nearestIntersection);
 			
+			/* ---- INDIRECT ILLUMINATION TEST ---- */
+			
 			float irradiance[3];
 			float* pos = nearestIntersection->getPoint()->toArray();
 			float* normal = nearestIntersection->getNormal()->toArray();
 			
-			shooter->getPhotonMap()->irradiance_estimate(irradiance, pos, normal, 10, 10, 10);
+			shooter->getPhotonMap()->irradiance_estimate(irradiance, pos, normal, 10.0, 10.0);
 			
-			oc->setR(oc->getR() * irradiance[0] * 100000);
-			oc->setG(oc->getG() * irradiance[1] * 100000);
-			oc->setB(oc->getB() * irradiance[2] * 100000);
+			if(irradiance[0]!=0 || irradiance[1]!=0 || irradiance[2]!=0){
+				//std::cout << "Irradiance " << irradiance[0] << " " << irradiance[1] << " " << irradiance[2] << std::endl;
+			}
+			
+			oc->setR(oc->getR() + irradiance[0] );
+			oc->setG(oc->getG() + irradiance[1] );
+			oc->setB(oc->getB() + irradiance[2] );
 			
 			oc->normalize();
 			
 			free(pos);
 			free(normal);
+			
+			/* ------------------------------------- */
 		}
 		else{
 			Color* reflectedColor = 0;
@@ -231,9 +243,10 @@ Ray* Scene::reflectedRay(Ray* ray, Intersection* intersection){
 Color* Scene::glossyReflection(Ray* ray, Intersection* intersection, bool random, double smoothing){
 	
 	Color* color = new Color();
+	
 	double f = intersection->getObject()->getGlossyFocal();
 	double radius = intersection->getObject()->getGlossyWidth();
-	double step = intersection->getObject()->getGlossyWidth() / smoothing;
+	double step = 1.0 / smoothing;
 	
 	Ray* reflected = reflectedRay(ray, intersection);
 	
@@ -242,7 +255,7 @@ Color* Scene::glossyReflection(Ray* ray, Intersection* intersection, bool random
 	
 	for(double i=-radius/2.0; i<radius/2.0; i+= step){
 		for(double j=-radius/2.0; j<radius/2.0; j+= step){
-
+			
 			Point* target;
 			
 			if(random){
@@ -266,12 +279,15 @@ Color* Scene::glossyReflection(Ray* ray, Intersection* intersection, bool random
 				
 				delete(glossyColor);
 			}
+			
+			delete(glossyIntersection);
+			delete(glossyRay);
 		}
 	}
 	
+	delete(virtualObs);
 	delete(sight);
 	delete(reflected);
-	delete(virtualObs);
 
 	return color;
 }
@@ -340,7 +356,7 @@ void Scene::shadow(Color* color, Intersection* intersection, bool random, double
 		double enlighted = 0;
 		double shadowed = 0;
 		double radius = (*iter)->getRadius();
-		double step = radius / smoothing;
+		double step = 1.0 / smoothing;
 		
 		Vector* distanceTolight = new Vector(intersection->getPoint(), (*iter)->getSource());
 		Observer* virtualObs = new Observer(intersection->getPoint(), (*iter)->getSource(), M_PI / 4.0);
@@ -360,8 +376,8 @@ void Scene::shadow(Color* color, Intersection* intersection, bool random, double
 					target = new Point(i, j, f);
 				}
 				
-				Ray* ray = virtualObs->ray(target);
-				Intersection* shadowIntersection = getNearestIntersection(ray);
+				Ray* shadowRay = virtualObs->ray(target);
+				Intersection* shadowIntersection = getNearestIntersection(shadowRay);
 				
 				if(shadowIntersection != 0){
 					
@@ -380,13 +396,16 @@ void Scene::shadow(Color* color, Intersection* intersection, bool random, double
 					enlighted++;
 				}
 				
-				delete(ray);
+				delete(shadowRay);
 				delete(shadowIntersection);
 				delete(target);
 			}
 		}
 		
-		color->darken(enlighted / (shadowed + enlighted));
+		if(shadowed > 0){
+			color->darken((enlighted / (shadowed + enlighted)) + 0.3);
+			color->normalize();
+		}
 		
 		delete(virtualObs);
 		delete(distanceTolight);
