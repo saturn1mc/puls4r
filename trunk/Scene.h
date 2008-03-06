@@ -53,7 +53,7 @@ private:
 	Ray* refractedRay(Ray* ray, Intersection* intersection);
 	Ray* refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon = 0.000001);
 	
-	void shadow(Color* color, Intersection* intersection, bool random = false, double smoothing = 3.0);
+	void shadow(Color* color, Intersection* intersection, bool random = false, double smoothing = 2.0);
 	
 public:
 	
