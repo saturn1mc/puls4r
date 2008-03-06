@@ -89,6 +89,16 @@ public:
 	void setZ(double _z) {z = _z;}
 	void setT(double _t) {t = _t;}
 	
+	float* toArray(void) const{
+		float* array = (float *)malloc(3*(sizeof(float)));
+		
+		array[0] = x;
+		array[1] = y;
+		array[2] = z;
+		
+		return array;
+	}
+	
 	const Vector& operator=(const Vector& v){
 		x = v.x;
 		y = v.y;

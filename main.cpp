@@ -132,7 +132,7 @@ Scene* createTestScene(){
 	tempPoint = new Point (0, 0, 0);
 	
 	Sphere* sphere1 = new Sphere(enl2, tempPoint, 2.0);
-	sphere1->setReflecting(false);
+	sphere1->setRefracting(true, 1.8, 1.0);
 	scene->addObject(sphere1);
 	
 	delete(tempPoint);

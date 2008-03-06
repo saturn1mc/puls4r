@@ -25,35 +25,22 @@ double Scene::calcFocal(void) const{
 	return ( (getW() / 2.0) / tan(observer->getAlpha()/2.0) );
 }
 
-Intersection* Scene::getNearestIntersection(Ray* ray, double epsilon){
-	
-	Intersection* nearestIntersection = 0;
-	
-	for(std::list<Object* >::iterator iter = objects.begin(); iter != objects.end(); ++iter){
-		
-		Intersection* candidate = (*iter)->intersection(ray);
-		
-		if(candidate != 0){
-			if((nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()) && (candidate->getT() > epsilon)){
-				if(nearestIntersection != 0){
-					delete(nearestIntersection);
-				}
-				
-				nearestIntersection = candidate;
-			}
-			else{
-				delete(candidate);
-			}
-		}
-		
-	}
-	
-	return nearestIntersection;
-}
-
 void Scene::rayTrace(void){
 	
-	std::cout << "---> Tracing..." << std::endl;
+	std::cout << "---> Photon Tracing..." << std::endl;
+	shooter = new PhotonShooter(lights.size(), 1000000);
+	int lightNum = 0;
+	for(std::list<Light* >::iterator iter = lights.begin(); iter != lights.end(); ++iter){
+		lightNum++;
+		std::cout << "Light (" << lightNum << "/" << lights.size() << ")" << std::endl;
+		shooter->shootFrom((*iter), objects);
+	}
+	std::cout << std::endl;
+	std::cout << "---> Balancing photon map" << std::endl;
+	shooter->getPhotonMap()->balance();
+	std::cout << "---> End of photon tracing" << std::endl;
+	
+	std::cout << "---> Rendering..." << std::endl;
 	int progress = 0;
 	
 	for(int l=-getH()/2; l<getH()/2; l++){
@@ -143,6 +130,21 @@ Color* Scene::observedColor(Ray* ray){
 		if(currentRecursions >= MAX_RECURSIONS || (!nearestIntersection->getObject()->isReflecting() && !nearestIntersection->getObject()->isRefracting())){
 			*oc = *objectColor;
 			shadow(oc, nearestIntersection);
+			
+			float irradiance[3];
+			float* pos = nearestIntersection->getPoint()->toArray();
+			float* normal = nearestIntersection->getNormal()->toArray();
+			
+			shooter->getPhotonMap()->irradiance_estimate(irradiance, pos, normal, 10, 10, 10);
+			
+			oc->setR(oc->getR() * irradiance[0] * 100000);
+			oc->setG(oc->getG() * irradiance[1] * 100000);
+			oc->setB(oc->getB() * irradiance[2] * 100000);
+			
+			oc->normalize();
+			
+			free(pos);
+			free(normal);
 		}
 		else{
 			Color* reflectedColor = 0;
@@ -187,6 +189,32 @@ Color* Scene::observedColor(Ray* ray){
 		
 		return oc;
 	}
+}
+
+Intersection* Scene::getNearestIntersection(Ray* ray, double epsilon){
+	
+	Intersection* nearestIntersection = 0;
+	
+	for(std::list<Object* >::iterator iter = objects.begin(); iter != objects.end(); ++iter){
+		
+		Intersection* candidate = (*iter)->intersection(ray);
+		
+		if(candidate != 0){
+			if((nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()) && (candidate->getT() > epsilon)){
+				if(nearestIntersection != 0){
+					delete(nearestIntersection);
+				}
+				
+				nearestIntersection = candidate;
+			}
+			else{
+				delete(candidate);
+			}
+		}
+		
+	}
+	
+	return nearestIntersection;
 }
 
 Ray* Scene::reflectedRay(Ray* ray, Intersection* intersection){
