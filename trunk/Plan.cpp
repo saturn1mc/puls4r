@@ -29,9 +29,16 @@ Intersection* Plan::intersection(Ray* ray){
 									ray->getOrigin()->getY() + (ray->getDirection()->getY() * ray->getT()),
 									ray->getOrigin()->getZ() + (ray->getDirection()->getZ() * ray->getT())
 								);
-		
-			Intersection* intersection = new Intersection(m, norm, this, ray->getT());
 			
+			Vector* nm = new Vector(norm);
+			
+			if(perlin != 0){
+				perlin->disruptNormal(nm, m, epsilon);
+			}
+		
+			Intersection* intersection = new Intersection(m, nm, this, ray->getT());
+			
+			delete(nm);
 			delete(m);
 			
 			return intersection;

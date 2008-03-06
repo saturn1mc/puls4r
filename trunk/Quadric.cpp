@@ -26,6 +26,10 @@ Intersection* Quadric::createIntersection(Ray* ray){
 		nm->invert();
 	}
 	
+	if(perlin != 0){
+		perlin->disruptNormal(nm, epsilon);
+	}
+	
 	Intersection *intersection = new Intersection(m, nm, this, ray->getT());
 	
 	delete(m);

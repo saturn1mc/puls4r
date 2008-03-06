@@ -11,7 +11,6 @@
 #define PLAN_H
 
 #include "Object.h"
-#include "Perlin.h"
 
 class Plan : public Object{
 private:
@@ -23,19 +22,27 @@ private:
 
 public:
 
-	Plan(Enlightment* _enlightment, Vector* _norm, double _d, bool _monoface) : norm(new Vector(_norm)), d(_d), monoface(_monoface) {
+	Plan(Enlightment* _enlightment, Vector* _norm, double _d, bool _monoface, bool perlinNoised = false) : norm(new Vector(_norm)), d(_d), monoface(_monoface) {
 		enlightment = _enlightment->clone();
 		norm->normalize();
+		
+		if(perlinNoised){
+			perlin = &Perlin::getInstance();
+		}
 	}
 	
 	Plan(const Plan& plan) : norm(new Vector(plan.norm)), d(plan.d), monoface(plan.monoface){
 		enlightment = plan.enlightment->clone();
 		norm->normalize();
+		
+		perlin = plan.perlin;
 	}
 	
 	Plan(const Plan* plan) : norm(new Vector(plan->norm)), d(plan->d), monoface(plan->monoface){
 		enlightment = plan->enlightment->clone();
 		norm->normalize();
+		
+		perlin = plan->perlin;
 	}
 
 	virtual ~Plan(void) {
