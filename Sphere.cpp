@@ -22,9 +22,14 @@ Intersection* Sphere::createIntersection(Ray* ray){
 	
 	nm->normalize();
 	
+	if(perlin != 0){
+		perlin->disruptNormal(nm, epsilon);
+	}
+	
 	Intersection *intersection = new Intersection(m, nm, this, ray->getT());
-	delete(m);
+	
 	delete(nm);
+	delete(m);
 	
 	return intersection;
 }

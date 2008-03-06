@@ -167,6 +167,7 @@ Color* Scene::observedColor(Ray* ray){
 				if(nearestIntersection->getObject()->getGlossyFocal() == 0){
 					Ray* reflected = reflectedRay(ray, nearestIntersection);
 					reflectedColor = observedColor(reflected);
+					
 					delete(reflected);
 				}
 				else{
@@ -249,9 +250,11 @@ Color* Scene::glossyReflection(Ray* ray, Intersection* intersection, bool random
 	double step = 1.0 / smoothing;
 	
 	Ray* reflected = reflectedRay(ray, intersection);
-	
 	Point* sight = new Point(((*reflected->getDirection()) * f) + intersection->getPoint());
 	Observer* virtualObs = new Observer(intersection->getPoint(), sight, M_PI / 4.0);
+	
+	delete(sight);
+	delete(reflected);
 	
 	for(double i=-radius/2.0; i<radius/2.0; i+= step){
 		for(double j=-radius/2.0; j<radius/2.0; j+= step){
@@ -286,8 +289,6 @@ Color* Scene::glossyReflection(Ray* ray, Intersection* intersection, bool random
 	}
 	
 	delete(virtualObs);
-	delete(sight);
-	delete(reflected);
 
 	return color;
 }
@@ -362,6 +363,8 @@ void Scene::shadow(Color* color, Intersection* intersection, bool random, double
 		Observer* virtualObs = new Observer(intersection->getPoint(), (*iter)->getSource(), M_PI / 4.0);
 		double f = distanceTolight->norm();
 		
+		delete(distanceTolight);
+		
 		for(double i=-radius/2.0; i<radius/2.0; i+= step){
 			for(double j=-radius/2.0; j<radius/2.0; j+= step){
 				
@@ -402,13 +405,12 @@ void Scene::shadow(Color* color, Intersection* intersection, bool random, double
 			}
 		}
 		
+		delete(virtualObs);
+		
 		if(shadowed > 0){
-			color->scale(enlighted / (shadowed + enlighted));
+			color->scale(std::min(1.0, (enlighted / (shadowed + enlighted)) + 0.3));
 			color->normalize();
 		}
-		
-		delete(virtualObs);
-		delete(distanceTolight);
 	}
 	
 	color->normalize();

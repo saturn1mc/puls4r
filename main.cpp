@@ -41,7 +41,7 @@ Scene* createTestScene(){
 	Enlightment* enl4 = new Phong(yellow);
 	Enlightment* enl5 = new Phong(purple);
 	Enlightment* enl6 = new Phong(orange);
-	Enlightment* enl7 = new Phong(orange);
+	Enlightment* enl7 = new Phong(white);
 	
 	/* Points */
 	Point* tempPoint;
@@ -102,18 +102,18 @@ Scene* createTestScene(){
 	
 	
 	//SPHERES
-	tempPoint = new Point (3.0, 0.2, 0);
+	tempPoint = new Point (4, 1.0, 0);
 	
-	Sphere* sphere1 = new Sphere(enl2, tempPoint, 2.0);
+	Sphere* sphere1 = new Sphere(enl2, tempPoint, 2.5);
 	sphere1->setRefracting(true, 1.5, 1.0);
 	scene->addObject(sphere1);
 	
 	delete(tempPoint);
 	
-	tempPoint = new Point (0, 4, 0);
+	tempPoint = new Point (-4, 1.0, -4);
 	
-	Sphere* sphere2 = new Sphere(enl3, tempPoint, 2.0);
-	//scene->addObject(sphere2);
+	Sphere* sphere2 = new Sphere(enl6, tempPoint, 2.5, true);
+	scene->addObject(sphere2);
 	
 	delete(tempPoint);
 
@@ -144,7 +144,7 @@ Scene* createTestScene(){
 	
 	tempPoint = new Point (0.0, 10, 0);
 	
-	Sphere* refractingSphere = new Sphere(enl1, tempPoint, 3.0);
+	Sphere* refractingSphere = new Sphere(enl6, tempPoint, 3.0);
 	refractingSphere->setRefracting(true, 1.8, 1.0);
 	//scene->addObject(refractingSphere);
 	

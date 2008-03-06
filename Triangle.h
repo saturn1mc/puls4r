@@ -21,7 +21,7 @@ private:
 	
 public:
 
-	Triangle(Enlightment* _enlightment, Point* a, Point* b, Point* c) : plan(0){
+	Triangle(Enlightment* _enlightment, Point* a, Point* b, Point* c , bool perlinNoised = false) : plan(0){
 		
 		enlightment = _enlightment->clone();
 		points[0] = new Point(a);
@@ -40,6 +40,10 @@ public:
 		delete(AB);
 		delete(AC);
 		delete(norm);
+		
+		if(perlinNoised){
+			perlin = &Perlin::getInstance();
+		}
 	}
 	
 	Triangle(const Triangle& triangle) : plan(0){
@@ -50,6 +54,8 @@ public:
 		points[2] = new Point(triangle.points[2]);
 		
 		plan = new Plan(triangle.plan);
+		
+		perlin = triangle.perlin;
 	}
 	
 	Triangle(const Triangle* triangle) : plan(0){
@@ -60,6 +66,8 @@ public:
 		points[2] = new Point(triangle->points[2]);
 		
 		plan = new Plan(triangle->plan);
+		
+		perlin = triangle->perlin;
 	}
 	
 	virtual ~Triangle(void) {
@@ -94,6 +102,8 @@ public:
 		points[2] = new Point(triangle.points[2]);
 		
 		plan = new Plan(triangle.plan);
+		
+		perlin = triangle.perlin;
 		
 		return *this;
 	}

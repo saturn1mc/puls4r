@@ -11,7 +11,6 @@
 #define SPHERE_H
 
 #include "Object.h"
-#include "Perlin.h"
 
 class Sphere : public Object{
 private:
@@ -23,12 +22,22 @@ private:
 	
 public:
 
-	Sphere(Enlightment* _enlightment, Point* _center, double _radius) : center(new Point(_center)), radius(_radius) {
+	Sphere(Enlightment* _enlightment, Point* _center, double _radius, bool perlinNoised = false) : center(new Point(_center)), radius(_radius) {
 		enlightment = _enlightment->clone();
+		
+		if(perlinNoised){
+			perlin = &Perlin::getInstance();
+		}
 	}
 	
 	Sphere(const Sphere& sphere) : center(new Point(sphere.center)), radius(sphere.radius){
 		enlightment = sphere.enlightment->clone();
+		perlin = sphere.perlin;
+	}
+	
+	Sphere(const Sphere* sphere) : center(new Point(sphere->center)), radius(sphere->radius){
+		enlightment = sphere->enlightment->clone();
+		perlin = sphere->perlin;
 	}
 	
 	virtual ~Sphere(void) {
@@ -45,6 +54,8 @@ public:
 		enlightment = sphere.enlightment->clone();
 		center = new Point(sphere.center);
 		radius = sphere.radius;
+		
+		perlin = sphere.perlin;
 		
 		return *this;
 	}

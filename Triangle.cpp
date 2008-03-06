@@ -30,6 +30,11 @@ Intersection* Triangle::intersection(Ray* ray){
 		
 		if((u>=0) && (v >= 0) && ((u+v) <= 1)){
 			intersection->setObject(this);
+			
+			if(perlin != 0){
+				perlin->disruptNormal(intersection->getNormal(), epsilon);
+			}
+			
 			return intersection;
 		}
 		else{

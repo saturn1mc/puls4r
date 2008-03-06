@@ -28,8 +28,12 @@ private:
 	
 public:
 
-	Quadric(Enlightment* _enlightment, double _A, double _B, double _C, double _D, double _E, double _F, double _G, double _H, double _I, double _J) : A(_A), B(_B), C(_C), D(_D), E(_E), F(_F), G(_G), H(_H), I(_I), J(_J){
+	Quadric(Enlightment* _enlightment, double _A, double _B, double _C, double _D, double _E, double _F, double _G, double _H, double _I, double _J, bool perlinNoised = false) : A(_A), B(_B), C(_C), D(_D), E(_E), F(_F), G(_G), H(_H), I(_I), J(_J){
 		enlightment = _enlightment->clone();
+		
+		if(perlinNoised){
+			perlin = &Perlin::getInstance();
+		}
 	}
 	
 	virtual ~Quadric(void) {}
@@ -54,6 +58,8 @@ public:
 		H = quadric.H;
 		I = quadric.I;
 		J = quadric.J;
+		
+		perlin = quadric.perlin;
 	
 		return *this;
 	}

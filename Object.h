@@ -22,9 +22,11 @@ class Object{
 
 protected:
 	
-	Object(void) : enlightment(0){}
 	Enlightment *enlightment;
 	Perlin* perlin;
+	double epsilon;
+	
+	Object(void) : enlightment(0), epsilon(0.5){}
 	
 public:
 		
@@ -74,6 +76,10 @@ public:
 	
 	void setEnlightment(Enlightment* _enlightment){
 		enlightment = _enlightment;
+	}
+	
+	void setEpsilon(double _epsilon){
+		epsilon = _epsilon;
 	}
 	
 	Object(const Object& object) : enlightment(0) {}
