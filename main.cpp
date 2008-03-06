@@ -56,7 +56,7 @@ Scene* createTestScene(){
 	Vector* tempVector;
 	
 	/* Image */
-	Image* image = new Image("test.bmp", 400, 300, 1);
+	Image* image = new Image("test.bmp", 1900, 1200, 1);
 	
 	/* Observer */
 	Observer* obs = new Observer(eye, sight, M_PI/4.0);
@@ -112,7 +112,8 @@ Scene* createTestScene(){
 	
 	tempPoint = new Point (-4, 1.0, -4);
 	
-	Sphere* sphere2 = new Sphere(enl6, tempPoint, 2.5, true);
+	Sphere* sphere2 = new Sphere(enl1, tempPoint, 2.5, true);
+	sphere2->setReflecting(false);
 	scene->addObject(sphere2);
 	
 	delete(tempPoint);
