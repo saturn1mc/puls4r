@@ -64,7 +64,7 @@ public:
 		normalizeComponent(b);
 	}
 	
-	void darken(double intensity){
+	void scale(double intensity){
 		r *= intensity;
 		g *= intensity;
 		b *= intensity;
