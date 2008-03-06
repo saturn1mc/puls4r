@@ -15,6 +15,7 @@
 #include <list>
 #include <cmath>
 
+#include "PhotonShooter.h"
 #include "Observer.h"
 #include "Image.h"
 #include "Color.h"
@@ -30,6 +31,7 @@ private:
 	static const int MAX_RECURSIONS = 1000;
 	int currentRecursions;
 	
+	PhotonShooter* shooter;
 	Observer* observer;
 	Image* img;
 	Color* background;
@@ -55,15 +57,16 @@ private:
 	
 public:
 	
-	Scene(Observer* _observer, Image* _img, Color* _background) : observer(new Observer(_observer)), img(new Image(_img)), background(new Color(_background)), objects(0), lights(0), boxes(0), focal(calcFocal()) {
+	Scene(Observer* _observer, Image* _img, Color* _background) : shooter(0), observer(new Observer(_observer)), img(new Image(_img)), background(new Color(_background)), objects(0), lights(0), boxes(0), focal(calcFocal()) {
 		std::srand(std::time(0));
 	}
 	
-	Scene(const Scene& scene) : observer(new Observer(scene.observer)), img(new Image(scene.img)), background(new Color(scene.background)), objects(scene.objects), lights(scene.lights), boxes(scene.boxes), focal(scene.focal) {
+	Scene(const Scene& scene) : shooter(new PhotonShooter(scene.shooter)), observer(new Observer(scene.observer)), img(new Image(scene.img)), background(new Color(scene.background)), objects(scene.objects), lights(scene.lights), boxes(scene.boxes), focal(scene.focal) {
 		std::srand(std::time(0));
 	}
 	
 	~Scene(){
+		delete(shooter);
 		delete(observer);
 		delete(img);
 		delete(background);
@@ -103,6 +106,7 @@ public:
 		lights.clear();
 		boxes.clear();
 		
+		delete(shooter);
 		delete(observer);
 		delete(img);
 		delete(background);
@@ -111,6 +115,7 @@ public:
 		lights = scene.lights;
 		boxes = scene.boxes;
 		
+		shooter = new PhotonShooter(scene.shooter);
 		observer = new Observer(scene.observer);
 		img = new Image(scene.img);
 		background = new Color(scene.background);

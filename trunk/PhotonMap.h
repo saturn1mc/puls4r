@@ -1,12 +1,11 @@
 //----------------------------------------------------------------------------
-// photonmap.h
 //
-// Henrik Wann Jensen - February 2001
+// From Henrik Wann Jensen
 //
 //----------------------------------------------------------------------------
 
-#ifndef __PHOTON_MAP_H__
-#define __PHOTON_MAP_H__
+#ifndef PHOTON_MAP_H
+#define PHOTON_MAP_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,26 +19,14 @@
 #pragma warning( disable : 4305 )
 #endif
 
-/* This is the photon
-* The power is not compressed so the
-* size is 28 bytes
-*/
-//**********************
 typedef struct Photon {
-	//**********************
-	float pos[3];                 // photon position
+	float pos[3];				  // photon position
 	short plane;                  // splitting plane for kd-tree
 	unsigned char theta, phi;     // incoming direction
 	float power[3];               // photon power (uncompressed)
 } Photon;
 
-
-/* This structure is used only to locate the
-* nearest photons
-*/
-//******************************
 typedef struct NearestPhotons {
-	//******************************
 	int max;
 	int found;
 	int got_heap;
@@ -48,23 +35,17 @@ typedef struct NearestPhotons {
 	const Photon **index;
 } NearestPhotons;
 
-
-/* This is the PhotonMap class
-*/
-//*****************
 class PhotonMap {
-	//*****************
+	
 public:
 	PhotonMap( int max_phot );
 	~PhotonMap();
 	
-	void store(
-			   const float power[3],          // photon power
+	void store(const float power[3],          // photon power
 			   const float pos[3],            // photon position
 			   const float dir[3] );          // photon direction
 	
-	void scale_photon_power(
-							const float scale );           // 1/(number of emitted photons)
+	void scale_photon_power(const float scale );           // 1/(number of emitted photons)
 	
 	void balance(void);              // balance the kd-tree (before use!)
 	
@@ -73,7 +54,7 @@ public:
 							 const float pos[3],            // surface position
 							 const float normal[3],         // surface normal at pos
 							 const float max_dist,          // max distance to look for photons
-							 const int nphotons,			   // number of photons to use
+							 const int nphotons,			// number of photons to use
 							 const float plane_scl ) const; // maximum distance to plane, rel. to max-dist
 	
 	void specular_irradiance_estimate( // by Stephan Reiter
@@ -98,12 +79,12 @@ public:
 	
 private:
 		
-		void balance_segment(
-							 Photon **pbal,
-							 Photon **porg,
-							 const int index,
-							 const int start,
-							 const int end );
+	void balance_segment(
+						 Photon **pbal,
+						 Photon **porg,
+						 const int index,
+						 const int start,
+						 const int end );
 	
 	void median_split(
 					  Photon **p,
@@ -128,4 +109,4 @@ private:
 	float bbox_max[3];		// use bbox_max;
 };
 
-#endif // __PHOTON_MAP__
+#endif // PHOTON_MAP
