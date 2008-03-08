@@ -37,6 +37,9 @@ private:
 	bool russianRoulette(double d) const;
 	void storePhoton(Point* position, Vector* direction, float energy[3]);
 	
+	void scaleEnergy(float energy[3], float coeff);
+	void scaleEnergy(float energy[3], Color* color);
+	
 public:
 	
 	PhotonShooter(int _nbLights, int _maxPhotons) : nbLights(_nbLights), maxPhotons(_maxPhotons), map(new PhotonMap(_maxPhotons)) {

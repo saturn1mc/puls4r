@@ -26,7 +26,7 @@ protected:
 	Perlin* perlin;
 	double epsilon;
 	
-	Object(void) : enlightment(0), epsilon(0.5){}
+	Object(void) : enlightment(0), perlin(0), epsilon(0.5){}
 	
 public:
 		
