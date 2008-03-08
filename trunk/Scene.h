@@ -40,12 +40,15 @@ private:
 	std::list<Box* > boxes;
 	double focal;
 	
-	Intersection* getNearestIntersection(Ray* ray, double epsilon = 0.000001);
-	
+	/* Global Functions */
 	double calcFocal(void) const;
+	Intersection* getNearestIntersection(Ray* ray, double epsilon = 0.000001);
+	Color* antialiasedColor(double l, double p, int mode);
+	
+	/* Ray Casting Functions */
+	void rayCasting(void);
 	
 	Color* colorAt(double l, double p);
-	Color* antialiasedColor(double l, double p);
 	Color* observedColor(Ray* ray);
 	Color* glossyReflection(Ray* ray, Intersection* intersection, bool random = false, double smoothing = 1);
 	
@@ -55,7 +58,14 @@ private:
 	
 	void shadow(Color* color, Intersection* intersection, bool random = false, double smoothing = 1);
 	
+	/* Photon Mapping Functions */
+	void photonMapping(void);
+	Color* gatherPhotonsAt(double l, double p);
+	
 public:
+	
+	static const int RAYCASTING_MODE = 0;
+	static const int PHOTONMAPPING_MODE = 1;
 	
 	Scene(Observer* _observer, Image* _img, Color* _background) : shooter(0), observer(new Observer(_observer)), img(new Image(_img)), background(new Color(_background)), objects(0), lights(0), boxes(0), focal(calcFocal()) {
 		std::srand(std::time(0));
@@ -99,7 +109,7 @@ public:
 	void addObject(Object* obj);
 	void addLight(Light* light);
 	void addBox(Box* box);
-	void rayTrace(void);
+	void trace(int mode = RAYCASTING_MODE);
 	
 	Scene& operator=(const Scene& scene){
 		objects.clear();

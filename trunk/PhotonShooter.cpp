@@ -47,10 +47,10 @@ void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > object
 			Ray* ray = new Ray((*iter)->getSource(), d);
 			
 			//TODO replace initial energy by light->totalEnergy * color
-			float energy[3] = {1.0, 1.0, 1.0};
+			float energy[3] = {100.0, 100.0, 100.0};
 			//---
 			
-			shootPhoton(ray, lights, objects, energy, false);
+			shootPhoton(ray, lights, objects, energy);
 			shooted++;
 			
 			delete(d);
@@ -90,6 +90,7 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 				storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
 			}
 			else{
+				
 				Ray* reflected = reflectedRay(ray, photonIntersection);
 				shootPhoton(reflected, lights, objects, energy, true);
 				delete(reflected);
@@ -103,43 +104,8 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 			}
 			else{
 				
-				float energy2[3];
-				
-				//TODO refraction index -> array[3] (r,g,b)
-				
-				//Red
-				photonIntersection->getObject()->setRefracting(true, 1.5, 1.0);
-				
-				energy2[0] = energy[0] * 3.0;
-				energy2[1] = energy[1] * 0.0;
-				energy2[2] = energy[2] * 0.0;
-				
 				Ray* refracted = refractedRay(ray, photonIntersection, objects);
-				shootPhoton(refracted, lights, objects, energy2, true);
-				delete(refracted);
-				
-				
-				//Green
-				
-				energy2[0] = energy[0] * 0.0;
-				energy2[1] = energy[1] * 3.0;
-				energy2[2] = energy[2] * 0.0;
-				
-				photonIntersection->getObject()->setRefracting(true, 1.3, 1.0);
-				
-				refracted = refractedRay(ray, photonIntersection, objects);
-				shootPhoton(refracted, lights, objects, energy2, true);
-				delete(refracted);
-				
-				//Blue
-				energy2[0] = energy[0] * 0.0;
-				energy2[1] = energy[1] * 0.0;
-				energy2[2] = energy[2] * 3.0;
-				
-				photonIntersection->getObject()->setRefracting(true, 1.2, 1.0);
-				
-				refracted = refractedRay(ray, photonIntersection, objects);
-				shootPhoton(refracted, lights, objects, energy2, true);
+				shootPhoton(refracted, lights, objects, energy, true);
 				delete(refracted);
 			}
 			
@@ -151,7 +117,14 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 				storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
 			}
 			else{
-				storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
+				
+				Color* objectColor = photonIntersection->getObject()->getEnlightment()->getColor(photonIntersection->getPoint(), photonIntersection->getNormal(), ray, lights);
+				scaleEnergy(energy, objectColor);
+				delete(objectColor);
+				
+				Ray* reflected = reflectedRay(ray, photonIntersection);				
+				shootPhoton(reflected, lights, objects, energy, true);
+				delete(reflected);
 			}
 		}
 	}
@@ -168,6 +141,18 @@ void PhotonShooter::storePhoton(Point* position, Vector* direction, float energy
 	
 	free(pos);
 	free(dir);
+}
+
+void PhotonShooter::scaleEnergy(float energy[3], float coeff){
+	energy[0] *= coeff;
+	energy[1] *= coeff;
+	energy[2] *= coeff;
+}
+
+void PhotonShooter::scaleEnergy(float energy[3], Color* color){
+	energy[0] *= (float)color->getR();
+	energy[1] *= (float)color->getG();
+	energy[2] *= (float)color->getB();
 }
 
 Intersection* PhotonShooter::getNearestIntersection(Ray* ray, std::list<Object * > objects, double epsilon){

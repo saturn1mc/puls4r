@@ -118,19 +118,19 @@ Scene* createTestScene(){
 	
 	
 	//SPHERES
-	tempPoint = new Point (4, 1, 0);
+	tempPoint = new Point (4, 0, 0);
 	
-	Sphere* sphere1 = new Sphere(enl3, tempPoint, 2.5);
+	Sphere* sphere1 = new Sphere(enl3, tempPoint, 2);
 	sphere1->setRefracting(true, 1.5, 1.0);
 	scene->addObject(sphere1);
 	
 	delete(tempPoint);
 	
-	tempPoint = new Point (-4, 1.0, -4);
+	tempPoint = new Point (-7.5, 0, -4);
 	
-	Sphere* sphere2 = new Sphere(enl1, tempPoint, 2.5, true);
+	Sphere* sphere2 = new Sphere(enl1, tempPoint, 2);
 	sphere2->setReflecting(false);
-	//scene->addObject(sphere2);
+	scene->addObject(sphere2);
 	
 	delete(tempPoint);
 
@@ -272,7 +272,7 @@ void viewY360(Scene* scene, int images){
 		free(filename);
 		
 		//Tracing new scene
-		scene->rayTrace();
+		scene->trace();
 		
 		//Observer rotation
 		*eye = (*rotateY) * eye;
@@ -325,7 +325,7 @@ void causticEvolution(Scene* scene, double nmin, double nmax, int images){
 		free(filename);
 		
 		//Tracing new scene
-		scene->rayTrace();
+		scene->trace();
 		
 		//Changing refraction index
 		sphere->setRefracting(true, nmin + ((double)i*delta), 1.0);
@@ -346,7 +346,7 @@ int main (int argc, char*  const argv[]) {
 	Scene* scene = createTestScene();
 	//viewY360(scene, 100);
 	//causticEvolution(scene, 1.0, 1.5, 25);
-	scene->rayTrace();
+	scene->trace(Scene::PHOTONMAPPING_MODE);
 	
 	delete(scene);
 	
