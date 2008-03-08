@@ -72,7 +72,7 @@ void PhotonMap :: irradiance_estimate(
 									   const float normal[3],         // surface normal at pos
 									   const float max_dist,          // max distance to look for photons
 									   const int nphotons ) const     // number of photons to use
-																	  //**********************************************
+//**********************************************
 {
 	irrad[0] = irrad[1] = irrad[2] = 0.0;
 	
@@ -343,7 +343,7 @@ void PhotonMap :: median_split(
 								const int end,                 // end of photon block in array
 								const int median,              // desired median number
 								const int axis )               // axis to split along
-															   //*****************************************************************
+//*****************************************************************
 {
 	int left = start;
 	int right = end;
