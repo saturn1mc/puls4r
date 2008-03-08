@@ -48,26 +48,42 @@ Scene* createTestScene(){
 	Point* A;
 	Point* B;
 	Point* C;
-	Point* eye = new Point(0.0, 5.0, 30.0);
-	Point* sight = new Point(0.0, 0.0, 0.0);
-	Point* lightPos = new Point(-5.0, 10.0, 5.0);
+	Point* eye;
+	Point* sight;
+	Point* lightPos;
 	
 	/* Vectors */
 	Vector* tempVector;
 	
 	/* Image */
-	Image* image = new Image("test.bmp", 1900, 1200, 1);
+	Image* image = new Image("test.bmp", 400, 300, 1);
 	
 	/* Observer */
+	eye = new Point(0.0, 5.0, 30.0);
+	sight = new Point(0.0, 0.0, 0.0);
+	
 	Observer* obs = new Observer(eye, sight, M_PI/4.0);
+	
+	delete(eye);
+	delete(sight);
 	
 	/* Scene */
 	Scene* scene = new Scene(obs, image, black);
 	
 	//Lights
+	lightPos = new Point(-5.0, 10.0, 5.0);
+	
 	Light* light1 = new Light(lightPos, white);
-	light1->setRadius(2.5);
+	light1->setRadius(1);
 	scene->addLight(light1);
+	
+	delete(lightPos);
+	
+	lightPos = new Point(5.0, 10.0, 5.0);
+	
+	Light* light2 = new Light(lightPos, white);
+	light2->setRadius(2.5);
+	//scene->addLight(light2);
 	
 	//Objects
 	
@@ -102,9 +118,9 @@ Scene* createTestScene(){
 	
 	
 	//SPHERES
-	tempPoint = new Point (4, 1.0, 0);
+	tempPoint = new Point (4, 1, 0);
 	
-	Sphere* sphere1 = new Sphere(enl2, tempPoint, 2.5);
+	Sphere* sphere1 = new Sphere(enl3, tempPoint, 2.5);
 	sphere1->setRefracting(true, 1.5, 1.0);
 	scene->addObject(sphere1);
 	
@@ -114,7 +130,7 @@ Scene* createTestScene(){
 	
 	Sphere* sphere2 = new Sphere(enl1, tempPoint, 2.5, true);
 	sphere2->setReflecting(false);
-	scene->addObject(sphere2);
+	//scene->addObject(sphere2);
 	
 	delete(tempPoint);
 
@@ -224,10 +240,6 @@ Scene* createTestScene(){
 	delete(enl6);
 	delete(enl7);
 	
-	delete(eye);
-	delete(sight);
-	delete(lightPos);
-	
 	delete(image);
 	
 	delete(obs);
@@ -283,9 +295,57 @@ void viewY360(Scene* scene, int images){
 	delete(rotateY);
 }
 
+void causticEvolution(Scene* scene, double nmin, double nmax, int images){
+	
+	double delta = (nmax-nmin) / images;
+	Color* white = new Color(1.0, 1.0, 1.0);
+	Enlightment* enl = new Phong(white);
+	
+	Point* tempPoint = new Point (4, 1, 0);
+	
+	Sphere* sphere = new Sphere(enl, tempPoint, 2.5);
+	sphere->setRefracting(true, nmin, 1.0);
+	scene->addObject(sphere);
+	
+	delete(tempPoint);
+	delete(white);
+	delete(enl);
+	
+	system("mkdir images");
+	
+	for(int i = 0; i<images; i++){
+		
+		cout << "Generating image " << (i+1) << "/" << images << endl;
+		
+		//Changing filename
+		char* filename = (char*) malloc(strlen("images/img000.bmp") + 1);
+		sprintf(filename, "images/img%d.bmp", i+1);
+		scene->getImage()->reset();
+		scene->getImage()->setFilename(filename);
+		free(filename);
+		
+		//Tracing new scene
+		scene->rayTrace();
+		
+		//Changing refraction index
+		sphere->setRefracting(true, nmin + ((double)i*delta), 1.0);
+		
+		cout << "Image " << (i+1) << "/" << images << " generated" << endl;
+	}
+	
+	cout << "Generating AVI" << endl;
+	
+	char* cmd = (char*)malloc(strlen("java -jar BmpSeq.jar -CMD images/img000.bmp images/img000.bmp 00 images/seq.avi") + 1);
+	sprintf(cmd, "java -jar BmpSeq.jar -CMD images/img%d.bmp images/img%d.bmp %d images/seq.avi", 1, (int)images, 30);
+	system(cmd);
+	
+	free(cmd);
+}
+
 int main (int argc, char*  const argv[]) {
 	Scene* scene = createTestScene();
 	//viewY360(scene, 100);
+	//causticEvolution(scene, 1.0, 1.5, 25);
 	scene->rayTrace();
 	
 	delete(scene);

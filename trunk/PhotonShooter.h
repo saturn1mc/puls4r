@@ -27,12 +27,15 @@ private:
 	int maxPhotons;
 	PhotonMap* map;
 	
-	void shootPhoton(Ray* ray, std::list<Object * > objects, float energy[3], bool indirect = false);
+	void shootPhoton(Ray* ray, std::list<Light* > lights, std::list<Object * > objects, float energy[3], bool indirect = false);
 	Intersection* getNearestIntersection(Ray* ray, std::list<Object * > objects, double epsilon = 0.000001);
 	
 	Ray* reflectedRay(Ray* ray, Intersection* intersection);
 	Ray* refractedRay(Ray* ray, Intersection* intersection, std::list<Object * > objects);
 	Ray* refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon = 0.000001);
+	
+	bool russianRoulette(double d) const;
+	void storePhoton(Point* position, Vector* direction, float energy[3]);
 	
 public:
 	
@@ -53,7 +56,7 @@ public:
 		delete(map);
 	}
 	
-	void shootFrom(Light* light, std::list<Object * > objects);
+	void shoot(std::list<Light* > lights, std::list<Object * > objects);
 	
 	PhotonMap* getPhotonMap(void) const{
 		return map;
