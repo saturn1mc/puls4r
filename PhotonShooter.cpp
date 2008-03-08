@@ -47,7 +47,7 @@ void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > object
 			Ray* ray = new Ray((*iter)->getSource(), d);
 			
 			//TODO replace initial energy by light->totalEnergy * color
-			float energy[3] = {100.0, 100.0, 100.0};
+			float energy[3] = {1.0, 1.0, 1.0};
 			//---
 			
 			shootPhoton(ray, lights, objects, energy, false);
@@ -110,9 +110,9 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 				//Red
 				photonIntersection->getObject()->setRefracting(true, 1.5, 1.0);
 				
-				energy2[0] *= energy[0] * 1.0;
-				energy2[1] *= energy[1] * 0.0;
-				energy2[2] *= energy[2] * 0.0;
+				energy2[0] = energy[0] * 3.0;
+				energy2[1] = energy[1] * 0.0;
+				energy2[2] = energy[2] * 0.0;
 				
 				Ray* refracted = refractedRay(ray, photonIntersection, objects);
 				shootPhoton(refracted, lights, objects, energy2, true);
@@ -121,22 +121,22 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 				
 				//Green
 				
-				energy2[0] *= energy[0] * 0.0;
-				energy2[1] *= energy[1] * 1.0;
-				energy2[2] *= energy[2] * 0.0;
+				energy2[0] = energy[0] * 0.0;
+				energy2[1] = energy[1] * 3.0;
+				energy2[2] = energy[2] * 0.0;
 				
-				photonIntersection->getObject()->setRefracting(true, 1.4, 1.0);
+				photonIntersection->getObject()->setRefracting(true, 1.3, 1.0);
 				
 				refracted = refractedRay(ray, photonIntersection, objects);
 				shootPhoton(refracted, lights, objects, energy2, true);
 				delete(refracted);
 				
 				//Blue
-				energy2[0] *= energy[0] * 0.0;
-				energy2[1] *= energy[1] * 0.0;
-				energy2[2] *= energy[2] * 1.0;
+				energy2[0] = energy[0] * 0.0;
+				energy2[1] = energy[1] * 0.0;
+				energy2[2] = energy[2] * 3.0;
 				
-				photonIntersection->getObject()->setRefracting(true, 1.3, 1.0);
+				photonIntersection->getObject()->setRefracting(true, 1.2, 1.0);
 				
 				refracted = refractedRay(ray, photonIntersection, objects);
 				shootPhoton(refracted, lights, objects, energy2, true);
@@ -148,17 +148,10 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 		if(indirect && !photonIntersection->getObject()->isReflecting() && !photonIntersection->getObject()->isRefracting()){
 			
 			if(russianRoulette(0.5)){
-				Color* objectColor = photonIntersection->getObject()->getEnlightment()->getColor(photonIntersection->getPoint(), photonIntersection->getNormal(), ray, lights);
-				
-				energy[0] *= (float)objectColor->getR();
-				energy[1] *= (float)objectColor->getG();
-				energy[2] *= (float)objectColor->getB();
-				
 				storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
-				delete(objectColor);
 			}
 			else{
-				//TODO random reflection
+				storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
 			}
 		}
 	}
