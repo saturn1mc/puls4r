@@ -18,7 +18,7 @@ void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > object
 		
 		int shooted = 0;
 		int progress = 0;
-		double x, y, z;
+		
 		
 		stored = 0;
 		
@@ -36,24 +36,17 @@ void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > object
 			 * Random emission from diffuse point light 
 			 * As described by Henrik Wann Jensen
 			 */
-			do{
-				x = (((double)std::rand() / (double)RAND_MAX) * 2.0) - 1.0;
-				y = (((double)std::rand() / (double)RAND_MAX) * 2.0) - 1.0;
-				z = (((double)std::rand() / (double)RAND_MAX) * 2.0) - 1.0;
-			}while( (x*x)+(y*y)+(z*z) > 1);
+			Vector* randDir = randomDirection();
+			Ray* ray = new Ray((*iter)->getSource(), randDir);
 			
-			
-			Vector* d = new Vector(x, y, z);
-			Ray* ray = new Ray((*iter)->getSource(), d);
-			
-			//TODO replace initial energy by light->totalEnergy * color
-			float energy[3] = {100.0, 100.0, 100.0};
-			//---
+			float energy[3] = {	(*iter)->getPower() * (*iter)->getColor()->getR(), 
+								(*iter)->getPower() * (*iter)->getColor()->getG(), 
+								(*iter)->getPower() * (*iter)->getColor()->getB()};
 			
 			shootPhoton(ray, lights, objects, energy);
 			shooted++;
 			
-			delete(d);
+			delete(randDir);
 			delete (ray);
 		}
 		
@@ -61,6 +54,23 @@ void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > object
 			map->scale_photon_power(1.0 / stored);
 		}
 	}
+	
+	std::cout << std::endl;
+	std::cout << "---> Balancing photon map..." << std::endl;
+	map->balance();
+}
+
+Vector* PhotonShooter::randomDirection(void) const{
+	
+	double x, y, z;
+	
+	do{
+		x = (((double)std::rand() / (double)RAND_MAX) * 2.0) - 1.0;
+		y = (((double)std::rand() / (double)RAND_MAX) * 2.0) - 1.0;
+		z = (((double)std::rand() / (double)RAND_MAX) * 2.0) - 1.0;
+	}while( (x*x)+(y*y)+(z*z) > 1);
+	
+	return new Vector(x, y, z);
 }
 
 bool PhotonShooter::russianRoulette(double d) const{
@@ -76,7 +86,7 @@ bool PhotonShooter::russianRoulette(double d) const{
 	}
 }
 
-void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<Object * > objects, float energy[3], bool indirect){
+void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<Object * > objects, float energy[3], bool canStore){
 	
 	//TODO take object color into account for refraction
 	//TODO split refraction coeff for all waves (r, g and b)
@@ -92,7 +102,7 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 			else{
 				
 				Ray* reflected = reflectedRay(ray, photonIntersection);
-				shootPhoton(reflected, lights, objects, energy, true);
+				shootPhoton(reflected, lights, objects, energy);
 				delete(reflected);
 			}
 		}
@@ -105,24 +115,27 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 			else{
 				
 				Ray* refracted = refractedRay(ray, photonIntersection, objects);
-				shootPhoton(refracted, lights, objects, energy, true);
+				shootPhoton(refracted, lights, objects, energy);
 				delete(refracted);
 			}
 			
 		}
 		
-		if(indirect && !photonIntersection->getObject()->isReflecting() && !photonIntersection->getObject()->isRefracting()){
+		if(canStore && !photonIntersection->getObject()->isReflecting() && !photonIntersection->getObject()->isRefracting()){
 			
-			if(russianRoulette(0.5)){
-				storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
-			}
-			else{
+			Color* objectColor = photonIntersection->getObject()->getEnlightment()->getColor(photonIntersection->getPoint(), photonIntersection->getNormal(), ray, lights);
+			scaleEnergy(energy, objectColor);
+			delete(objectColor);
+			
+			storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
+			
+			if(!russianRoulette(0.5)){
 				
-				Color* objectColor = photonIntersection->getObject()->getEnlightment()->getColor(photonIntersection->getPoint(), photonIntersection->getNormal(), ray, lights);
-				scaleEnergy(energy, objectColor);
-				delete(objectColor);
+				Vector* randDir = randomDirection();
+				Ray* reflected = new Ray(photonIntersection->getPoint(), randDir);		
 				
-				Ray* reflected = reflectedRay(ray, photonIntersection);				
+				delete(randDir);
+				
 				shootPhoton(reflected, lights, objects, energy, true);
 				delete(reflected);
 			}
@@ -141,12 +154,6 @@ void PhotonShooter::storePhoton(Point* position, Vector* direction, float energy
 	
 	free(pos);
 	free(dir);
-}
-
-void PhotonShooter::scaleEnergy(float energy[3], float coeff){
-	energy[0] *= coeff;
-	energy[1] *= coeff;
-	energy[2] *= coeff;
 }
 
 void PhotonShooter::scaleEnergy(float energy[3], Color* color){
