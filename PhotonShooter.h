@@ -27,17 +27,17 @@ private:
 	int maxPhotons;
 	PhotonMap* map;
 	
-	void shootPhoton(Ray* ray, std::list<Light* > lights, std::list<Object * > objects, float energy[3], bool indirect = false);
+	void shootPhoton(Ray* ray, std::list<Light* > lights, std::list<Object * > objects, float energy[3], bool canStore = true);
 	Intersection* getNearestIntersection(Ray* ray, std::list<Object * > objects, double epsilon = 0.000001);
 	
 	Ray* reflectedRay(Ray* ray, Intersection* intersection);
 	Ray* refractedRay(Ray* ray, Intersection* intersection, std::list<Object * > objects);
 	Ray* refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon = 0.000001);
 	
+	Vector* randomDirection(void) const;
 	bool russianRoulette(double d) const;
 	void storePhoton(Point* position, Vector* direction, float energy[3]);
 	
-	void scaleEnergy(float energy[3], float coeff);
 	void scaleEnergy(float energy[3], Color* color);
 	
 public:

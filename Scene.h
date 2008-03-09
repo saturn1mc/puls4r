@@ -45,12 +45,9 @@ private:
 	Intersection* getNearestIntersection(Ray* ray, double epsilon = 0.000001);
 	Color* antialiasedColor(double l, double p, int mode);
 	
-	/* Ray Casting Functions */
-	void rayCasting(void);
-	
-	Color* colorAt(double l, double p);
-	Color* observedColor(Ray* ray);
-	Color* glossyReflection(Ray* ray, Intersection* intersection, bool random = false, double smoothing = 1);
+	Color* colorAt(double l, double p, int mode);
+	Color* observedColor(Ray* ray, int mode);
+	Color* glossyReflection(Ray* ray, Intersection* intersection, int mode, bool random = false, double smoothing = 1);
 	
 	Ray* reflectedRay(Ray* ray, Intersection* intersection);
 	Ray* refractedRay(Ray* ray, Intersection* intersection);
@@ -58,9 +55,11 @@ private:
 	
 	void shadow(Color* color, Intersection* intersection, bool random = false, double smoothing = 1);
 	
+	/* Ray Casting Function */
+	void rayCasting(void);
+	
 	/* Photon Mapping Functions */
 	void photonMapping(void);
-	Color* gatherPhotonsAt(double l, double p);
 	
 public:
 	

@@ -58,43 +58,12 @@ Color* Scene::antialiasedColor(double l, double p, int mode){
 			cpt++;
 			
 			if(finalColor == 0){
-				switch(mode){
-					case RAYCASTING_MODE:
-						finalColor = colorAt(l2, p2);
-						
-						break;
-						
-					case PHOTONMAPPING_MODE:
-						finalColor = gatherPhotonsAt(l2, p2);
-						
-						break;
-						
-					default:
-						std::cerr << "Unknown mode " << mode << " for tracing" << std::endl;
-				}
+				finalColor = colorAt(l2, p2, mode);
 			}
 			else{
 				
-				Color* nearColor;
-				
-				switch(mode){
-					case RAYCASTING_MODE:
-						nearColor = colorAt(l2, p2);
-						
-						break;
-						
-					case PHOTONMAPPING_MODE:
-						nearColor = gatherPhotonsAt(l2, p2);
-						
-						break;
-						
-					default:
-						std::cerr << "Unknown mode " << mode << " for tracing" << std::endl;
-				}
-				
-				if(nearColor != 0){
-					*finalColor = (*finalColor) + nearColor;
-				}
+				Color* nearColor = colorAt(l2, p2, mode);
+				*finalColor = (*finalColor) + nearColor;
 				
 				delete(nearColor);
 			}
@@ -107,55 +76,13 @@ Color* Scene::antialiasedColor(double l, double p, int mode){
 	return finalColor;
 }
 
-/**************************/
-/* Ray Casting Functions  */
-/**************************/
-
-void Scene::rayCasting(void){
-	std::cout << "---> Rendering..." << std::endl;
-	int progress = 0;
-	
-	for(int l=-getH()/2; l<getH()/2; l++){
-		
-		int done = (int)round(100 *  (float)(l+(getH()/2)+1) / (float)getH());
-		
-		if(progress != done){
-			progress = done;
-			std::cout << "\r\t" << progress << "%";
-			std::cout.flush();
-		}
-		
-		for(int p=-getW()/2; p<getW()/2; p++){
-			
-			Color* color = 0;
-			
-			if(img->getAntialiasing() > 1){
-				color = antialiasedColor(l, p, RAYCASTING_MODE);
-			}
-			else{
-				color = colorAt(l, p);
-			}
-			
-			img->writePixel(color);
-			
-			delete(color);
-		}
-	}
-	
-	std::cout << std::endl;
-	std::cout << "\tWriting image to " << img->getFilename() << std::endl;
-	img->writeBitmap();
-	std::cout << "---> End of rendering" << std::endl;
-}
-
-
-Color* Scene::colorAt(double l, double p){
+Color* Scene::colorAt(double l, double p, int mode){
 	
 	Point* target = new Point(p, l, focal);
 	Ray* ray = observer->ray(target);
 	
 	currentRecursions = 0;
-	Color* oc = observedColor(ray);
+	Color* oc = observedColor(ray, mode);
 	
 	delete(target);
 	delete(ray);
@@ -163,7 +90,7 @@ Color* Scene::colorAt(double l, double p){
 	return oc;
 }
 
-Color* Scene::observedColor(Ray* ray){
+Color* Scene::observedColor(Ray* ray, int mode){
 	Color* oc = new Color(background);
 	Intersection* nearestIntersection = getNearestIntersection(ray, 0.0001);
 	
@@ -177,8 +104,36 @@ Color* Scene::observedColor(Ray* ray){
 		Color* objectColor = nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNormal(), ray, lights);
 		
 		if((currentRecursions >= MAX_RECURSIONS) || (!nearestIntersection->getObject()->isReflecting() && !nearestIntersection->getObject()->isRefracting())){
-			*oc = *objectColor;
-			shadow(oc, nearestIntersection);
+			
+			switch(mode){
+				case RAYCASTING_MODE :
+					*oc = *objectColor;
+					shadow(oc, nearestIntersection);
+				
+					break;
+				
+				case PHOTONMAPPING_MODE:
+					
+					float irradiance[3];
+					float* pos = nearestIntersection->getPoint()->toArray();
+					float* normal = nearestIntersection->getNormal()->toArray();
+				
+					shooter->getPhotonMap()->irradiance_estimate(irradiance, pos, normal, 100, 1000);
+				
+					oc->setR((double)irradiance[0]);
+					oc->setG((double)irradiance[1]);
+					oc->setB((double)irradiance[2]);			
+				
+					oc->normalize();
+				
+					free(pos);
+					free(normal);
+					
+					break;
+					
+				default:
+					std::cerr << "Unknown mode " << mode << " for tracing" << std::endl;
+			}
 		}
 		else{
 			Color* reflectedColor = 0;
@@ -188,12 +143,12 @@ Color* Scene::observedColor(Ray* ray){
 				
 				if(nearestIntersection->getObject()->getGlossyFocal() == 0){
 					Ray* reflected = reflectedRay(ray, nearestIntersection);
-					reflectedColor = observedColor(reflected);
+					reflectedColor = observedColor(reflected, mode);
 					
 					delete(reflected);
 				}
 				else{
-					reflectedColor = glossyReflection(ray, nearestIntersection);
+					reflectedColor = glossyReflection(ray, nearestIntersection, mode);
 				}
 				
 				*reflectedColor = ((*objectColor) * (1.0 - nearestIntersection->getObject()->getKR())) + ((*reflectedColor) * nearestIntersection->getObject()->getKR());
@@ -203,7 +158,7 @@ Color* Scene::observedColor(Ray* ray){
 			if(nearestIntersection->getObject()->isRefracting()){
 				Ray* refracted = refractedRay(ray, nearestIntersection);
 				
-				refractedColor = observedColor(refracted);
+				refractedColor = observedColor(refracted, mode);
 				
 				*refractedColor = ((*objectColor) * (1.0 - nearestIntersection->getObject()->getKT())) + ((*refractedColor) * nearestIntersection->getObject()->getKT());
 				*oc = (*oc) + refractedColor;
@@ -263,7 +218,7 @@ Ray* Scene::reflectedRay(Ray* ray, Intersection* intersection){
 	return reflected;
 }
 
-Color* Scene::glossyReflection(Ray* ray, Intersection* intersection, bool random, double smoothing){
+Color* Scene::glossyReflection(Ray* ray, Intersection* intersection, int mode, bool random, double smoothing){
 	
 	Color* color = new Color();
 	
@@ -299,7 +254,7 @@ Color* Scene::glossyReflection(Ray* ray, Intersection* intersection, bool random
 			
 			if(glossyIntersection != 0){
 				
-				Color* glossyColor = observedColor(glossyRay);
+				Color* glossyColor = observedColor(glossyRay, mode);
 				
 				*color = (*color) + glossyColor;
 				cpt++;
@@ -443,19 +398,57 @@ void Scene::shadow(Color* color, Intersection* intersection, bool random, double
 	color->normalize();
 }
 
+/**************************/
+/* Ray Casting Function  */
+/**************************/
+
+void Scene::rayCasting(void){
+	std::cout << "---> Rendering..." << std::endl;
+	int progress = 0;
+	
+	for(int l=-getH()/2; l<getH()/2; l++){
+		
+		int done = (int)round(100 *  (float)(l+(getH()/2)+1) / (float)getH());
+		
+		if(progress != done){
+			progress = done;
+			std::cout << "\r\t" << progress << "%";
+			std::cout.flush();
+		}
+		
+		for(int p=-getW()/2; p<getW()/2; p++){
+			
+			Color* color = 0;
+			
+			if(img->getAntialiasing() > 1){
+				color = antialiasedColor(l, p, RAYCASTING_MODE);
+			}
+			else{
+				color = colorAt(l, p, RAYCASTING_MODE);
+			}
+			
+			img->writePixel(color);
+			
+			delete(color);
+		}
+	}
+	
+	std::cout << std::endl;
+	std::cout << "\tWriting image to " << img->getFilename() << std::endl;
+	img->writeBitmap();
+	std::cout << "---> End of rendering" << std::endl;
+}
+
 /*****************************/
-/* Photon Mapping Functions  */
+/* Photon Mapping Function  */
 /*****************************/
 
 void Scene::photonMapping(void){
 	std::cout << "---> Photon Tracing..." << std::endl;
-	shooter = new PhotonShooter(lights.size(), 1000000);
 	
+	shooter = new PhotonShooter(lights.size(), 1000000);
 	shooter->shoot(lights, objects);
 	
-	std::cout << std::endl;
-	std::cout << "---> Balancing photon map..." << std::endl;
-	shooter->getPhotonMap()->balance();
 	std::cout << "---> End of photon tracing" << std::endl;
 	
 	std::cout << "---> Rendering..." << std::endl;
@@ -479,7 +472,7 @@ void Scene::photonMapping(void){
 				color = antialiasedColor(l, p, PHOTONMAPPING_MODE);
 			}
 			else{
-				color = gatherPhotonsAt(l, p);
+				color = colorAt(l, p, PHOTONMAPPING_MODE);
 			}
 			
 			img->writePixel(color);
@@ -492,45 +485,4 @@ void Scene::photonMapping(void){
 	std::cout << "\tWriting image to " << img->getFilename() << std::endl;
 	img->writeBitmap();
 	std::cout << "---> End of rendering" << std::endl;
-}
-
-Color* Scene::gatherPhotonsAt(double l, double p){
-	
-	Point* target = new Point(p, l, focal);
-	Ray* ray = observer->ray(target);
-	delete(target);
-	
-	Intersection* nearestIntersection = getNearestIntersection(ray);
-	
-	Color* oc;
-	
-	if(nearestIntersection == 0){
-		
-		oc = new Color(background);
-		
-	}
-	else{
-		
-		oc = nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNormal(), ray, lights);
-		
-		float irradiance[3];
-		float* pos = nearestIntersection->getPoint()->toArray();
-		float* normal = nearestIntersection->getNormal()->toArray();
-		
-		shooter->getPhotonMap()->irradiance_estimate(irradiance, pos, normal, 10.0, 10.0);
-		
-		oc->setR( oc->getR() + (double)irradiance[0] );
-		oc->setG( oc->getG() + (double)irradiance[1] );
-		oc->setB( oc->getB() + (double)irradiance[2] );			
-		
-		oc->normalize();
-		
-		free(pos);
-		free(normal);
-	}
-	
-	delete(ray);
-	delete(nearestIntersection);
-	
-	return oc;
 }
