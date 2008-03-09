@@ -33,7 +33,7 @@ private:
 	
 	PhotonShooter* shooter;
 	Observer* observer;
-	Image* img;
+	Image* image;
 	Color* background;
 	std::list<Object* > objects;
 	std::list<Light* > lights;
@@ -66,43 +66,60 @@ public:
 	static const int RAYCASTING_MODE = 0;
 	static const int PHOTONMAPPING_MODE = 1;
 	
-	Scene(Observer* _observer, Image* _img, Color* _background) : shooter(0), observer(new Observer(_observer)), img(new Image(_img)), background(new Color(_background)), objects(0), lights(0), boxes(0), focal(calcFocal()) {
+	Scene(void) : shooter(0), observer(0), image(0), background(0), objects(0), lights(0), boxes(0), focal(0) {
 		std::srand(std::time(0));
 	}
 	
-	Scene(const Scene& scene) : shooter(new PhotonShooter(scene.shooter)), observer(new Observer(scene.observer)), img(new Image(scene.img)), background(new Color(scene.background)), objects(scene.objects), lights(scene.lights), boxes(scene.boxes), focal(scene.focal) {
+	Scene(Observer* _observer, Image* _image, Color* _background) : shooter(0), observer(new Observer(_observer)), image(new Image(_image)), background(new Color(_background)), objects(0), lights(0), boxes(0), focal(calcFocal()) {
+		std::srand(std::time(0));
+	}
+	
+	Scene(const Scene& scene) : shooter(new PhotonShooter(scene.shooter)), observer(new Observer(scene.observer)), image(new Image(scene.image)), background(new Color(scene.background)), objects(scene.objects), lights(scene.lights), boxes(scene.boxes), focal(scene.focal) {
 		std::srand(std::time(0));
 	}
 	
 	~Scene(){
 		delete(shooter);
 		delete(observer);
-		delete(img);
+		delete(image);
 		delete(background);
 		objects.clear();
 		lights.clear();
 		boxes.clear();
 	}
 	
-	int getH(void) const {return img->getH();}
-	int getW(void) const {return img->getW();}
+	int getH(void) const {return image->getH();}
+	int getW(void) const {return image->getW();}
 	double getFocal(void) const {return focal;}
 	Observer* getObserver(void) const {return observer;}
-	Image* getImage(void) const {return img;}
+	Image* getImage(void) const {return image;}
 	Color* getBackground(void) const {return background;}
 	
 	std::list<Object* >& getObjects(void) {return objects;}
 	std::list<Light* >& getLights(void) {return lights;}
 	std::list<Box* >& getBoxes(void) {return boxes;}
 	
-	void setImage(Image* _img){
-		delete(img);
-		img = new Image(_img);
+	void setImage(Image* _image){
+		delete(image);
+		image = new Image(_image);
+		
+		if(observer !=0){
+			focal = calcFocal();
+		}
 	}
 	
 	void setObserver(Observer* _observer){
 		delete(observer);
 		observer = new Observer(_observer);
+		
+		if(image !=0){
+			focal = calcFocal();
+		}
+	}
+	
+	void setBackground(Color* _background){
+		delete(background);
+		background = new Color(_background);
 	}
 	
 	void addObject(Object* obj);
@@ -117,7 +134,7 @@ public:
 		
 		delete(shooter);
 		delete(observer);
-		delete(img);
+		delete(image);
 		delete(background);
 		
 		objects = scene.objects;
@@ -126,7 +143,7 @@ public:
 		
 		shooter = new PhotonShooter(scene.shooter);
 		observer = new Observer(scene.observer);
-		img = new Image(scene.img);
+		image = new Image(scene.image);
 		background = new Color(scene.background);
 		
 		return *this;
