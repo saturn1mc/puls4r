@@ -129,7 +129,7 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 			
 			storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
 			
-			if(!russianRoulette(0.5)){
+			if(!russianRoulette(photonIntersection->getObject()->getKR())){
 				
 				Vector* randDir = randomDirection();
 				Ray* reflected = new Ray(photonIntersection->getPoint(), randDir);		

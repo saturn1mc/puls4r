@@ -35,7 +35,7 @@ protected:
 	double n;
 	double kt;
 	
-	Enlightment(void) : reflect(false), kr(1.0), glossyFocal(0.0), glossyWidth(0.0), refract(false), n(1.0), kt(1.0){}
+	Enlightment(void) : reflect(false), kr(0), glossyFocal(0.0), glossyWidth(0.0), refract(false), n(1.0), kt(0){}
 	
 	Vector* getV(Ray* ray) const{
 		Vector* v = new Vector((*ray->getDirection()) * -1.0);

@@ -71,7 +71,7 @@ Scene* createTestScene(){
 	Scene* scene = new Scene(obs, image, black);
 	
 	//Lights
-	lightPos = new Point(-5.0, 10.0, 5.0);
+	lightPos = new Point(-8.0, 5.0, 0.0);
 	
 	Light* light1 = new Light(lightPos, white);
 	light1->setRadius(1);
@@ -92,7 +92,7 @@ Scene* createTestScene(){
 	B = new Point(10, 10, 10);
 	
 	Box* box1 = new Box(A, B);
-	scene->addBox(box1);
+	//scene->addBox(box1);
 	
 	delete(A);
 	delete(B);
@@ -118,11 +118,11 @@ Scene* createTestScene(){
 	
 	
 	//SPHERES
-	tempPoint = new Point (4, 0, 0);
+	tempPoint = new Point (0, 0, 0);
 	
 	Sphere* sphere1 = new Sphere(enl3, tempPoint, 2);
 	sphere1->setRefracting(true, 1.5, 1.0);
-	scene->addObject(sphere1);
+	//scene->addObject(sphere1);
 	
 	delete(tempPoint);
 	
@@ -130,7 +130,7 @@ Scene* createTestScene(){
 	
 	Sphere* sphere2 = new Sphere(enl1, tempPoint, 2);
 	sphere2->setReflecting(false);
-	scene->addObject(sphere2);
+	//scene->addObject(sphere2);
 	
 	delete(tempPoint);
 
@@ -247,7 +247,7 @@ Scene* createTestScene(){
 	return scene;
 }
 
-void viewY360(Scene* scene, int images){
+void viewY360(Scene* scene, int images, int mode){
 	
 	Observer* obs = new Observer(scene->getObserver());
 	Point* eye = new Point(scene->getObserver()->getEye());
@@ -272,7 +272,7 @@ void viewY360(Scene* scene, int images){
 		free(filename);
 		
 		//Tracing new scene
-		scene->trace();
+		scene->trace(mode);
 		
 		//Observer rotation
 		*eye = (*rotateY) * eye;
@@ -295,13 +295,13 @@ void viewY360(Scene* scene, int images){
 	delete(rotateY);
 }
 
-void causticEvolution(Scene* scene, double nmin, double nmax, int images){
+void causticEvolution(Scene* scene, double nmin, double nmax, int images, int mode){
 	
 	double delta = (nmax-nmin) / images;
 	Color* white = new Color(1.0, 1.0, 1.0);
 	Enlightment* enl = new Phong(white);
 	
-	Point* tempPoint = new Point (4, 1, 0);
+	Point* tempPoint = new Point (0, 0, 0);
 	
 	Sphere* sphere = new Sphere(enl, tempPoint, 2.5);
 	sphere->setRefracting(true, nmin, 1.0);
@@ -325,7 +325,7 @@ void causticEvolution(Scene* scene, double nmin, double nmax, int images){
 		free(filename);
 		
 		//Tracing new scene
-		scene->trace();
+		scene->trace(mode);
 		
 		//Changing refraction index
 		sphere->setRefracting(true, nmin + ((double)i*delta), 1.0);
@@ -345,10 +345,8 @@ void causticEvolution(Scene* scene, double nmin, double nmax, int images){
 int main (int argc, char*  const argv[]) {
 	Scene* scene = createTestScene();
 	//viewY360(scene, 100);
-	//causticEvolution(scene, 1.0, 1.5, 25);
-	scene->trace(Scene::PHOTONMAPPING_MODE);
+	causticEvolution(scene, 1.0, 2.0, 50, Scene::PHOTONMAPPING_MODE);
+	//scene->trace(Scene::PHOTONMAPPING_MODE);
 	
 	delete(scene);
-	
-	//while(1){}//Malloc debug
 }
