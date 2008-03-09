@@ -115,6 +115,8 @@ public:
 		
 		MALLOC(pic, unsigned char, image.w*image.h*3);
 		
+		antialiasing = image.antialiasing;
+		
 		return *this;
 	}
 };
@@ -137,6 +139,7 @@ template <class charT, class traits> std::basic_ostream<charT,traits>& operator 
 	s << "Width : " << img.getW() << std::endl;
 	s << "Height : " << img.getH() << std::endl;
 	s << "Filename : " << img.getFilename() << std::endl;
+	s << "Antialiasing : " << img.getAntialiasing() << std::endl;
 	s << "---------------------------" << std::endl;
 	
 	// print string stream
@@ -163,6 +166,7 @@ template <class charT, class traits> std::basic_ostream<charT,traits>& operator 
 	s << "Width : " << img->getW() << std::endl;
 	s << "Height : " << img->getH() << std::endl;
 	s << "Filename : " << img->getFilename() << std::endl;
+	s << "Antialiasing : " << img->getAntialiasing() << std::endl;
 	s << "---------------------------" << std::endl;
 	
 	// print string stream

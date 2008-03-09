@@ -30,19 +30,25 @@ double Scene::calcFocal(void) const{
 }
 
 void Scene::trace(int mode){
-	switch(mode){
-		case RAYCASTING_MODE:
-			rayCasting();
-			
-			break;
-			
-		case PHOTONMAPPING_MODE:
-			photonMapping();
-			
-			break;
-			
-		default:
-			std::cerr << "Unknown mode " << mode << " for tracing" << std::endl;
+	
+	if(observer != 0 && image !=0 && background !=0){
+		switch(mode){
+			case RAYCASTING_MODE:
+				rayCasting();
+				
+				break;
+				
+			case PHOTONMAPPING_MODE:
+				photonMapping();
+				
+				break;
+				
+			default:
+				std::cerr << "Unknown mode " << mode << " for tracing" << std::endl;
+		}
+	}
+	else{
+		std::cerr << "Can't trace Scene : attributes uninitialized (check observer, image and background color)" << std::endl;
 	}
 }
 
@@ -50,7 +56,7 @@ Color* Scene::antialiasedColor(double l, double p, int mode){
 	
 	Color* finalColor = 0;
 	double cpt = 0;
-	double aa = 1.0 / ((double)img->getAntialiasing());
+	double aa = 1.0 / ((double)image->getAntialiasing());
 	
 	for(double l2 = (l - 1); l2 <= (l + 1); l2+=aa){
 		for(double p2 = (p - 1); p2 <= (p + 1); p2+=aa){
@@ -109,23 +115,23 @@ Color* Scene::observedColor(Ray* ray, int mode){
 				case RAYCASTING_MODE :
 					*oc = *objectColor;
 					shadow(oc, nearestIntersection);
-				
+					
 					break;
-				
+					
 				case PHOTONMAPPING_MODE:
 					
 					float irradiance[3];
 					float* pos = nearestIntersection->getPoint()->toArray();
 					float* normal = nearestIntersection->getNormal()->toArray();
-				
+					
 					shooter->getPhotonMap()->irradiance_estimate(irradiance, pos, normal, 100, 1000);
-				
+					
 					oc->setR((double)irradiance[0]);
 					oc->setG((double)irradiance[1]);
 					oc->setB((double)irradiance[2]);			
-				
+					
 					oc->normalize();
-				
+					
 					free(pos);
 					free(normal);
 					
@@ -420,22 +426,22 @@ void Scene::rayCasting(void){
 			
 			Color* color = 0;
 			
-			if(img->getAntialiasing() > 1){
+			if(image->getAntialiasing() > 1){
 				color = antialiasedColor(l, p, RAYCASTING_MODE);
 			}
 			else{
 				color = colorAt(l, p, RAYCASTING_MODE);
 			}
 			
-			img->writePixel(color);
+			image->writePixel(color);
 			
 			delete(color);
 		}
 	}
 	
 	std::cout << std::endl;
-	std::cout << "\tWriting image to " << img->getFilename() << std::endl;
-	img->writeBitmap();
+	std::cout << "\tWriting image to " << image->getFilename() << std::endl;
+	image->writeBitmap();
 	std::cout << "---> End of rendering" << std::endl;
 }
 
@@ -468,21 +474,21 @@ void Scene::photonMapping(void){
 			
 			Color* color = 0;
 			
-			if(img->getAntialiasing() > 1){
+			if(image->getAntialiasing() > 1){
 				color = antialiasedColor(l, p, PHOTONMAPPING_MODE);
 			}
 			else{
 				color = colorAt(l, p, PHOTONMAPPING_MODE);
 			}
 			
-			img->writePixel(color);
+			image->writePixel(color);
 			
 			delete(color);
 		}
 	}
 	
 	std::cout << std::endl;
-	std::cout << "\tWriting image to " << img->getFilename() << std::endl;
-	img->writeBitmap();
+	std::cout << "\tWriting image to " << image->getFilename() << std::endl;
+	image->writeBitmap();
 	std::cout << "---> End of rendering" << std::endl;
 }
