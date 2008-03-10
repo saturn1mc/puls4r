@@ -266,8 +266,10 @@ Ray Scene::refractedRay(Ray* ray, Intersection* intersection){
 		if(refractionIntersection->getObject() == intersection->getObject()){
 			refractionIntersection->getNormal()->invert();
 			
+			Ray r2 = refractRay(&r1, refractionIntersection, intersection->getObject()->getN(), 1.0);
+			
 			delete(refractionIntersection);
-			return refractRay(&r1, refractionIntersection, intersection->getObject()->getN(), 1.0);
+			return r2;
 		}
 		else{
 			
