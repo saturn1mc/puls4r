@@ -2,7 +2,7 @@
 #
 # Makefile for pulsar
 # Creator [Xcode -> Makefile Ver: Feb 14 2007 09:18:41]
-# Created: [Sat Mar  8 12:25:41 2008]
+# Created: [Mon Mar 10 15:15:21 2008]
 #
 ###################################################
 
@@ -10,8 +10,9 @@
 # Macros
 #
 
+
 CC = g++ 
-CC_OPTIONS = -O3 -Wall -pedantic 
+CC_OPTIONS = -O3
 LNK_OPTIONS = 
 
 
@@ -37,6 +38,11 @@ pulsar : \
 		./Image.o\
 		./Observer.o\
 		./PhotonShooter.o\
+		./tinyxmlparser.o\
+		./tinyxmlerror.o\
+		./tinyxml.o\
+		./SceneParser.o\
+		./tinystr.o\
 		./Quadric.o\
 		./Triangle.o\
 		./PhotonMap.o\
@@ -53,6 +59,11 @@ pulsar : \
 		./Image.o\
 		./Observer.o\
 		./PhotonShooter.o\
+		./tinyxmlparser.o\
+		./tinyxmlerror.o\
+		./tinyxml.o\
+		./SceneParser.o\
+		./tinystr.o\
 		./Quadric.o\
 		./Triangle.o\
 		./PhotonMap.o\
@@ -72,6 +83,11 @@ clean :
 		./Image.o\
 		./Observer.o\
 		./PhotonShooter.o\
+		./tinyxmlparser.o\
+		./tinyxmlerror.o\
+		./tinyxml.o\
+		./SceneParser.o\
+		./tinystr.o\
 		./Quadric.o\
 		./Triangle.o\
 		./PhotonMap.o\
@@ -137,27 +153,52 @@ install : pulsar
 	$(CC) $(CC_OPTIONS) PhotonShooter.cpp -c $(INCLUDE) -o ./PhotonShooter.o
 
 
-# Item # 11 -- Quadric --
+# Item # 11 -- tinyxmlparser --
+./tinyxmlparser.o : tinyxmlparser.cpp
+	$(CC) $(CC_OPTIONS) tinyxmlparser.cpp -c $(INCLUDE) -o ./tinyxmlparser.o
+
+
+# Item # 12 -- tinyxmlerror --
+./tinyxmlerror.o : tinyxmlerror.cpp
+	$(CC) $(CC_OPTIONS) tinyxmlerror.cpp -c $(INCLUDE) -o ./tinyxmlerror.o
+
+
+# Item # 13 -- tinyxml --
+./tinyxml.o : tinyxml.cpp
+	$(CC) $(CC_OPTIONS) tinyxml.cpp -c $(INCLUDE) -o ./tinyxml.o
+
+
+# Item # 14 -- SceneParser --
+./SceneParser.o : SceneParser.cpp
+	$(CC) $(CC_OPTIONS) SceneParser.cpp -c $(INCLUDE) -o ./SceneParser.o
+
+
+# Item # 15 -- tinystr --
+./tinystr.o : tinystr.cpp
+	$(CC) $(CC_OPTIONS) tinystr.cpp -c $(INCLUDE) -o ./tinystr.o
+
+
+# Item # 16 -- Quadric --
 ./Quadric.o : Quadric.cpp
 	$(CC) $(CC_OPTIONS) Quadric.cpp -c $(INCLUDE) -o ./Quadric.o
 
 
-# Item # 12 -- Triangle --
+# Item # 17 -- Triangle --
 ./Triangle.o : Triangle.cpp
 	$(CC) $(CC_OPTIONS) Triangle.cpp -c $(INCLUDE) -o ./Triangle.o
 
 
-# Item # 13 -- PhotonMap --
+# Item # 18 -- PhotonMap --
 ./PhotonMap.o : PhotonMap.cpp
 	$(CC) $(CC_OPTIONS) PhotonMap.cpp -c $(INCLUDE) -o ./PhotonMap.o
 
 
-# Item # 14 -- Box --
+# Item # 19 -- Box --
 ./Box.o : Box.cpp
 	$(CC) $(CC_OPTIONS) Box.cpp -c $(INCLUDE) -o ./Box.o
 
 
-# Item # 15 -- Perlin --
+# Item # 20 -- Perlin --
 ./Perlin.o : Perlin.cpp
 	$(CC) $(CC_OPTIONS) Perlin.cpp -c $(INCLUDE) -o ./Perlin.o
 

@@ -47,13 +47,13 @@ private:
 	
 	Color* colorAt(double l, double p, int mode);
 	Color* observedColor(Ray* ray, int mode);
-	Color* glossyReflection(Ray* ray, Intersection* intersection, int mode, bool random = false, double smoothing = 1);
+	Color* glossyReflection(Ray* ray, Intersection* intersection, int mode, bool random = false, double smoothing = 2.0);
 	
 	Ray* reflectedRay(Ray* ray, Intersection* intersection);
 	Ray* refractedRay(Ray* ray, Intersection* intersection);
 	Ray* refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon = 0.000001);
 	
-	void shadow(Color* color, Intersection* intersection, bool random = false, double smoothing = 1);
+	void shadow(Color* color, Intersection* intersection, bool random = false, double smoothing = 2.0);
 	
 	/* Ray Casting Function */
 	void rayCasting(void);

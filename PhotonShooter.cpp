@@ -53,9 +53,10 @@ void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > object
 		if(stored != 0){
 			map->scale_photon_power(1.0 / stored);
 		}
+		
+		std::cout << std::endl;
 	}
 	
-	std::cout << std::endl;
 	std::cout << "---> Balancing photon map..." << std::endl;
 	map->balance();
 }
@@ -114,8 +115,41 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 			}
 			else{
 				
-				Ray* refracted = refractedRay(ray, photonIntersection, objects);
+				//Diffraction test
+//				float e2[3];
+//				
+//				//R
+//				photonIntersection->getObject()->setRefracting(true, 1.9, 1.0);
+//				Ray* refracted = refractedRay(ray, photonIntersection, objects);
+//				e2[0] = energy[0] * (1.0 / 3.0);
+//				e2[1] = energy[1] * 0.0;
+//				e2[2] = energy[2] * 0.0;
+//				shootPhoton(refracted, lights, objects, e2);
+//				delete(refracted);
+//				
+//				//G
+//				photonIntersection->getObject()->setRefracting(true, 1.5, 1.0);
+//				refracted = refractedRay(ray, photonIntersection, objects);
+//				e2[0] = energy[0] * 0.0;
+//				e2[1] = energy[1] * (1.0 / 3.0);
+//				e2[2] = energy[2] * 0.0;
+//				shootPhoton(refracted, lights, objects, e2);
+//				delete(refracted);
+//				
+//				//B
+//				photonIntersection->getObject()->setRefracting(true, 1.1, 1.0);
+//				refracted = refractedRay(ray, photonIntersection, objects);
+//				e2[0] = energy[0] * 0.0;
+//				e2[1] = energy[1] * 0.0;
+//				e2[2] = energy[2] * (1.0 / 3.0);
+//				shootPhoton(refracted, lights, objects, e2);
+//				delete(refracted);
+				
+				
+				
+				Ray *refracted = refractedRay(ray, photonIntersection, objects);
 				shootPhoton(refracted, lights, objects, energy);
+				
 				delete(refracted);
 			}
 			
