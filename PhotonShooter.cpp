@@ -200,8 +200,10 @@ Ray PhotonShooter::refractedRay(Ray* ray, Intersection* intersection, std::list<
 		if(refractionIntersection->getObject() == intersection->getObject()){
 			refractionIntersection->getNormal()->invert();
 			
+			Ray r2 = refractRay(&r1, refractionIntersection, intersection->getObject()->getN(), 1.0);
 			delete(refractionIntersection);
-			return refractRay(&r1, refractionIntersection, intersection->getObject()->getN(), 1.0);
+			
+			return r2;
 		}
 		else{
 			
