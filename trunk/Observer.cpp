@@ -11,8 +11,8 @@
 
 void Observer::initMatrix(void){
 	
-	Vector* up = new Vector(0,1,0);
-	up->normalize();
+	Vector up(0,1,0);
+	up.normalize();
 	
 	Vector w = (*sight) ^ up;
 	w.normalize();
@@ -22,15 +22,11 @@ void Observer::initMatrix(void){
 	
 	view = new Matrix(w, u, *sight, *eye);
 	*view = view->t();
-	
-	delete(up);
 }
 
-Ray* Observer::ray(Point *sp){
-	Vector* dir = new Vector(*eye, (*view) * sp);
-	Ray* ray = new Ray(eye, dir);
-	
-	delete(dir);
+Ray Observer::ray(Point *sp){
+	Vector dir(*eye, (*view) * sp);
+	Ray ray(eye, &dir);
 	
 	return ray;
 }

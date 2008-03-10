@@ -12,16 +12,16 @@
 	</observer>
 
 	<lights>
-		<light x="0" y="0" z="0" r="1" g="1" b="1" radius="1.5" power="1000"/>
+		<light x="2" y="5" z="0" r="1" g="1" b="1" radius="1.5" power="1000"/>
 	</lights>
 	
 	<objects>
 		<sphere x="0" y="0" z="0" radius="2"
 				enlightment="phong" r="1" g="1" b="1" 
-				reflecting="false"
-				kr="0.0"
-				glossyFocal="0.0"
-				glossyWidth="0.0"
+				reflecting="0"
+				kr="1.0"
+				glossyFocal="0"
+				glossyWidth="0"
 				refracting="1"
 				n="1.5"
 				kt="1.0"

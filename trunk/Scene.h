@@ -28,6 +28,7 @@
 class Scene{
 private:
 	
+	static const double epsilon;
 	static const int MAX_RECURSIONS = 1000;
 	int currentRecursions;
 	
@@ -42,16 +43,16 @@ private:
 	
 	/* Global Functions */
 	double calcFocal(void) const;
-	Intersection* getNearestIntersection(Ray* ray, double epsilon = 0.000001);
-	Color* antialiasedColor(double l, double p, int mode);
+	Intersection* getNearestIntersection(Ray* ray, double _epsilon = epsilon);
+	Color antialiasedColor(double l, double p, int mode);
 	
-	Color* colorAt(double l, double p, int mode);
-	Color* observedColor(Ray* ray, int mode);
-	Color* glossyReflection(Ray* ray, Intersection* intersection, int mode, bool random = false, double smoothing = 2.0);
+	Color colorAt(double l, double p, int mode);
+	Color observedColor(Ray* ray, int mode);
+	Color glossyReflection(Ray* ray, Intersection* intersection, int mode, bool random = false, double smoothing = 2.0);
 	
-	Ray* reflectedRay(Ray* ray, Intersection* intersection);
-	Ray* refractedRay(Ray* ray, Intersection* intersection);
-	Ray* refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon = 0.000001);
+	Ray reflectedRay(Ray* ray, Intersection* intersection);
+	Ray refractedRay(Ray* ray, Intersection* intersection);
+	Ray refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double _epsilon = epsilon);
 	
 	void shadow(Color* color, Intersection* intersection, bool random = false, double smoothing = 2.0);
 	
@@ -83,6 +84,7 @@ public:
 		delete(observer);
 		delete(image);
 		delete(background);
+		
 		objects.clear();
 		lights.clear();
 		boxes.clear();

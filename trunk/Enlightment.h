@@ -37,23 +37,23 @@ protected:
 	
 	Enlightment(void) : reflect(false), kr(0), glossyFocal(0.0), glossyWidth(0.0), refract(false), n(1.0), kt(0){}
 	
-	Vector* getV(Ray* ray) const{
-		Vector* v = new Vector((*ray->getDirection()) * -1.0);
-		v->normalize();
+	Vector getV(Ray* ray) const{
+		Vector v((*ray->getDirection()) * -1.0);
+		v.normalize();
 		return v;
 	}
 	
-	Vector* getR(Vector* light, Vector* norm) const{
-		Vector* r = new Vector( ( ( (*norm) * 2.0 ) * ( (*norm) * (light) ) ) - light );
-		r->normalize();
+	Vector getR(Vector* light, Vector* norm) const{
+		Vector r( ( ( (*norm) * 2.0 ) * ( (*norm) * (light) ) ) - light );
+		r.normalize();
 		
 		return r;
 	}
 	
-	Vector* getL(Point* point, Light* light) const{
-		Vector* l = new Vector(point, light->getSource());
+	Vector getL(Point* point, Light* light) const{
+		Vector l(point, light->getSource());
 		
-		l->normalize();
+		l.normalize();
 		
 		return l;
 	}
@@ -62,7 +62,7 @@ public:
 	
 	Enlightment(Enlightment &enlightment) : reflect(enlightment.reflect), kr(enlightment.kr), glossyFocal(enlightment.glossyFocal), glossyWidth(enlightment.glossyWidth), refract(enlightment.refract), n(enlightment.n), kt(enlightment.kt) {}
 	virtual ~Enlightment(void) {}
-	virtual Color* getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const = 0;
+	virtual Color getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const = 0;
 	virtual Enlightment *clone(void) = 0;
 	
 	bool isReflecting(void) const { return reflect; }

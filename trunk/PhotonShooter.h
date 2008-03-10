@@ -22,19 +22,21 @@ class PhotonShooter{
 
 private:
 	
+	static const double epsilon;
+	
 	int stored;
 	int nbLights;
 	int maxPhotons;
 	PhotonMap* map;
 	
 	void shootPhoton(Ray* ray, std::list<Light* > lights, std::list<Object * > objects, float energy[3], bool canStore = true);
-	Intersection* getNearestIntersection(Ray* ray, std::list<Object * > objects, double epsilon = 0.000001);
+	Intersection* getNearestIntersection(Ray* ray, std::list<Object * > objects, double _epsilon = epsilon);
 	
-	Ray* reflectedRay(Ray* ray, Intersection* intersection);
-	Ray* refractedRay(Ray* ray, Intersection* intersection, std::list<Object * > objects);
-	Ray* refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon = 0.000001);
+	Ray reflectedRay(Ray* ray, Intersection* intersection);
+	Ray refractedRay(Ray* ray, Intersection* intersection, std::list<Object * > objects);
+	Ray refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double _epsilon = epsilon);
 	
-	Vector* randomDirection(void) const;
+	Vector randomDirection(void) const;
 	bool russianRoulette(double d) const;
 	void storePhoton(Point* position, Vector* direction, float energy[3]);
 	

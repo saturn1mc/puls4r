@@ -9,6 +9,7 @@
 
 #include "Linear.h"
 
-Color* Linear::getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const{
-	return new Color(color);
+Color Linear::getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const{
+	Color c(color);
+	return c;
 }

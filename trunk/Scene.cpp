@@ -9,6 +9,8 @@
 
 #include "Scene.h"
 
+const double Scene::epsilon = 0.000001;
+
 void Scene::addObject(Object* obj){
 	objects.push_front(obj);
 }
@@ -52,53 +54,40 @@ void Scene::trace(int mode){
 	}
 }
 
-Color* Scene::antialiasedColor(double l, double p, int mode){
+Color Scene::antialiasedColor(double l, double p, int mode){
 	
-	Color* finalColor = 0;
+	Color finalColor;
 	double cpt = 0;
 	double aa = 1.0 / ((double)image->getAntialiasing());
 	
 	for(double l2 = (l - 1); l2 <= (l + 1); l2+=aa){
 		for(double p2 = (p - 1); p2 <= (p + 1); p2+=aa){
 			
-			cpt++;
+			finalColor = finalColor + colorAt(l2, p2, mode);
+			cpt++;	
 			
-			if(finalColor == 0){
-				finalColor = colorAt(l2, p2, mode);
-			}
-			else{
-				
-				Color* nearColor = colorAt(l2, p2, mode);
-				*finalColor = (*finalColor) + nearColor;
-				
-				delete(nearColor);
-			}
 		}
 	}
 	
-	*finalColor = (*finalColor) * (1.0 / cpt);
-	finalColor->normalize();
+	finalColor = finalColor * (1.0 / cpt);
+	finalColor.normalize();
 	
 	return finalColor;
 }
 
-Color* Scene::colorAt(double l, double p, int mode){
+Color Scene::colorAt(double l, double p, int mode){
 	
-	Point* target = new Point(p, l, focal);
-	Ray* ray = observer->ray(target);
+	Point target(p, l, focal);
+	Ray ray = observer->ray(&target);
 	
 	currentRecursions = 0;
-	Color* oc = observedColor(ray, mode);
-	
-	delete(target);
-	delete(ray);
-	
-	return oc;
+		
+	return observedColor(&ray, mode);
 }
 
-Color* Scene::observedColor(Ray* ray, int mode){
-	Color* oc = new Color(background);
-	Intersection* nearestIntersection = getNearestIntersection(ray, 0.0001);
+Color Scene::observedColor(Ray* ray, int mode){
+	Color oc (background);
+	Intersection* nearestIntersection = getNearestIntersection(ray);
 	
 	currentRecursions++;
 	
@@ -107,14 +96,14 @@ Color* Scene::observedColor(Ray* ray, int mode){
 	}
 	else{
 		
-		Color* objectColor = nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNormal(), ray, lights);
+		Color objectColor = nearestIntersection->getObject()->getEnlightment()->getColor(nearestIntersection->getPoint(), nearestIntersection->getNormal(), ray, lights);
 		
 		if((currentRecursions >= MAX_RECURSIONS) || (!nearestIntersection->getObject()->isReflecting() && !nearestIntersection->getObject()->isRefracting())){
 			
 			switch(mode){
 				case RAYCASTING_MODE :
-					*oc = *objectColor;
-					shadow(oc, nearestIntersection);
+					oc = objectColor;
+					shadow(&oc, nearestIntersection);
 					
 					break;
 					
@@ -126,11 +115,11 @@ Color* Scene::observedColor(Ray* ray, int mode){
 					
 					shooter->getPhotonMap()->irradiance_estimate(irradiance, pos, normal, 100, 1000);
 					
-					oc->setR((double)irradiance[0]);
-					oc->setG((double)irradiance[1]);
-					oc->setB((double)irradiance[2]);			
+					oc.setR((double)irradiance[0]);
+					oc.setG((double)irradiance[1]);
+					oc.setB((double)irradiance[2]);			
 					
-					oc->normalize();
+					oc.normalize();
 					
 					free(pos);
 					free(normal);
@@ -142,46 +131,38 @@ Color* Scene::observedColor(Ray* ray, int mode){
 			}
 		}
 		else{
-			Color* reflectedColor = 0;
-			Color* refractedColor = 0;
+			Color reflectedColor;
+			Color refractedColor;
 			
 			if(nearestIntersection->getObject()->isReflecting()){
 				
 				if(nearestIntersection->getObject()->getGlossyFocal() == 0){
-					Ray* reflected = reflectedRay(ray, nearestIntersection);
-					reflectedColor = observedColor(reflected, mode);
-					
-					delete(reflected);
+					Ray reflected = reflectedRay(ray, nearestIntersection);
+					reflectedColor = observedColor(&reflected, mode);
 				}
 				else{
 					reflectedColor = glossyReflection(ray, nearestIntersection, mode);
 				}
 				
-				*reflectedColor = ((*objectColor) * (1.0 - nearestIntersection->getObject()->getKR())) + ((*reflectedColor) * nearestIntersection->getObject()->getKR());
-				*oc = (*oc) + reflectedColor;
+				reflectedColor = (objectColor * (1.0 - nearestIntersection->getObject()->getKR())) + (reflectedColor * nearestIntersection->getObject()->getKR());
+				oc = oc + reflectedColor;
 			}
 			
 			if(nearestIntersection->getObject()->isRefracting()){
-				Ray* refracted = refractedRay(ray, nearestIntersection);
+				Ray refracted = refractedRay(ray, nearestIntersection);
 				
-				refractedColor = observedColor(refracted, mode);
+				refractedColor = observedColor(&refracted, mode);
 				
-				*refractedColor = ((*objectColor) * (1.0 - nearestIntersection->getObject()->getKT())) + ((*refractedColor) * nearestIntersection->getObject()->getKT());
-				*oc = (*oc) + refractedColor;
-				
-				delete(refracted);
+				refractedColor = (objectColor * (1.0 - nearestIntersection->getObject()->getKT())) + (refractedColor * nearestIntersection->getObject()->getKT());
+				oc = oc + refractedColor;
 			}
 			
 			if(nearestIntersection->getObject()->isReflecting() && nearestIntersection->getObject()->isRefracting()){
-				*oc = (*oc) * 0.5;
+				oc = oc * 0.5;
 			}
-			
-			
-			delete(reflectedColor);
-			delete(refractedColor);
 		}
 		
-		delete(objectColor);
+		delete(nearestIntersection);
 		
 		return oc;
 	}
@@ -213,20 +194,19 @@ Intersection* Scene::getNearestIntersection(Ray* ray, double epsilon){
 	return nearestIntersection;
 }
 
-Ray* Scene::reflectedRay(Ray* ray, Intersection* intersection){
-	Vector *reflectDirection = new Vector( (*ray->getDirection()) - ( ((*intersection->getNormal()) * 2.0) * ((*intersection->getNormal()) * ray->getDirection()) ) );
-	reflectDirection->normalize();
+Ray Scene::reflectedRay(Ray* ray, Intersection* intersection){
+	Vector reflectDirection( (*ray->getDirection()) - ( ((*intersection->getNormal()) * 2.0) * ((*intersection->getNormal()) * ray->getDirection()) ) );
+	reflectDirection.normalize();
 	
-	Ray* reflected = new Ray(intersection->getPoint(), reflectDirection);
-	
-	delete(reflectDirection);
+	Point origin((reflectDirection * epsilon) + intersection->getPoint());
+	Ray reflected(&origin, &reflectDirection);
 	
 	return reflected;
 }
 
-Color* Scene::glossyReflection(Ray* ray, Intersection* intersection, int mode, bool random, double smoothing){
+Color Scene::glossyReflection(Ray* ray, Intersection* intersection, int mode, bool random, double smoothing){
 	
-	Color* color = new Color();
+	Color color;
 	
 	double cpt = 0;
 	
@@ -234,106 +214,87 @@ Color* Scene::glossyReflection(Ray* ray, Intersection* intersection, int mode, b
 	double radius = intersection->getObject()->getGlossyWidth();
 	double step = 1.0 / smoothing;
 	
-	Ray* reflected = reflectedRay(ray, intersection);
-	Point* sight = new Point(((*reflected->getDirection()) * f) + intersection->getPoint());
-	Observer* virtualObs = new Observer(intersection->getPoint(), sight, M_PI / 4.0);
-	
-	delete(sight);
-	delete(reflected);
+	Ray reflected = reflectedRay(ray, intersection);
+	Point sight(((*reflected.getDirection()) * f) + intersection->getPoint());
+	Observer virtualObs(intersection->getPoint(), &sight, M_PI / 4.0);
 	
 	for(double i=-radius/2.0; i<radius/2.0; i+= step){
 		for(double j=-radius/2.0; j<radius/2.0; j+= step){
 			
-			Point* target;
+			Point target;
 			
 			if(random){
 				double ii = ( ((double)std::rand() / (double)RAND_MAX) * radius ) - (radius/2.0);
 				double jj = ( ((double)std::rand() / (double)RAND_MAX) * radius ) - (radius/2.0);
-				target = new Point(ii, jj, f);
+				Point temp(ii, jj, f);
+				
+				target = temp;
 			}
 			else{
-				target = new Point(i, j, f);
+				Point temp(i, j, f);
+				
+				target = temp;
 			}
 			
-			Ray* glossyRay = virtualObs->ray(target);
-			Intersection* glossyIntersection = getNearestIntersection(glossyRay);
+			Ray glossyRay = virtualObs.ray(&target);
+			Intersection* glossyIntersection = getNearestIntersection(&glossyRay);
 			
 			if(glossyIntersection != 0){
 				
-				Color* glossyColor = observedColor(glossyRay, mode);
+				Color glossyColor = observedColor(&glossyRay, mode);
 				
-				*color = (*color) + glossyColor;
+				color = color + glossyColor;
 				cpt++;
-				
-				delete(glossyColor);
 			}
 			
 			delete(glossyIntersection);
-			delete(glossyRay);
 		}
 	}
 	
-	delete(virtualObs);
-	
-	*color = (*color) * (1.0 / cpt);
-	color->normalize();
+	color = color * (1.0 / cpt);
+	color.normalize();
 	
 	return color;
 }
 
-Ray* Scene::refractedRay(Ray* ray, Intersection* intersection){
+Ray Scene::refractedRay(Ray* ray, Intersection* intersection){
 	
-	Ray* refracted = 0;
-	
-	Ray* r1 = refractRay(ray, intersection, 1.0, intersection->getObject()->getN());
-	Intersection* refractionIntersection = getNearestIntersection(r1, 0.0001);
+	Ray r1 = refractRay(ray, intersection, 1.0, intersection->getObject()->getN());
+	Intersection* refractionIntersection = getNearestIntersection(&r1);
 	
 	if(refractionIntersection != 0){
 		if(refractionIntersection->getObject() == intersection->getObject()){
 			refractionIntersection->getNormal()->invert();
-			Ray* r2 = refractRay(r1, refractionIntersection, intersection->getObject()->getN(), 1.0);
-			refracted = new Ray(r2);
-			
-			delete(r2);
+			return refractRay(&r1, refractionIntersection, intersection->getObject()->getN(), 1.0);
 		}
 		else{
-			refracted = new Ray(r1);
+			return r1;
 		}
 	}
 	else{
-		refracted = new Ray(r1);
+		return r1;
 	}
-	
-	delete(refractionIntersection);
-	delete(r1);
-	
-	return refracted;
 }
 
-Ray* Scene::refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon){
+Ray Scene::refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon){
 	
 	double n = n2 / n1;
 	double cosT = (*intersection->getNormal()) * ray->getDirection();
 	double sinT2 = 1.0 - ((1.0  - cosT * cosT ) / ( n * n ));
 	
-	Ray* refracted;
-	Vector* refractDirection;
-	Point* origin;
+	Vector refractDirection;
 	
 	if(sinT2 > 0){
 		//refraction
-		refractDirection = new Vector( (( (*ray->getDirection()) - ( (*intersection->getNormal()) * cosT ) ) * (1.0 / n)) - ( (*intersection->getNormal()) * sqrt(sinT2) ));
+		refractDirection = ( (( (*ray->getDirection()) - ( (*intersection->getNormal()) * cosT ) ) * (1.0 / n)) - ( (*intersection->getNormal()) * sqrt(sinT2) ));
 	}
 	else{
 		//reflexion
-		refractDirection = new Vector( (*ray->getDirection()) - ( ((*intersection->getNormal()) * 2.0) * ((*intersection->getNormal()) * ray->getDirection()) ) );
+		refractDirection = ( (*ray->getDirection()) - ( ((*intersection->getNormal()) * 2.0) * ((*intersection->getNormal()) * ray->getDirection()) ) );
 	}
 	
-	origin = new Point(((*refractDirection) * epsilon) + intersection->getPoint());
-	refracted = new Ray(origin, refractDirection);
-	
-	delete(origin);
-	delete(refractDirection);
+	Point origin((refractDirection * epsilon) + intersection->getPoint());
+	Ray refracted(&origin, &refractDirection);
 	
 	return refracted;
 }
@@ -347,53 +308,49 @@ void Scene::shadow(Color* color, Intersection* intersection, bool random, double
 		double radius = (*iter)->getRadius();
 		double step = 1.0 / smoothing;
 		
-		Vector* distanceTolight = new Vector(intersection->getPoint(), (*iter)->getSource());
-		Observer* virtualObs = new Observer(intersection->getPoint(), (*iter)->getSource(), M_PI / 4.0);
-		double f = distanceTolight->norm();
-		
-		delete(distanceTolight);
+		Point shadowedPoint(((*intersection->getNormal()) * epsilon) + intersection->getPoint());
+		Vector distanceTolight(&shadowedPoint, (*iter)->getSource());
+		Observer virtualObs(&shadowedPoint, (*iter)->getSource(), M_PI / 4.0);
+		double f = distanceTolight.norm();
 		
 		for(double i=-radius/2.0; i<radius/2.0; i+= step){
 			for(double j=-radius/2.0; j<radius/2.0; j+= step){
 				
-				Point* target;
+				Point target;
 				
 				if(random){
 					double ii = ( ((double)std::rand() / (double)RAND_MAX) * radius ) - (radius/2.0);
 					double jj = ( ((double)std::rand() / (double)RAND_MAX) * radius ) - (radius/2.0);
-					target = new Point(ii, jj, f);
+					Point temp(ii, jj, f);
+					
+					target = temp;
 				}
 				else{
-					target = new Point(i, j, f);
+					Point temp(i, j, f);
+					target = temp;
 				}
 				
-				Ray* shadowRay = virtualObs->ray(target);
-				Intersection* shadowIntersection = getNearestIntersection(shadowRay);
+				Ray shadowRay = virtualObs.ray(&target);
+				Intersection* shadowIntersection = getNearestIntersection(&shadowRay);
 				
 				if(shadowIntersection != 0){
 					
-					Vector *shadowVect = new Vector(intersection->getPoint(), shadowIntersection->getPoint());
+					Vector shadowVect(intersection->getPoint(), shadowIntersection->getPoint());
 					
-					if(shadowVect->norm() <= f){
+					if(shadowVect.norm() < f){
 						shadowed++;
 					}
 					else{
 						enlighted++;
 					}
-					
-					delete(shadowVect);
 				}
 				else{
 					enlighted++;
 				}
 				
-				delete(shadowRay);
 				delete(shadowIntersection);
-				delete(target);
 			}
 		}
-		
-		delete(virtualObs);
 		
 		if(shadowed > 0){
 			color->scale(std::min(1.0, (enlighted / (shadowed + enlighted)) + 0.3));
@@ -424,7 +381,7 @@ void Scene::rayCasting(void){
 		
 		for(int p=-getW()/2; p<getW()/2; p++){
 			
-			Color* color = 0;
+			Color color;
 			
 			if(image->getAntialiasing() > 1){
 				color = antialiasedColor(l, p, RAYCASTING_MODE);
@@ -433,9 +390,7 @@ void Scene::rayCasting(void){
 				color = colorAt(l, p, RAYCASTING_MODE);
 			}
 			
-			image->writePixel(color);
-			
-			delete(color);
+			image->writePixel(&color);
 		}
 	}
 	
@@ -472,7 +427,7 @@ void Scene::photonMapping(void){
 		
 		for(int p=-getW()/2; p<getW()/2; p++){
 			
-			Color* color = 0;
+			Color color;
 			
 			if(image->getAntialiasing() > 1){
 				color = antialiasedColor(l, p, PHOTONMAPPING_MODE);
@@ -481,9 +436,7 @@ void Scene::photonMapping(void){
 				color = colorAt(l, p, PHOTONMAPPING_MODE);
 			}
 			
-			image->writePixel(color);
-			
-			delete(color);
+			image->writePixel(&color);
 		}
 	}
 	

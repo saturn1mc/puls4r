@@ -51,7 +51,7 @@ public:
 				break;
 		}
 		
-		throw new std::exception();
+		throw std::exception();
 	}
 	
 	double getX(void) const { return x; }

@@ -82,8 +82,8 @@ private:
 	void parseBackgroundElement(TiXmlElement* backgroundElement, Scene *scene) const throw(std::exception);
 
 	void parseObserverElement(TiXmlElement* observerElement, Scene *scene) const throw(std::exception);
-	Point* parseEyeElement(TiXmlElement* eyeElement) const throw(std::exception);
-	Point* parseSightElement(TiXmlElement* sightElement) const throw(std::exception);
+	Point parseEyeElement(TiXmlElement* eyeElement) const throw(std::exception);
+	Point parseSightElement(TiXmlElement* sightElement) const throw(std::exception);
 	
 	void parseLightList(TiXmlElement* lightListElement, Scene* scene) const throw(std::exception);
 	void parseLightElement(TiXmlElement* lightElement, Scene* scene) const throw(std::exception);

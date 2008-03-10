@@ -49,7 +49,7 @@ public:
 		delete(view);
 	}
 	
-	Ray* ray(Point* sp);
+	Ray ray(Point* sp);
 	
 	Point* getEye(void) const {return eye;}	
 	Vector* getSight(void) const {return sight;}

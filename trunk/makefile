@@ -12,7 +12,7 @@
 
 
 CC = g++ 
-CC_OPTIONS = -O3
+CC_OPTIONS = -O3 -Wall -pedantic
 LNK_OPTIONS = 
 
 

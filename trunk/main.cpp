@@ -120,18 +120,17 @@ void traceScene(int mode, char* sceneFile, char* targetFile, int width, int heig
 	SceneParser parser;
 	
 	Scene* scene = parser.parse(sceneFile);
-	Image* image = new Image(targetFile, width, height, antialiasing);
+	Image image(targetFile, width, height, antialiasing);
 	
-	scene->setImage(image);
+	scene->setImage(&image);
 	scene->trace(mode);
 	
-	delete(image);
 	delete(scene);
 }
 
 
 int main (int argc, char*  const argv[]) {
-
+	
 	if(argc < 6){
 		printUsage();
 	}
