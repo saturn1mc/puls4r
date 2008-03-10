@@ -10,26 +10,23 @@
 #include "Sphere.h"
 
 Intersection* Sphere::createIntersection(Ray* ray){
-	Point* m =  new Point(	ray->getOrigin()->getX() + (ray->getDirection()->getX() * ray->getT()),
-							ray->getOrigin()->getY() + (ray->getDirection()->getY() * ray->getT()),
-							ray->getOrigin()->getZ() + (ray->getDirection()->getZ() * ray->getT())
-						);
+	Point m	(	ray->getOrigin()->getX() + (ray->getDirection()->getX() * ray->getT()),
+				ray->getOrigin()->getY() + (ray->getDirection()->getY() * ray->getT()),
+				ray->getOrigin()->getZ() + (ray->getDirection()->getZ() * ray->getT())
+			);
 	
-	Vector* nm = new Vector(	(m->getX() - center->getX()) / radius,
-								(m->getY() - center->getY()) / radius,
-								(m->getZ() - center->getZ()) / radius
-							);
+	Vector nm	(	(m.getX() - center->getX()) / radius,
+					(m.getY() - center->getY()) / radius,
+					(m.getZ() - center->getZ()) / radius
+				);
 	
-	nm->normalize();
+	nm.normalize();
 	
 	if(perlin != 0){
-		perlin->disruptNormal(nm, epsilon);
+		perlin->disruptNormal(&nm, epsilon);
 	}
 	
-	Intersection *intersection = new Intersection(m, nm, this, ray->getT());
-	
-	delete(nm);
-	delete(m);
+	Intersection *intersection = new Intersection(&m, &nm, this, ray->getT());
 	
 	return intersection;
 }

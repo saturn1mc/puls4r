@@ -9,6 +9,8 @@
 
 #include "PhotonShooter.h"
 
+const double PhotonShooter::epsilon = 0.000001;
+
 void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > objects){
 	
 	int lightNum = 0;
@@ -36,18 +38,15 @@ void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > object
 			 * Random emission from diffuse point light 
 			 * As described by Henrik Wann Jensen
 			 */
-			Vector* randDir = randomDirection();
-			Ray* ray = new Ray((*iter)->getSource(), randDir);
+			Vector randDir = randomDirection();
+			Ray ray((*iter)->getSource(), &randDir);
 			
 			float energy[3] = {	(*iter)->getPower() * (*iter)->getColor()->getR(), 
 								(*iter)->getPower() * (*iter)->getColor()->getG(), 
 								(*iter)->getPower() * (*iter)->getColor()->getB()};
 			
-			shootPhoton(ray, lights, objects, energy);
+			shootPhoton(&ray, lights, objects, energy);
 			shooted++;
-			
-			delete(randDir);
-			delete (ray);
 		}
 		
 		if(stored != 0){
@@ -61,7 +60,7 @@ void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > object
 	map->balance();
 }
 
-Vector* PhotonShooter::randomDirection(void) const{
+Vector PhotonShooter::randomDirection(void) const{
 	
 	double x, y, z;
 	
@@ -71,7 +70,9 @@ Vector* PhotonShooter::randomDirection(void) const{
 		z = (((double)std::rand() / (double)RAND_MAX) * 2.0) - 1.0;
 	}while( (x*x)+(y*y)+(z*z) > 1);
 	
-	return new Vector(x, y, z);
+	Vector randDir(x, y, z);
+	
+	return randDir;
 }
 
 bool PhotonShooter::russianRoulette(double d) const{
@@ -101,10 +102,8 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 				storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
 			}
 			else{
-				
-				Ray* reflected = reflectedRay(ray, photonIntersection);
-				shootPhoton(reflected, lights, objects, energy);
-				delete(reflected);
+				Ray reflected = reflectedRay(ray, photonIntersection);
+				shootPhoton(&reflected, lights, objects, energy);
 			}
 		}
 		
@@ -114,64 +113,24 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 				storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
 			}
 			else{
-				
-				//Diffraction test
-//				float e2[3];
-//				
-//				//R
-//				photonIntersection->getObject()->setRefracting(true, 1.9, 1.0);
-//				Ray* refracted = refractedRay(ray, photonIntersection, objects);
-//				e2[0] = energy[0] * (1.0 / 3.0);
-//				e2[1] = energy[1] * 0.0;
-//				e2[2] = energy[2] * 0.0;
-//				shootPhoton(refracted, lights, objects, e2);
-//				delete(refracted);
-//				
-//				//G
-//				photonIntersection->getObject()->setRefracting(true, 1.5, 1.0);
-//				refracted = refractedRay(ray, photonIntersection, objects);
-//				e2[0] = energy[0] * 0.0;
-//				e2[1] = energy[1] * (1.0 / 3.0);
-//				e2[2] = energy[2] * 0.0;
-//				shootPhoton(refracted, lights, objects, e2);
-//				delete(refracted);
-//				
-//				//B
-//				photonIntersection->getObject()->setRefracting(true, 1.1, 1.0);
-//				refracted = refractedRay(ray, photonIntersection, objects);
-//				e2[0] = energy[0] * 0.0;
-//				e2[1] = energy[1] * 0.0;
-//				e2[2] = energy[2] * (1.0 / 3.0);
-//				shootPhoton(refracted, lights, objects, e2);
-//				delete(refracted);
-				
-				
-				
-				Ray *refracted = refractedRay(ray, photonIntersection, objects);
-				shootPhoton(refracted, lights, objects, energy);
-				
-				delete(refracted);
+				Ray refracted = refractedRay(ray, photonIntersection, objects);
+				shootPhoton(&refracted, lights, objects, energy);
 			}
 			
 		}
 		
 		if(canStore && !photonIntersection->getObject()->isReflecting() && !photonIntersection->getObject()->isRefracting()){
 			
-			Color* objectColor = photonIntersection->getObject()->getEnlightment()->getColor(photonIntersection->getPoint(), photonIntersection->getNormal(), ray, lights);
-			scaleEnergy(energy, objectColor);
-			delete(objectColor);
+			Color objectColor = photonIntersection->getObject()->getEnlightment()->getColor(photonIntersection->getPoint(), photonIntersection->getNormal(), ray, lights);
+			scaleEnergy(energy, &objectColor);
 			
 			storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
 			
 			if(!russianRoulette(photonIntersection->getObject()->getKR())){
 				
-				Vector* randDir = randomDirection();
-				Ray* reflected = new Ray(photonIntersection->getPoint(), randDir);		
-				
-				delete(randDir);
-				
-				shootPhoton(reflected, lights, objects, energy, true);
-				delete(reflected);
+				Vector randDir = randomDirection();
+				Ray reflected(photonIntersection->getPoint(), &randDir);
+				shootPhoton(&reflected, lights, objects, energy, true);
 			}
 		}
 	}
@@ -222,70 +181,55 @@ Intersection* PhotonShooter::getNearestIntersection(Ray* ray, std::list<Object *
 	return nearestIntersection;
 }
 
-Ray* PhotonShooter::reflectedRay(Ray* ray, Intersection* intersection){
-	Vector *reflectDirection = new Vector( (*ray->getDirection()) - ( ((*intersection->getNormal()) * 2.0) * ((*intersection->getNormal()) * ray->getDirection()) ) );
-	reflectDirection->normalize();
+Ray PhotonShooter::reflectedRay(Ray* ray, Intersection* intersection){
+	Vector reflectDirection( (*ray->getDirection()) - ( ((*intersection->getNormal()) * 2.0) * ((*intersection->getNormal()) * ray->getDirection()) ) );
+	reflectDirection.normalize();
 	
-	Ray* reflected = new Ray(intersection->getPoint(), reflectDirection);
-	
-	delete(reflectDirection);
+	Point origin((reflectDirection * epsilon) + intersection->getPoint());
+	Ray reflected(&origin, &reflectDirection);
 	
 	return reflected;
 }
 
-Ray* PhotonShooter::refractedRay(Ray* ray, Intersection* intersection, std::list<Object * > objects){
+Ray PhotonShooter::refractedRay(Ray* ray, Intersection* intersection, std::list<Object * > objects){
 	
-	Ray* refracted = 0;
-	
-	Ray* r1 = refractRay(ray, intersection, 1.0, intersection->getObject()->getN());
-	Intersection* refractionIntersection = getNearestIntersection(r1, objects, 0.0001);
+	Ray r1 = refractRay(ray, intersection, 1.0, intersection->getObject()->getN());
+	Intersection* refractionIntersection = getNearestIntersection(&r1, objects);
 	
 	if(refractionIntersection != 0){
 		if(refractionIntersection->getObject() == intersection->getObject()){
 			refractionIntersection->getNormal()->invert();
-			Ray* r2 = refractRay(r1, refractionIntersection, intersection->getObject()->getN(), 1.0);
-			refracted = new Ray(r2);
-			
-			delete(r2);
+			return refractRay(&r1, refractionIntersection, intersection->getObject()->getN(), 1.0);
 		}
 		else{
-			refracted = new Ray(r1);
+			return r1;
 		}
 	}
 	else{
-		refracted = new Ray(r1);
+		return r1;
 	}
-	
-	delete(refractionIntersection);
-	delete(r1);
-	
-	return refracted;
 }
 
-Ray* PhotonShooter::refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon){
+Ray PhotonShooter::refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double epsilon){
 	
 	double n = n2 / n1;
 	double cosT = (*intersection->getNormal()) * ray->getDirection();
 	double sinT2 = 1.0 - ((1.0  - cosT * cosT ) / ( n * n ));
 	
-	Ray* refracted;
-	Vector* refractDirection;
-	Point* origin;
+	Vector refractDirection;
 	
 	if(sinT2 > 0){
 		//refraction
-		refractDirection = new Vector( (( (*ray->getDirection()) - ( (*intersection->getNormal()) * cosT ) ) * (1.0 / n)) - ( (*intersection->getNormal()) * sqrt(sinT2) ));
+		refractDirection = ( (( (*ray->getDirection()) - ( (*intersection->getNormal()) * cosT ) ) * (1.0 / n)) - ( (*intersection->getNormal()) * sqrt(sinT2) ));
 	}
 	else{
 		//reflexion
-		refractDirection = new Vector( (*ray->getDirection()) - ( ((*intersection->getNormal()) * 2.0) * ((*intersection->getNormal()) * ray->getDirection()) ) );
+		refractDirection = ( (*ray->getDirection()) - ( ((*intersection->getNormal()) * 2.0) * ((*intersection->getNormal()) * ray->getDirection()) ) );
 	}
 	
-	origin = new Point(((*refractDirection) * epsilon) + intersection->getPoint());
-	refracted = new Ray(origin, refractDirection);
-	
-	delete(origin);
-	delete(refractDirection);
+	Point origin((refractDirection * epsilon) + intersection->getPoint());
+	Ray refracted(&origin, &refractDirection);
 	
 	return refracted;
 }
+

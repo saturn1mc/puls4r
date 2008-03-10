@@ -25,21 +25,18 @@ Intersection* Plan::intersection(Ray* ray){
 			
 			ray->setT(t);
 		
-			Point* m = new Point(	ray->getOrigin()->getX() + (ray->getDirection()->getX() * ray->getT()),
-									ray->getOrigin()->getY() + (ray->getDirection()->getY() * ray->getT()),
-									ray->getOrigin()->getZ() + (ray->getDirection()->getZ() * ray->getT())
-								);
+			Point m	(	ray->getOrigin()->getX() + (ray->getDirection()->getX() * ray->getT()),
+						ray->getOrigin()->getY() + (ray->getDirection()->getY() * ray->getT()),
+						ray->getOrigin()->getZ() + (ray->getDirection()->getZ() * ray->getT())
+					);
 			
-			Vector* nm = new Vector(norm);
+			Vector nm(norm);
 			
 			if(perlin != 0){
-				perlin->disruptNormal(nm, m, epsilon);
+				perlin->disruptNormal(&nm, &m, epsilon);
 			}
 		
-			Intersection* intersection = new Intersection(m, nm, this, ray->getT());
-			
-			delete(nm);
-			delete(m);
+			Intersection* intersection = new Intersection(&m, &nm, this, ray->getT());
 			
 			return intersection;
 		}

@@ -17,16 +17,12 @@ Intersection* Triangle::intersection(Ray* ray){
 		return 0;
 	}
 	else{
-		Point* b = new Point(*points[1] - points[0]);
-		Point* c = new Point(*points[2] - points[0]);
-		Point* p = new Point(*intersection->getPoint() - points[0]);
+		Point b(*points[1] - points[0]);
+		Point c(*points[2] - points[0]);
+		Point p(*intersection->getPoint() - points[0]);
 		
-		double u = ((p->getY() * c->getX()) - (p->getX() * c->getY())) / ((b->getY() * c->getX()) - (b->getX() * c->getY()));
-		double v = ((p->getY() * b->getX()) - (p->getX() * b->getY())) / ((c->getY() * b->getX()) - (c->getX() * b->getY()));
-		
-		delete(b);
-		delete(c);
-		delete(p);
+		double u = ((p.getY() * c.getX()) - (p.getX() * c.getY())) / ((b.getY() * c.getX()) - (b.getX() * c.getY()));
+		double v = ((p.getY() * b.getX()) - (p.getX() * b.getY())) / ((c.getY() * b.getX()) - (c.getX() * b.getY()));
 		
 		if((u>=0) && (v >= 0) && ((u+v) <= 1)){
 			intersection->setObject(this);

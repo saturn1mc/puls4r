@@ -10,30 +10,27 @@
 #include "Quadric.h"
 
 Intersection* Quadric::createIntersection(Ray* ray){
-	Point* m =  new Point(	ray->getOrigin()->getX() + (ray->getDirection()->getX() * ray->getT()),
-							ray->getOrigin()->getY() + (ray->getDirection()->getY() * ray->getT()),
-							ray->getOrigin()->getZ() + (ray->getDirection()->getZ() * ray->getT())
-						  );
+	Point m	(	ray->getOrigin()->getX() + (ray->getDirection()->getX() * ray->getT()),
+				ray->getOrigin()->getY() + (ray->getDirection()->getY() * ray->getT()),
+				ray->getOrigin()->getZ() + (ray->getDirection()->getZ() * ray->getT())
+			);
 	
-	Vector* nm = new Vector(	2.0 * A * m->getX() + D * m->getY() + E * m->getZ() + G,
-								2.0 * B * m->getY() + D * m->getX() + F * m->getZ() + H,
-								2.0 * C * m->getZ() + E * m->getX() + F * m->getY() + I
-							);
+	Vector nm	(	2.0 * A * m.getX() + D * m.getY() + E * m.getZ() + G,
+					2.0 * B * m.getY() + D * m.getX() + F * m.getZ() + H,
+					2.0 * C * m.getZ() + E * m.getX() + F * m.getY() + I
+				);
 	
-	nm->normalize();
+	nm.normalize();
 	
-	if(((*nm) * ray->getDirection()) > 0){
-		nm->invert();
+	if((nm * ray->getDirection()) > 0){
+		nm.invert();
 	}
 	
 	if(perlin != 0){
-		perlin->disruptNormal(nm, epsilon);
+		perlin->disruptNormal(&nm, epsilon);
 	}
 	
-	Intersection *intersection = new Intersection(m, nm, this, ray->getT());
-	
-	delete(m);
-	delete(nm);
+	Intersection *intersection = new Intersection(&m, &nm, this, ray->getT());
 	
 	return intersection;
 }

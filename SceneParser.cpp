@@ -64,6 +64,8 @@ const std::string SceneParser::EPSILON_ATTR = "epsilon";
 
 Scene* SceneParser::parse(std::string filePath) const throw(std::exception){
 	
+	std::cout << "---> Parsing " << filePath << " ... " << std::endl;
+	
 	Scene *scene = new Scene();
 	
 	TiXmlDocument doc(filePath.c_str());
@@ -75,20 +77,26 @@ Scene* SceneParser::parse(std::string filePath) const throw(std::exception){
 	TiXmlHandle hdl(&doc);
 	
 	//Background color parsing
+	std::cout << "\tParsing background ... " << std::endl;
 	TiXmlElement *elem = hdl.FirstChildElement().FirstChildElement(BACKGROUND_NODE.c_str()).Element();
 	parseBackgroundElement(elem, scene);
 	
 	//Observer parsing
+	std::cout << "\tParsing observer ... " << std::endl;
 	elem = hdl.FirstChildElement().FirstChildElement(OBSERVER_NODE.c_str()).Element();
 	parseObserverElement(elem, scene);
 	
 	//Light list parsing
+	std::cout << "\tParsing lights ... " << std::endl;
 	elem = hdl.FirstChildElement().FirstChildElement(LIGHT_LIST_NODE.c_str()).Element();
 	parseLightList(elem, scene);
 	
 	//Object list parsing
+	std::cout << "\tParsing objects ... " << std::endl;
 	elem = hdl.FirstChildElement().FirstChildElement(OBJECTS_LIST_NODE.c_str()).Element();
 	parseObjectList(elem, scene);
+	
+	std::cout << "---> End of parsing." << std::endl;
 	
 	return scene;
 }
@@ -100,42 +108,40 @@ void SceneParser::parseBackgroundElement(TiXmlElement* backgroundElement, Scene 
 	backgroundElement->QueryDoubleAttribute(G_ATTR.c_str(), &g);
 	backgroundElement->QueryDoubleAttribute(B_ATTR.c_str(), &b);
 	
-	Color* background = new Color(r, g, b);
-	scene->setBackground(background);
-	
-	delete(background);
+	Color background(r, g, b);
+	scene->setBackground(&background);
 }
 
 void SceneParser::parseObserverElement(TiXmlElement* observerElement, Scene *scene) const throw(std::exception){
-	Point* eye = parseEyeElement(observerElement->FirstChildElement(EYE_NODE.c_str()));
-	Point* sight = parseSightElement(observerElement->FirstChildElement(SIGHT_NODE.c_str()));
+	Point eye = parseEyeElement(observerElement->FirstChildElement(EYE_NODE.c_str()));
+	Point sight = parseSightElement(observerElement->FirstChildElement(SIGHT_NODE.c_str()));
 	
-	Observer* observer = new Observer(eye, sight, M_PI/4.0);
-	scene->setObserver(observer);
-	
-	delete(observer);
-	delete(sight);
-	delete(eye);
+	Observer observer(&eye, &sight, M_PI/4.0);
+	scene->setObserver(&observer);
 }
 
-Point* SceneParser::parseEyeElement(TiXmlElement* eyeElement) const throw(std::exception){
+Point SceneParser::parseEyeElement(TiXmlElement* eyeElement) const throw(std::exception){
 	double x, y, z;
 	
 	eyeElement->QueryDoubleAttribute(X_ATTR.c_str(), &x);
 	eyeElement->QueryDoubleAttribute(Y_ATTR.c_str(), &y);
 	eyeElement->QueryDoubleAttribute(Z_ATTR.c_str(), &z);
 	
-	return new Point(x, y, z);
+	Point eye(x, y, z);
+	
+	return eye;
 }
 
-Point* SceneParser::parseSightElement(TiXmlElement* sightElement) const throw(std::exception){
+Point SceneParser::parseSightElement(TiXmlElement* sightElement) const throw(std::exception){
 	double x, y, z;
 	
 	sightElement->QueryDoubleAttribute(X_ATTR.c_str(), &x);
 	sightElement->QueryDoubleAttribute(Y_ATTR.c_str(), &y);
 	sightElement->QueryDoubleAttribute(Z_ATTR.c_str(), &z);
 	
-	return new Point(x, y, z);
+	Point sight(x, y, z);
+	
+	return sight;
 }
 
 void SceneParser::parseLightList(TiXmlElement* lightListElement, Scene* scene) const throw(std::exception){
@@ -156,7 +162,7 @@ void SceneParser::parseLightElement(TiXmlElement* lightElement, Scene* scene) co
 	lightElement->QueryDoubleAttribute(Y_ATTR.c_str(), &y);
 	lightElement->QueryDoubleAttribute(Z_ATTR.c_str(), &z);
 	
-	Point* position = new Point(x,y,z);
+	Point position(x,y,z);
 	
 	//Color
 	double r, g, b;
@@ -165,7 +171,7 @@ void SceneParser::parseLightElement(TiXmlElement* lightElement, Scene* scene) co
 	lightElement->QueryDoubleAttribute(G_ATTR.c_str(), &g);
 	lightElement->QueryDoubleAttribute(B_ATTR.c_str(), &b);
 	
-	Color* color = new Color(r,g,b);
+	Color color(r,g,b);
 	
 	//Radius
 	double radius;
@@ -175,13 +181,10 @@ void SceneParser::parseLightElement(TiXmlElement* lightElement, Scene* scene) co
 	double power;
 	lightElement->QueryDoubleAttribute(POWER_ATTR.c_str(), &power);
 	
-	Light* light = new Light(position, color);
+	Light* light = new Light(&position, &color);
 	light->setRadius(radius);
 	light->setPower(power);
 	scene->addLight(light);
-	
-	delete(position);
-	delete(color);
 }
 
 void SceneParser::parseObjectList(TiXmlElement* objectListElement, Scene* scene) const throw(std::exception){
@@ -214,7 +217,7 @@ void SceneParser::parseSphereElement(TiXmlElement* sphereElement, Scene* scene) 
 	sphereElement->QueryDoubleAttribute(Y_ATTR.c_str(), &y);
 	sphereElement->QueryDoubleAttribute(Z_ATTR.c_str(), &z);
 	
-	Point* position = new Point(x,y,z);
+	Point position(x,y,z);
 	
 	//Radius
 	double radius;
@@ -253,7 +256,7 @@ void SceneParser::parseSphereElement(TiXmlElement* sphereElement, Scene* scene) 
 	sphereElement->QueryDoubleAttribute(EPSILON_ATTR.c_str(), &epsilon);
 	
 	
-	Sphere* sphere = new Sphere(enl, position, radius, perlin == 1);
+	Sphere* sphere = new Sphere(enl, &position, radius, perlin == 1);
 	sphere->setReflecting(reflecting == 1, kr);
 	sphere->setGlossy(glossyFocal, glossyWidth);
 	sphere->setRefracting(refracting == 1, n, kt);
@@ -262,7 +265,6 @@ void SceneParser::parseSphereElement(TiXmlElement* sphereElement, Scene* scene) 
 	scene->addObject(sphere);
 	
 	delete(enl);
-	delete(position);
 }
 
 void SceneParser::parsePlanElement(TiXmlElement* planElement, Scene* scene) const throw(std::exception){
@@ -275,7 +277,7 @@ void SceneParser::parsePlanElement(TiXmlElement* planElement, Scene* scene) cons
 	planElement->QueryDoubleAttribute(Z_ATTR.c_str(), &z);
 	planElement->QueryDoubleAttribute(D_ATTR.c_str(), &d);
 	
-	Vector* normal = new Vector(x,y,z);
+	Vector normal(x,y,z);
 	
 	//Monoface property
 	int monoface;
@@ -314,7 +316,7 @@ void SceneParser::parsePlanElement(TiXmlElement* planElement, Scene* scene) cons
 	planElement->QueryDoubleAttribute(EPSILON_ATTR.c_str(), &epsilon);
 	
 	
-	Plan* plan = new Plan(enl, normal, d, monoface == 1, perlin == 1);
+	Plan* plan = new Plan(enl, &normal, d, monoface == 1, perlin == 1);
 	plan->setReflecting(reflecting == 1, kr);
 	plan->setGlossy(glossyFocal, glossyWidth);
 	plan->setRefracting(refracting == 1, n, kt);
@@ -323,7 +325,6 @@ void SceneParser::parsePlanElement(TiXmlElement* planElement, Scene* scene) cons
 	scene->addObject(plan);
 	
 	delete(enl);
-	delete(normal);
 }
 
 Enlightment* SceneParser::parseEnlightment(TiXmlElement* objectElement) const throw(std::exception){
@@ -335,16 +336,15 @@ Enlightment* SceneParser::parseEnlightment(TiXmlElement* objectElement) const th
 	objectElement->QueryDoubleAttribute(G_ATTR.c_str(), &g);
 	objectElement->QueryDoubleAttribute(B_ATTR.c_str(), &b);
 	
-	Color* color = new Color(r,g,b);
+	Color color(r,g,b);
 	
 	//Type
 	const char* enlName = objectElement->Attribute(ENLIGHTMENT_ATTR.c_str());
-	
 	Enlightment* enl;
 	
 	//TODO handle all enlightments
 	if(strcmp(enlName, ENL_PHONG.c_str()) == 0){
-		enl = new Phong(color);
+		enl = new Phong(&color);
 	}
 	
 	return enl;

@@ -10,22 +10,19 @@
 #include "Lambert.h"
 
 
-Color* Lambert::getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const{
+Color Lambert::getColor(Point* point, Vector* norm, Ray* ray, std::list<Light* > lights) const{
 	
-	Color* color = new Color(od);
+	Color color(od);
 	
 	for(std::list<Light* >::iterator iter = lights.begin(); iter != lights.end(); ++iter){
-		Vector* L = getL(point, (*iter));
+		Vector L = getL(point, (*iter));
 		
-		Color *diffuse = new Color((*(*iter)->getColor()) * (kd * ((*L) * norm)));
+		Color diffuse = ((*(*iter)->getColor()) * (kd * (L * norm)));
 		
-		*color = (*color) * (diffuse);
-		
-		delete(diffuse);
-		delete(L);
+		color = color * diffuse;
 	}
 	
-	color->normalize();
+	color.normalize();
 	
 	return color;
 }
