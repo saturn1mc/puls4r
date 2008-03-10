@@ -42,6 +42,7 @@ const std::string SceneParser::G_ATTR = "g";
 const std::string SceneParser::B_ATTR = "b";
 
 const std::string SceneParser::D_ATTR = "d";
+const std::string SceneParser::MONOFACE_ATTR = "monoface";
 
 const std::string SceneParser::RADIUS_ATTR = "radius";
 
@@ -276,6 +277,10 @@ void SceneParser::parsePlanElement(TiXmlElement* planElement, Scene* scene) cons
 	
 	Vector* normal = new Vector(x,y,z);
 	
+	//Monoface property
+	int monoface;
+	planElement->QueryIntAttribute(MONOFACE_ATTR.c_str(), &monoface);
+	
 	//Enlightment
 	Enlightment* enl = parseEnlightment(planElement);
 	
@@ -309,7 +314,7 @@ void SceneParser::parsePlanElement(TiXmlElement* planElement, Scene* scene) cons
 	planElement->QueryDoubleAttribute(EPSILON_ATTR.c_str(), &epsilon);
 	
 	
-	Plan* plan = new Plan(enl, normal, d, perlin == 1);
+	Plan* plan = new Plan(enl, normal, d, monoface == 1, perlin == 1);
 	plan->setReflecting(reflecting == 1, kr);
 	plan->setGlossy(glossyFocal, glossyWidth);
 	plan->setRefracting(refracting == 1, n, kt);

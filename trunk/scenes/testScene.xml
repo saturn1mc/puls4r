@@ -12,12 +12,12 @@
 	</observer>
 
 	<lights>
-		<light x="0" y="5" z="0" r="1" g="1" b="1" radius="1" power="1000"/>
+		<light x="0" y="0" z="0" r="1" g="1" b="1" radius="1.5" power="1000"/>
 	</lights>
 	
 	<objects>
 		<sphere x="0" y="0" z="0" radius="2"
-				enlightment="phong" r="0" g="1" b="0" 
+				enlightment="phong" r="1" g="1" b="1" 
 				reflecting="false"
 				kr="0.0"
 				glossyFocal="0.0"
@@ -28,7 +28,7 @@
 				perlin = "0"
 				epsilon = "0.0"/>
 				
-		<sphere x="-7.5" y="0" z="-4" radius="2"
+		<sphere x="-7.5" y="0" z="-5" radius="2"
 				enlightment="phong" r="1" g="0" b="0" 
 				reflecting="0"
 				kr="0.0"
@@ -40,7 +40,43 @@
 				perlin = "0"
 				epsilon = "0"/>
 				
-		<plan 	x="0" y="1" z="0" d="2"
+		<sphere x="-7.5" y="0" z="5" radius="2"
+				enlightment="phong" r="0" g="1" b="0" 
+				reflecting="0"
+				kr="0.0"
+				glossyFocal="0.0"
+				glossyWidth="0.0"
+				refracting="0"
+				n="1.0"
+				kt="0.0"
+				perlin = "0"
+				epsilon = "0"/>
+		
+		<sphere x="7.5" y="0" z="-5" radius="2"
+				enlightment="phong" r="0" g="0" b="1" 
+				reflecting="0"
+				kr="0.0"
+				glossyFocal="0.0"
+				glossyWidth="0.0"
+				refracting="0"
+				n="1.0"
+				kt="0.0"
+				perlin = "0"
+				epsilon = "0"/>
+				
+		<sphere x="7.5" y="0" z="5" radius="2"
+				enlightment="phong" r="1" g="0" b="1" 
+				reflecting="0"
+				kr="0.0"
+				glossyFocal="0.0"
+				glossyWidth="0.0"
+				refracting="0"
+				n="1.0"
+				kt="0.0"
+				perlin = "0"
+				epsilon = "0"/>
+				
+		<plan 	x="0" y="1" z="0" d="2" monoface="0"
 				enlightment="phong" r="1" g="1" b="1" 
 				reflecting="0"
 				kr="0.0"
@@ -52,7 +88,7 @@
 				perlin = "0"
 				epsilon = "0"/>
 				
-		<plan 	x="1" y="0" z="0" d="10"
+		<plan 	x="1" y="0" z="0" d="10" monoface="0"
 				enlightment="phong" r="1" g="1" b="1" 
 				reflecting="0"
 				kr="0.0"
@@ -64,7 +100,7 @@
 				perlin = "0"
 				epsilon = "0"/>
 				
-		<plan 	x="0" y="0" z="1" d="20"
+		<plan 	x="0" y="0" z="1" d="20" monoface="0"
 				enlightment="phong" r="1" g="1" b="1" 
 				reflecting="0"
 				kr="0.0"
@@ -76,7 +112,7 @@
 				perlin = "0"
 				epsilon = "0"/>
 				
-		<plan 	x="0" y="-1" z="0" d="15"
+		<plan 	x="0" y="-1" z="0" d="15" monoface="0"
 				enlightment="phong" r="1" g="1" b="1" 
 				reflecting="0"
 				kr="0.0"
@@ -88,7 +124,7 @@
 				perlin = "0"
 				epsilon = "0"/>
 				
-		<plan 	x="-1" y="0" z="0" d="10.0"
+		<plan 	x="-1" y="0" z="0" d="10.0" monoface="0"
 				enlightment="phong" r="1" g="1" b="1" 
 				reflecting="0"
 				kr="0.0"
@@ -100,7 +136,7 @@
 				perlin = "0"
 				epsilon = "0"/>
 				
-		<plan 	x="0" y="0" z="-1" d="50"
+		<plan 	x="0" y="0" z="-1" d="50" monoface="0"
 				enlightment="phong" r="1" g="1" b="1" 
 				reflecting="0"
 				kr="0.0"

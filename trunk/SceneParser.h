@@ -58,6 +58,7 @@ public:
 	static const std::string B_ATTR;
 	
 	static const std::string D_ATTR;
+	static const std::string MONOFACE_ATTR;
 	
 	static const std::string RADIUS_ATTR;
 	static const std::string POWER_ATTR;
