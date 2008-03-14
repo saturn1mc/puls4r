@@ -65,6 +65,8 @@ public:
 	
 	static const std::string ENLIGHTMENT_ATTR;
 	static const std::string ENL_PHONG;
+	static const std::string ENL_LINEAR;
+	static const std::string ENL_LAMBERT;
 	
 	static const std::string REFLECTING_ATTR;
 	static const std::string KR_ATTR;

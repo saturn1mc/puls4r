@@ -22,6 +22,9 @@ class PhotonShooter{
 
 private:
 	
+	static const int MAX_RECURSIONS = 1000;
+	int currentRecursions;
+	
 	static const double epsilon;
 	
 	int stored;

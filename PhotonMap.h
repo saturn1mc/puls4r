@@ -56,15 +56,6 @@ public:
 							 const float max_dist,          // max distance to look for photons
 							 const int nphotons	) const; // number of photons to use
 	
-	void specular_irradiance_estimate( // by Stephan Reiter
-									   float irrad[3],				   // returned specular irradiance
-									   const float pos[3],            // surface position
-									   const float normal[3],         // surface normal at pos
-									   const float view[3],		   // pos to eye
-									   const float max_dist,          // max distance to look for photons
-									   const int nphotons,			   // number of photons to use
-									   const float plane_scl ) const; // maximum distance to plane, rel. to max-dist
-	
 	void locate_photons(
 						NearestPhotons *const np,      // np is used to locate the photons
 						const int index ) const;       // call with index = 1
