@@ -50,6 +50,8 @@ const std::string SceneParser::POWER_ATTR = "power";
 
 const std::string SceneParser::ENLIGHTMENT_ATTR = "enlightment";
 const std::string SceneParser::ENL_PHONG = "phong";
+const std::string SceneParser::ENL_LINEAR = "linear";
+const std::string SceneParser::ENL_LAMBERT = "lambert";
 
 const std::string SceneParser::REFLECTING_ATTR = "reflecting";
 const std::string SceneParser::KR_ATTR = "kr";
@@ -340,11 +342,24 @@ Enlightment* SceneParser::parseEnlightment(TiXmlElement* objectElement) const th
 	
 	//Type
 	const char* enlName = objectElement->Attribute(ENLIGHTMENT_ATTR.c_str());
-	Enlightment* enl;
+	Enlightment* enl = 0;
 	
 	//TODO handle all enlightments
 	if(strcmp(enlName, ENL_PHONG.c_str()) == 0){
 		enl = new Phong(&color);
+	}
+	
+	if(strcmp(enlName, ENL_LINEAR.c_str()) == 0){
+		enl = new Linear(&color);
+	}
+	
+	if(strcmp(enlName, ENL_LAMBERT.c_str()) == 0){
+		enl = new Lambert(&color);
+	}
+	
+	if(enl == 0){
+		std::cerr << "Enlightment technique unknown : " << enlName << std::endl;
+		enl = new Linear(&color);
 	}
 	
 	return enl;

@@ -45,6 +45,7 @@ void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > object
 								(*iter)->getPower() * (*iter)->getColor()->getG(), 
 								(*iter)->getPower() * (*iter)->getColor()->getB()};
 			
+			currentRecursions = 0;
 			shootPhoton(&ray, lights, objects, energy);
 			shooted++;
 		}
@@ -90,15 +91,16 @@ bool PhotonShooter::russianRoulette(double d) const{
 
 void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<Object * > objects, float energy[3], bool canStore){
 	
-	//TODO take object color into account for refraction
 	//TODO split refraction coeff for all waves (r, g and b)
+	
+	currentRecursions++;
 	
 	Intersection* photonIntersection = getNearestIntersection(ray, objects);
 	
 	if(photonIntersection != 0){
 		if(photonIntersection->getObject()->isReflecting()){
 			
-			if(russianRoulette(photonIntersection->getObject()->getKR())){
+			if(russianRoulette(photonIntersection->getObject()->getKR()) || (currentRecursions >= MAX_RECURSIONS)){
 				storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
 			}
 			else{
@@ -109,7 +111,7 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 		
 		if(photonIntersection->getObject()->isRefracting()){
 			
-			if(russianRoulette(photonIntersection->getObject()->getKT())){
+			if(russianRoulette(photonIntersection->getObject()->getKT()) || (currentRecursions >= MAX_RECURSIONS)){
 				storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
 			}
 			else{
@@ -126,8 +128,7 @@ void PhotonShooter::shootPhoton(Ray* ray, std::list<Light * > lights, std::list<
 			
 			storePhoton(photonIntersection->getPoint(), ray->getDirection(), energy);
 			
-			if(!russianRoulette(photonIntersection->getObject()->getKR())){
-				
+			if(!russianRoulette(photonIntersection->getObject()->getKR()) && !(currentRecursions >= MAX_RECURSIONS)){
 				Vector randDir = randomDirection();
 				Ray reflected(photonIntersection->getPoint(), &randDir);
 				shootPhoton(&reflected, lights, objects, energy, true);
@@ -201,8 +202,8 @@ Ray PhotonShooter::refractedRay(Ray* ray, Intersection* intersection, std::list<
 			refractionIntersection->getNormal()->invert();
 			
 			Ray r2 = refractRay(&r1, refractionIntersection, intersection->getObject()->getN(), 1.0);
-			delete(refractionIntersection);
 			
+			delete(refractionIntersection);
 			return r2;
 		}
 		else{
