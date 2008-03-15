@@ -117,20 +117,18 @@ void printUsage(void){
 }
 
 void traceScene(int mode, char* sceneFile, char* targetFile, int width, int height, int antialiasing){
-	SceneParser parser;
 	
-	Scene* scene = parser.parse(sceneFile);
+	Scene* scene = SceneParser::getInstance().parse(sceneFile);
 	Image image(targetFile, width, height, antialiasing);
 	
 	scene->setImage(&image);
+	
 	scene->trace(mode);
 	
 	delete(scene);
 }
 
-
-int main (int argc, char*  const argv[]) {
-	
+void pulsar(int argc, char*  const argv[]) {
 	if(argc < 6){
 		printUsage();
 	}
@@ -164,4 +162,9 @@ int main (int argc, char*  const argv[]) {
 			cerr << "Option unknown : " << argv[1] << endl;
 		}
 	}
+}
+
+
+int main (int argc, char*  const argv[]) {
+	pulsar(argc, argv);
 }

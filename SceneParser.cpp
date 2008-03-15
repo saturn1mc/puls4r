@@ -11,6 +11,8 @@
 
 using namespace std;
 
+SceneParser* SceneParser::singleton = 0;
+
 const std::string SceneParser::ROOT_NODE = "scene";
 
 const std::string SceneParser::BACKGROUND_NODE = "background";
