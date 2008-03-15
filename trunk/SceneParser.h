@@ -81,6 +81,10 @@ public:
 	
 private:
 
+	static SceneParser* singleton;
+	SceneParser(void){}
+	SceneParser(SceneParser& sceneParser);
+
 	void parseBackgroundElement(TiXmlElement* backgroundElement, Scene *scene) const throw(std::exception);
 
 	void parseObserverElement(TiXmlElement* observerElement, Scene *scene) const throw(std::exception);
@@ -98,8 +102,14 @@ private:
 	Enlightment* parseEnlightment(TiXmlElement* objectElement) const throw(std::exception);
 	
 public :
-	SceneParser(void){};
-	~SceneParser(void){};
+	static SceneParser& getInstance(void){
+		if(singleton == 0){
+			singleton = new SceneParser();
+		}
+		
+		return *singleton;
+	}
+	
 	
 	Scene* parse(std::string filePath) const throw(std::exception);
 };

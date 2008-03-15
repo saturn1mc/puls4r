@@ -49,6 +49,7 @@ public:
 		delete(enlightment);
 		delete(norm);
 	}
+	
 	virtual Intersection* intersection(Ray* ray);
 	virtual std::string toString(void) const;
 	
