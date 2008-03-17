@@ -6,6 +6,7 @@
  *  Copyright 2007 __MyCompanyName__. All rights reserved.
  *
  */
+
 #ifndef SCENE_PARSER_H
 #define SCENE_PARSER_H
 

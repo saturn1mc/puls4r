@@ -168,7 +168,7 @@ Color Scene::observedColor(Ray* ray, int mode){
 	}
 }
 
-Intersection* Scene::getNearestIntersection(Ray* ray, double epsilon){
+Intersection* Scene::getNearestIntersection(Ray* ray, double _epsilon){
 	
 	Intersection* nearestIntersection = 0;
 	
@@ -178,6 +178,32 @@ Intersection* Scene::getNearestIntersection(Ray* ray, double epsilon){
 		
 		if(candidate != 0){
 			if((nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()) && (candidate->getT() > epsilon)){
+				if(nearestIntersection != 0){
+					delete(nearestIntersection);
+				}
+				
+				nearestIntersection = candidate;
+			}
+			else{
+				delete(candidate);
+			}
+		}
+		
+	}
+	
+	return nearestIntersection;
+}
+
+Intersection* Scene::getNearestShadowIntersection(Ray* ray, double _epsilon){
+	
+	Intersection* nearestIntersection = 0;
+	
+	for(std::list<Object* >::iterator iter = objects.begin(); iter != objects.end(); ++iter){
+		
+		Intersection* candidate = (*iter)->intersection(ray);
+		
+		if(candidate != 0){
+			if((nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()) && (!candidate->getObject()->isRefracting()) && (candidate->getT() > epsilon)){
 				if(nearestIntersection != 0){
 					delete(nearestIntersection);
 				}
@@ -337,7 +363,7 @@ void Scene::shadow(Color* color, Intersection* intersection, bool random, double
 				}
 				
 				Ray shadowRay = virtualObs.ray(&target);
-				Intersection* shadowIntersection = getNearestIntersection(&shadowRay);
+				Intersection* shadowIntersection = getNearestShadowIntersection(&shadowRay);
 				
 				if(shadowIntersection != 0){
 					

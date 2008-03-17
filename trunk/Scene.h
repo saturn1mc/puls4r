@@ -44,6 +44,7 @@ private:
 	/* Global Functions */
 	double calcFocal(void) const;
 	Intersection* getNearestIntersection(Ray* ray, double _epsilon = epsilon);
+	Intersection* getNearestShadowIntersection(Ray* ray, double _epsilon = epsilon);
 	Color antialiasedColor(double l, double p, int mode);
 	
 	Color colorAt(double l, double p, int mode);
