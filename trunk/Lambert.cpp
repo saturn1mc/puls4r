@@ -1,6 +1,6 @@
 /*
  *  Lambert.cpp
- *  RayTracing
+ *  puls4r
  *
  *  Created by Camille on 23/01/08.
  *  Copyright 2008 __MyCompanyName__. All rights reserved.

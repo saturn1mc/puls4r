@@ -1,6 +1,6 @@
 /*
  *  Triangle.h
- *  Pulsar
+ *  puls4r
  *
  *  Created by Camille on 27/01/08.
  *  Copyright 2008 __MyCompanyName__. All rights reserved.
@@ -28,18 +28,13 @@ public:
 		points[1] = new Point(b);
 		points[2] = new Point(c);
 		
-		Vector *AB = new Vector(a, b);
-		Vector *AC = new Vector(a, c);
+		Vector AB(a, b);
+		Vector AC(a, c);
 	
-		Vector *norm = new Vector((*AB) ^ (AC));
-		norm->normalize();
-		double d = - (norm->get(0) * points[0]->getX())  - (norm->get(1) * points[0]->getY()) - (norm->get(2) * points[0]->getZ());
+		Vector norm(AB ^ AC);
+		double d = - (norm.get(0) * points[0]->getX())  - (norm.get(1) * points[0]->getY()) - (norm.get(2) * points[0]->getZ());
 	
-		plan = new Plan(enlightment, norm, d, false);
-		
-		delete(AB);
-		delete(AC);
-		delete(norm);
+		plan = new Plan(enlightment, &norm, d, false);
 		
 		if(perlinNoised){
 			perlin = &Perlin::getInstance();

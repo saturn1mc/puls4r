@@ -1,9 +1,9 @@
 /*
  *  SceneParser.h
- *  TP1-C++
+ *  puls4r
  *
  *  Created by Camille on 09/03/08.
- *  Copyright 2007 __MyCompanyName__. All rights reserved.
+ *  Copyright 2008 __MyCompanyName__. All rights reserved.
  *
  */
 
@@ -44,6 +44,8 @@ public:
 	static const std::string OBJECTS_LIST_NODE;
 	static const std::string SPHERE_NODE;
 	static const std::string PLAN_NODE;
+	static const std::string TRIANGLE_NODE;
+	static const std::string QUADRIC_NODE;
 	
 	static const std::string TARGET_ATTR;
 	static const std::string WIDTH_ATTR;
@@ -54,9 +56,32 @@ public:
 	static const std::string Y_ATTR;
 	static const std::string Z_ATTR;
 	
+	static const std::string AX_ATTR;
+	static const std::string AY_ATTR;
+	static const std::string AZ_ATTR;
+	
+	static const std::string BX_ATTR;
+	static const std::string BY_ATTR;
+	static const std::string BZ_ATTR;
+	
+	static const std::string CX_ATTR;
+	static const std::string CY_ATTR;
+	static const std::string CZ_ATTR;
+	
 	static const std::string R_ATTR;
 	static const std::string G_ATTR;
 	static const std::string B_ATTR;
+	
+	static const std::string QA_ATTR;
+	static const std::string QB_ATTR;
+	static const std::string QC_ATTR;
+	static const std::string QD_ATTR;
+	static const std::string QE_ATTR;
+	static const std::string QF_ATTR;
+	static const std::string QG_ATTR;
+	static const std::string QH_ATTR;
+	static const std::string QI_ATTR;
+	static const std::string QJ_ATTR;
 	
 	static const std::string D_ATTR;
 	static const std::string MONOFACE_ATTR;
@@ -99,6 +124,8 @@ private:
 	void parseObjectElement(TiXmlElement* objectElement, Scene* scene) const throw(std::exception);
 	void parseSphereElement(TiXmlElement* sphereElement, Scene* scene) const throw(std::exception);
 	void parsePlanElement(TiXmlElement* planElement, Scene* scene) const throw(std::exception);
+	void parseTriangleElement(TiXmlElement* triangleElement, Scene* scene) const throw(std::exception);
+	void parseQuadricElement(TiXmlElement* quadricElement, Scene* scene) const throw(std::exception);
 	
 	Enlightment* parseEnlightment(TiXmlElement* objectElement) const throw(std::exception);
 	

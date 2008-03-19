@@ -22,53 +22,62 @@ class PhotonShooter{
 
 private:
 	
-	static const int MAX_RECURSIONS = 1000;
+	static const int MAX_RECURSIONS = 500;
+	static const int IRRADIANCE_AREA = 10;
+	static const int IRRADIANCE_PHOTON_NUMBER = 2000;
+	
 	int currentRecursions;
 	
-	static const double epsilon;
+	static const double EPSILON;
 	
-	int stored;
+	int storedDirect;
+	int storedIndirect;
+	int storedCaustic;
+	
 	int nbLights;
 	int maxPhotons;
-	PhotonMap* map;
 	
-	void shootPhoton(Ray* ray, std::list<Light* > lights, std::list<Object * > objects, float energy[3], bool canStore = true);
-	Intersection* getNearestIntersection(Ray* ray, std::list<Object * > objects, double _epsilon = epsilon);
+	PhotonMap* directEnlightment;
+	PhotonMap* indirectEnlightment;
+	PhotonMap* caustics;
+	
+	void shootPhoton(Ray* ray, std::list<Light* > lights, std::list<Object * > objects, float energy[3], bool direct, bool indirect, bool caustic);
+	Intersection* getNearestIntersection(Ray* ray, std::list<Object * > objects, double _epsilon = EPSILON);
 	
 	Ray reflectedRay(Ray* ray, Intersection* intersection);
 	Ray refractedRay(Ray* ray, Intersection* intersection, std::list<Object * > objects);
-	Ray refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double _epsilon = epsilon);
+	Ray refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double _epsilon = EPSILON);
 	
 	Vector randomDirection(void) const;
 	bool russianRoulette(double d) const;
-	void storePhoton(Point* position, Vector* direction, float energy[3]);
+	void storePhoton(Point* position, Vector* direction, float energy[3], bool direct, bool indirect, bool caustic);
 	
 	void scaleEnergy(float energy[3], Color* color);
 	
 public:
 	
-	PhotonShooter(int _nbLights, int _maxPhotons) : nbLights(_nbLights), maxPhotons(_maxPhotons), map(new PhotonMap(_maxPhotons)) {
+	PhotonShooter(int _nbLights, int _maxPhotons) : nbLights(_nbLights), maxPhotons(_maxPhotons), directEnlightment(new PhotonMap(_maxPhotons)), indirectEnlightment(new PhotonMap(_maxPhotons)), caustics(new PhotonMap(_maxPhotons)) {
 		std::srand(std::time(0));
 	}
 	
-	PhotonShooter(PhotonShooter& photonShooter) : nbLights(photonShooter.nbLights), maxPhotons(photonShooter.maxPhotons), map(new PhotonMap(photonShooter.maxPhotons)) {
+	PhotonShooter(PhotonShooter& photonShooter) : nbLights(photonShooter.nbLights), maxPhotons(photonShooter.maxPhotons), directEnlightment(new PhotonMap(photonShooter.maxPhotons)), indirectEnlightment(new PhotonMap(photonShooter.maxPhotons)), caustics(new PhotonMap(photonShooter.maxPhotons)) {
 		std::srand(std::time(0));
 	}
 	
-	PhotonShooter(PhotonShooter* photonShooter) : nbLights(photonShooter->nbLights), maxPhotons(photonShooter->maxPhotons), map(new PhotonMap(photonShooter->maxPhotons)) {
+	PhotonShooter(PhotonShooter* photonShooter) : nbLights(photonShooter->nbLights), maxPhotons(photonShooter->maxPhotons), directEnlightment(new PhotonMap(photonShooter->maxPhotons)), indirectEnlightment(new PhotonMap(photonShooter->maxPhotons)), caustics(new PhotonMap(photonShooter->maxPhotons)) {
 		std::srand(std::time(0));
 	}
 	
 	
 	~PhotonShooter(void) {
-		delete(map);
+		delete(directEnlightment);
+		delete(indirectEnlightment);
+		delete(caustics);
 	}
 	
 	void shoot(std::list<Light* > lights, std::list<Object * > objects);
 	
-	PhotonMap* getPhotonMap(void) const{
-		return map;
-	}
+	Color irradianceEstimate(Intersection* intersection);
 };
 
 #endif //PHOTON_SHOOTER_H
