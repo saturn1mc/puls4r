@@ -1,6 +1,6 @@
 /*
  *  Scene.h
- *  RayTracing
+ *  puls4r
  *
  *  Created by Camille on 09/01/08.
  *  Copyright 2008 __MyCompanyName__. All rights reserved.
@@ -28,8 +28,10 @@
 class Scene{
 private:
 	
-	static const double epsilon;
+	static const double EPSILON;
+	static const double SMOOTHING;
 	static const int MAX_RECURSIONS = 1000;
+	
 	int currentRecursions;
 	
 	PhotonShooter* shooter;
@@ -43,19 +45,19 @@ private:
 	
 	/* Global Functions */
 	double calcFocal(void) const;
-	Intersection* getNearestIntersection(Ray* ray, double _epsilon = epsilon);
-	Intersection* getNearestShadowIntersection(Ray* ray, double _epsilon = epsilon);
+	Intersection* getNearestIntersection(Ray* ray, double _epsilon = EPSILON);
+	Intersection* getNearestShadowIntersection(Ray* ray, double _epsilon = EPSILON);
 	Color antialiasedColor(double l, double p, int mode);
 	
 	Color colorAt(double l, double p, int mode);
 	Color observedColor(Ray* ray, int mode);
-	Color glossyReflection(Ray* ray, Intersection* intersection, int mode, bool random = false, double smoothing = 2.0);
+	Color glossyReflection(Ray* ray, Intersection* intersection, int mode, bool random = false, double _smoothing = SMOOTHING);
 	
 	Ray reflectedRay(Ray* ray, Intersection* intersection);
 	Ray refractedRay(Ray* ray, Intersection* intersection);
-	Ray refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double _epsilon = epsilon);
+	Ray refractRay(Ray* ray, Intersection* intersection, double n1, double n2, double _epsilon = EPSILON);
 	
-	void shadow(Color* color, Intersection* intersection, bool random = false, double smoothing = 2.0);
+	void shadow(Color* color, Intersection* intersection, bool random = false, double _smoothing = SMOOTHING);
 	
 	/* Ray Casting Function */
 	void rayCasting(void);

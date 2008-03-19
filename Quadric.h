@@ -1,6 +1,6 @@
 /*
  *  Quadric.h
- *  Pulsar
+ *  puls4r
  *
  *  Created by Camille on 01/03/08.
  *  Copyright 2008 __MyCompanyName__. All rights reserved.

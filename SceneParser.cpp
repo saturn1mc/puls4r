@@ -1,9 +1,9 @@
 /*
  *  SceneParser.cpp
- *  TP1-C++
+ *  puls4r
  *
  *  Created by Camille on 09/03/08.
- *  Copyright 2007 __MyCompanyName__. All rights reserved.
+ *  Copyright 2008 __MyCompanyName__. All rights reserved.
  *
  */
 
@@ -29,6 +29,8 @@ const std::string SceneParser::LIGHT_NODE = "light";
 const std::string SceneParser::OBJECTS_LIST_NODE = "objects";
 const std::string SceneParser::SPHERE_NODE = "sphere";
 const std::string SceneParser::PLAN_NODE = "plan";
+const std::string SceneParser::TRIANGLE_NODE = "triangle";
+const std::string SceneParser::QUADRIC_NODE = "quadric";
 
 const std::string SceneParser::TARGET_ATTR = "target";
 const std::string SceneParser::WIDTH_ATTR = "width";
@@ -39,9 +41,32 @@ const std::string SceneParser::X_ATTR = "x";
 const std::string SceneParser::Y_ATTR = "y";
 const std::string SceneParser::Z_ATTR = "z";
 
+const std::string SceneParser::AX_ATTR = "ax";
+const std::string SceneParser::AY_ATTR = "ay";
+const std::string SceneParser::AZ_ATTR = "az";
+
+const std::string SceneParser::BX_ATTR = "bx";
+const std::string SceneParser::BY_ATTR = "by";
+const std::string SceneParser::BZ_ATTR = "bz";
+
+const std::string SceneParser::CX_ATTR = "cx";
+const std::string SceneParser::CY_ATTR = "cy";
+const std::string SceneParser::CZ_ATTR = "cz";
+
 const std::string SceneParser::R_ATTR = "r";
 const std::string SceneParser::G_ATTR = "g";
 const std::string SceneParser::B_ATTR = "b";
+
+const std::string SceneParser::QA_ATTR = "qa";
+const std::string SceneParser::QB_ATTR = "qb";
+const std::string SceneParser::QC_ATTR = "qc";
+const std::string SceneParser::QD_ATTR = "qd";
+const std::string SceneParser::QE_ATTR = "qe";
+const std::string SceneParser::QF_ATTR = "qf";
+const std::string SceneParser::QG_ATTR = "qg";
+const std::string SceneParser::QH_ATTR = "qh";
+const std::string SceneParser::QI_ATTR = "qi";
+const std::string SceneParser::QJ_ATTR = "qj";
 
 const std::string SceneParser::D_ATTR = "d";
 const std::string SceneParser::MONOFACE_ATTR = "monoface";
@@ -202,14 +227,30 @@ void SceneParser::parseObjectList(TiXmlElement* objectListElement, Scene* scene)
 
 void SceneParser::parseObjectElement(TiXmlElement* objectElement, Scene* scene) const throw(std::exception){
 	
-	//TODO handle all objects
+	bool handled = false;
 	
 	if(strcmp(objectElement->Value(), SPHERE_NODE.c_str()) == 0){
 		parseSphereElement(objectElement, scene);
+		handled = true;
 	}
 	
 	if(strcmp(objectElement->Value(), PLAN_NODE.c_str()) == 0){
 		parsePlanElement(objectElement, scene);
+		handled = true;
+	}
+	
+	if(strcmp(objectElement->Value(), TRIANGLE_NODE.c_str()) == 0){
+		parseTriangleElement(objectElement, scene);
+		handled = true;
+	}
+	
+	if(strcmp(objectElement->Value(), QUADRIC_NODE.c_str()) == 0){
+		parseQuadricElement(objectElement, scene);
+		handled = true;
+	}
+	
+	if(!handled){
+		std::cerr << "Unknown object " << objectElement->Value() << std::endl;
 	}
 }
 
@@ -236,7 +277,6 @@ void SceneParser::parseSphereElement(TiXmlElement* sphereElement, Scene* scene) 
 	double glossyFocal;
 	double glossyWidth;
 	
-	
 	sphereElement->QueryIntAttribute(REFLECTING_ATTR.c_str(), &reflecting);
 	sphereElement->QueryDoubleAttribute(KR_ATTR.c_str(), &kr);
 	sphereElement->QueryDoubleAttribute(GLOSSY_FOCAL_ATTR.c_str(), &glossyFocal);
@@ -257,9 +297,9 @@ void SceneParser::parseSphereElement(TiXmlElement* sphereElement, Scene* scene) 
 	double epsilon;
 	
 	sphereElement->QueryIntAttribute(PERLIN_ATTR.c_str(), &perlin);
-	sphereElement->QueryDoubleAttribute(EPSILON_ATTR.c_str(), &epsilon);
+	sphereElement->QueryDoubleAttribute(EPSILON_ATTR.c_str(), &epsilon);	
 	
-	
+	//Creating and adding object
 	Sphere* sphere = new Sphere(enl, &position, radius, perlin == 1);
 	sphere->setReflecting(reflecting == 1, kr);
 	sphere->setGlossy(glossyFocal, glossyWidth);
@@ -296,7 +336,6 @@ void SceneParser::parsePlanElement(TiXmlElement* planElement, Scene* scene) cons
 	double glossyFocal;
 	double glossyWidth;
 	
-	
 	planElement->QueryIntAttribute(REFLECTING_ATTR.c_str(), &reflecting);
 	planElement->QueryDoubleAttribute(KR_ATTR.c_str(), &kr);
 	planElement->QueryDoubleAttribute(GLOSSY_FOCAL_ATTR.c_str(), &glossyFocal);
@@ -319,7 +358,7 @@ void SceneParser::parsePlanElement(TiXmlElement* planElement, Scene* scene) cons
 	planElement->QueryIntAttribute(PERLIN_ATTR.c_str(), &perlin);
 	planElement->QueryDoubleAttribute(EPSILON_ATTR.c_str(), &epsilon);
 	
-	
+	//Creating and adding object
 	Plan* plan = new Plan(enl, &normal, d, monoface == 1, perlin == 1);
 	plan->setReflecting(reflecting == 1, kr);
 	plan->setGlossy(glossyFocal, glossyWidth);
@@ -327,6 +366,128 @@ void SceneParser::parsePlanElement(TiXmlElement* planElement, Scene* scene) cons
 	plan->setEpsilon(epsilon);
 	
 	scene->addObject(plan);
+	
+	delete(enl);
+}
+
+void SceneParser::parseTriangleElement(TiXmlElement* triangleElement, Scene* scene) const throw(std::exception){
+	
+	//Equation parameters
+	double ax, ay, az, bx, by, bz, cx, cy, cz;
+	
+	triangleElement->QueryDoubleAttribute(AX_ATTR.c_str(), &ax);
+	triangleElement->QueryDoubleAttribute(AY_ATTR.c_str(), &ay);
+	triangleElement->QueryDoubleAttribute(AZ_ATTR.c_str(), &az);
+	Point a(ax, ay, az);
+	
+	triangleElement->QueryDoubleAttribute(BX_ATTR.c_str(), &bx);
+	triangleElement->QueryDoubleAttribute(BY_ATTR.c_str(), &by);
+	triangleElement->QueryDoubleAttribute(BZ_ATTR.c_str(), &bz);
+	Point b(bx, by, bz);
+	
+	triangleElement->QueryDoubleAttribute(CX_ATTR.c_str(), &cx);
+	triangleElement->QueryDoubleAttribute(CY_ATTR.c_str(), &cy);
+	triangleElement->QueryDoubleAttribute(CZ_ATTR.c_str(), &cz);
+	Point c(cx, cy ,cz);
+	
+	//Enlightment
+	Enlightment* enl = parseEnlightment(triangleElement);
+	
+	//Relfection attributes
+	int reflecting;
+	double kr;
+	double glossyFocal;
+	double glossyWidth;
+	
+	triangleElement->QueryIntAttribute(REFLECTING_ATTR.c_str(), &reflecting);
+	triangleElement->QueryDoubleAttribute(KR_ATTR.c_str(), &kr);
+	triangleElement->QueryDoubleAttribute(GLOSSY_FOCAL_ATTR.c_str(), &glossyFocal);
+	triangleElement->QueryDoubleAttribute(GLOSSY_WIDTH_ATTR.c_str(), &glossyWidth);
+	
+	//Refraction attributes
+	int refracting;
+	double n;
+	double kt;
+	
+	triangleElement->QueryIntAttribute(REFRACTING_ATTR.c_str(), &refracting);
+	triangleElement->QueryDoubleAttribute(N_ATTR.c_str(), &n);
+	triangleElement->QueryDoubleAttribute(KT_ATTR.c_str(), &kt);
+	
+	
+	//Noise attributes
+	int perlin;
+	double epsilon;
+	
+	triangleElement->QueryIntAttribute(PERLIN_ATTR.c_str(), &perlin);
+	triangleElement->QueryDoubleAttribute(EPSILON_ATTR.c_str(), &epsilon);
+	
+	//Creating and adding object
+	Triangle* triangle = new Triangle(enl, &a, &b, &c, perlin == 1);
+	triangle->setReflecting(reflecting == 1, kr);
+	triangle->setGlossy(glossyFocal, glossyWidth);
+	triangle->setRefracting(refracting == 1, n, kt);
+	triangle->setEpsilon(epsilon);
+	
+	scene->addObject(triangle);
+	
+	delete(enl);
+}
+
+void SceneParser::parseQuadricElement(TiXmlElement* quadricElement, Scene* scene) const throw(std::exception){
+	
+	//Equation parameters
+	double a, b, c, d, e, f, g, h, i, j;
+	
+	quadricElement->QueryDoubleAttribute(QA_ATTR.c_str(), &a);
+	quadricElement->QueryDoubleAttribute(QB_ATTR.c_str(), &b);
+	quadricElement->QueryDoubleAttribute(QC_ATTR.c_str(), &c);
+	quadricElement->QueryDoubleAttribute(QD_ATTR.c_str(), &d);
+	quadricElement->QueryDoubleAttribute(QE_ATTR.c_str(), &e);
+	quadricElement->QueryDoubleAttribute(QF_ATTR.c_str(), &f);
+	quadricElement->QueryDoubleAttribute(QG_ATTR.c_str(), &g);
+	quadricElement->QueryDoubleAttribute(QH_ATTR.c_str(), &h);
+	quadricElement->QueryDoubleAttribute(QI_ATTR.c_str(), &i);
+	quadricElement->QueryDoubleAttribute(QJ_ATTR.c_str(), &j);
+	
+	//Enlightment
+	Enlightment* enl = parseEnlightment(quadricElement);
+	
+	//Relfection attributes
+	int reflecting;
+	double kr;
+	double glossyFocal;
+	double glossyWidth;
+	
+	quadricElement->QueryIntAttribute(REFLECTING_ATTR.c_str(), &reflecting);
+	quadricElement->QueryDoubleAttribute(KR_ATTR.c_str(), &kr);
+	quadricElement->QueryDoubleAttribute(GLOSSY_FOCAL_ATTR.c_str(), &glossyFocal);
+	quadricElement->QueryDoubleAttribute(GLOSSY_WIDTH_ATTR.c_str(), &glossyWidth);
+	
+	//Refraction attributes
+	int refracting;
+	double n;
+	double kt;
+	
+	quadricElement->QueryIntAttribute(REFRACTING_ATTR.c_str(), &refracting);
+	quadricElement->QueryDoubleAttribute(N_ATTR.c_str(), &n);
+	quadricElement->QueryDoubleAttribute(KT_ATTR.c_str(), &kt);
+	
+	
+	//Noise attributes
+	int perlin;
+	double epsilon;
+	
+	quadricElement->QueryIntAttribute(PERLIN_ATTR.c_str(), &perlin);
+	quadricElement->QueryDoubleAttribute(EPSILON_ATTR.c_str(), &epsilon);
+	
+	//Creating and adding object
+	Quadric* quadric = new Quadric(enl, a, b, c, d, e, f, g, h, i, j, perlin == 1);
+	quadric->setReflecting(reflecting == 1, kr);
+	quadric->setGlossy(glossyFocal, glossyWidth);
+	quadric->setRefracting(refracting == 1, n, kt);
+	quadric->setEpsilon(epsilon);
+	
+	scene->addObject(quadric);
 	
 	delete(enl);
 }

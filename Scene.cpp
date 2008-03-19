@@ -1,6 +1,6 @@
 /*
  *  Scene.cpp
- *  RayTracing
+ *  puls4r
  *
  *  Created by Camille on 09/01/08.
  *  Copyright 2008 __MyCompanyName__. All rights reserved.
@@ -9,7 +9,8 @@
 
 #include "Scene.h"
 
-const double Scene::epsilon = 0.000001;
+const double Scene::EPSILON = 0.000001;
+const double Scene::SMOOTHING = 4.0;
 
 void Scene::addObject(Object* obj){
 	objects.push_front(obj);
@@ -109,20 +110,7 @@ Color Scene::observedColor(Ray* ray, int mode){
 					
 				case PHOTONMAPPING_MODE:
 					
-					float irradiance[3];
-					float* pos = nearestIntersection->getPoint()->toArray();
-					float* normal = nearestIntersection->getNormal()->toArray();
-					
-					shooter->getPhotonMap()->irradiance_estimate(irradiance, pos, normal, 100, 1000);
-					
-					oc.setR((double)irradiance[0]);
-					oc.setG((double)irradiance[1]);
-					oc.setB((double)irradiance[2]);			
-					
-					oc.normalize();
-					
-					free(pos);
-					free(normal);
+					oc = shooter->irradianceEstimate(nearestIntersection);
 					
 					break;
 					
@@ -177,7 +165,7 @@ Intersection* Scene::getNearestIntersection(Ray* ray, double _epsilon){
 		Intersection* candidate = (*iter)->intersection(ray);
 		
 		if(candidate != 0){
-			if((nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()) && (candidate->getT() > epsilon)){
+			if((nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()) && (candidate->getT() > _epsilon)){
 				if(nearestIntersection != 0){
 					delete(nearestIntersection);
 				}
@@ -203,7 +191,7 @@ Intersection* Scene::getNearestShadowIntersection(Ray* ray, double _epsilon){
 		Intersection* candidate = (*iter)->intersection(ray);
 		
 		if(candidate != 0){
-			if((nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()) && (!candidate->getObject()->isRefracting()) && (candidate->getT() > epsilon)){
+			if((nearestIntersection == 0 || nearestIntersection->getT() > candidate->getT()) && (!candidate->getObject()->isRefracting()) && (candidate->getT() > _epsilon)){
 				if(nearestIntersection != 0){
 					delete(nearestIntersection);
 				}
@@ -224,13 +212,13 @@ Ray Scene::reflectedRay(Ray* ray, Intersection* intersection){
 	Vector reflectDirection( (*ray->getDirection()) - ( ((*intersection->getNormal()) * 2.0) * ((*intersection->getNormal()) * ray->getDirection()) ) );
 	reflectDirection.normalize();
 	
-	Point origin((reflectDirection * epsilon) + intersection->getPoint());
+	Point origin((reflectDirection * EPSILON) + intersection->getPoint());
 	Ray reflected(&origin, &reflectDirection);
 	
 	return reflected;
 }
 
-Color Scene::glossyReflection(Ray* ray, Intersection* intersection, int mode, bool random, double smoothing){
+Color Scene::glossyReflection(Ray* ray, Intersection* intersection, int mode, bool random, double _smoothing){
 	
 	Color color;
 	
@@ -238,7 +226,7 @@ Color Scene::glossyReflection(Ray* ray, Intersection* intersection, int mode, bo
 	
 	double f = intersection->getObject()->getGlossyFocal();
 	double radius = intersection->getObject()->getGlossyWidth();
-	double step = 1.0 / smoothing;
+	double step = 1.0 / _smoothing;
 	
 	Ray reflected = reflectedRay(ray, intersection);
 	Point sight(((*reflected.getDirection()) * f) + intersection->getPoint());
@@ -331,16 +319,16 @@ Ray Scene::refractRay(Ray* ray, Intersection* intersection, double n1, double n2
 	return refracted;
 }
 
-void Scene::shadow(Color* color, Intersection* intersection, bool random, double smoothing){
+void Scene::shadow(Color* color, Intersection* intersection, bool random, double _smoothing){
 	
 	for(std::list<Light* >::iterator iter = lights.begin(); iter != lights.end(); ++iter){
 		
 		double enlighted = 0;
 		double shadowed = 0;
 		double radius = (*iter)->getRadius();
-		double step = 1.0 / smoothing;
+		double step = 1.0 / _smoothing;
 		
-		Point shadowedPoint(((*intersection->getNormal()) * epsilon) + intersection->getPoint());
+		Point shadowedPoint(((*intersection->getNormal()) * EPSILON) + intersection->getPoint());
 		Vector distanceTolight(&shadowedPoint, (*iter)->getSource());
 		Observer virtualObs(&shadowedPoint, (*iter)->getSource(), M_PI / 4.0);
 		double f = distanceTolight.norm();

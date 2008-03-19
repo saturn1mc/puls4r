@@ -6,6 +6,7 @@
 
 #include "PhotonMap.h"
 
+
 /* This is the constructor for the photon map.
 * To create the photon map it is necessary to specify the
 * maximum number of photons that will be stored
@@ -77,8 +78,8 @@ void PhotonMap :: irradiance_estimate(
 	irrad[0] = irrad[1] = irrad[2] = 0.0;
 	
 	NearestPhotons np;
-	np.dist2 = new float[nphotons+1];
-	np.index = new const Photon*[nphotons+1];
+	np.dist2 = (float*)alloca( sizeof(float)*(nphotons+1) );
+	np.index = (const Photon**)alloca( sizeof(Photon*)*(nphotons+1) );
 	
 	np.pos[0] = pos[0]; np.pos[1] = pos[1]; np.pos[2] = pos[2];
 	np.max = nphotons;
@@ -113,9 +114,6 @@ void PhotonMap :: irradiance_estimate(
 	irrad[0] *= tmp;
 	irrad[1] *= tmp;
 	irrad[2] *= tmp;
-	
-	delete np.dist2;
-	delete np.index;
 }
 
 
@@ -155,7 +153,7 @@ void PhotonMap :: locate_photons(
 	dist2 += dist1*dist1;
 	
 	if ( dist2 < np->dist2[0] ) {
-		// we found a photon  [:)] Insert it in the candidate list
+		// we found a photon :) Insert it in the candidate list
 		
 		if ( np->found < np->max ) {
 			// heap is not full; use array
@@ -226,7 +224,7 @@ void PhotonMap :: store(
 						 const float dir[3] )
 //***************************
 {
-	if (stored_photons>max_photons)
+	if (stored_photons>=max_photons)
 		return;
 	
 	stored_photons++;
@@ -290,9 +288,7 @@ void PhotonMap :: balance(void)
 		Photon **pa1 = (Photon**)malloc(sizeof(Photon*)*(stored_photons+1));
 		Photon **pa2 = (Photon**)malloc(sizeof(Photon*)*(stored_photons+1));
 		
-		int i;
-		
-		for (i=0; i<=stored_photons; i++)
+		for (int i=0; i<=stored_photons; i++)
 			pa2[i] = &photons[i];
 		
 		balance_segment( pa1, pa2, 1, 1, stored_photons );
@@ -302,7 +298,7 @@ void PhotonMap :: balance(void)
 		int d, j=1, foo=1;
 		Photon foo_photon = photons[j];
 		
-		for (i=1; i<=stored_photons; i++) {
+		for (int i=1; i<=stored_photons; i++) {
 			d=pa1[j]-photons;
 			pa1[j] = NULL;
 			if (d != foo)
@@ -393,7 +389,7 @@ void PhotonMap :: balance_segment(
 	if ((3*median) <= (end-start+1)) {
 		median += median;
 		median += start-1;
-	} else	
+	} else
 		median = end-median+1;
 	
 	//--------------------------
@@ -435,14 +431,12 @@ void PhotonMap :: balance_segment(
 	if ( median < end ) {
 		// balance right segment
 		if ( median+1 < end ) {
-			const float tmp = bbox_min[axis];		
+			const float tmp = bbox_min[axis];
 			bbox_min[axis] = pbal[index]->pos[axis];
 			balance_segment( pbal, porg, 2*index+1, median+1, end );
 			bbox_min[axis] = tmp;
 		} else {
 			pbal[ 2*index+1 ] = porg[end];
 		}
-	}	
+	}
 }
-
-
