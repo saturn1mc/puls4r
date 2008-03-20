@@ -23,8 +23,8 @@ class PhotonShooter{
 private:
 	
 	static const int MAX_RECURSIONS = 500;
-	static const int IRRADIANCE_AREA = 10;
-	static const int IRRADIANCE_PHOTON_NUMBER = 2000;
+	static const double IRRADIANCE_AREA;
+	static const int IRRADIANCE_PHOTON_NUMBER = 1000000;
 	
 	int currentRecursions;
 	

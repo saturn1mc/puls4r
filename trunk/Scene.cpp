@@ -427,7 +427,7 @@ void Scene::rayCasting(void){
 void Scene::photonMapping(void){
 	std::cout << "---> Photon Tracing..." << std::endl;
 	
-	shooter = new PhotonShooter(lights.size(), 1000000);
+	shooter = new PhotonShooter(lights.size(), PHOTONS);
 	shooter->shoot(lights, objects);
 	
 	std::cout << "---> End of photon tracing" << std::endl;

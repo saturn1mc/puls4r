@@ -30,6 +30,7 @@ private:
 	
 	static const double EPSILON;
 	static const double SMOOTHING;
+	static const int PHOTONS = 1000000;
 	static const int MAX_RECURSIONS = 1000;
 	
 	int currentRecursions;
