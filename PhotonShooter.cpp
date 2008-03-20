@@ -10,6 +10,7 @@
 #include "PhotonShooter.h"
 
 const double PhotonShooter::EPSILON = 0.000001;
+const double PhotonShooter::IRRADIANCE_AREA = 1.5;
 
 void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > objects){
 	
@@ -18,16 +19,15 @@ void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > object
 	for(std::list<Light* >::iterator iter = lights.begin(); iter != lights.end(); ++iter){
 		lightNum++;
 		
-		int shooted = 0;
 		int progress = 0;
 		
 		storedDirect = 0;
 		storedIndirect = 0;
 		storedCaustic = 0;
 		
-		while(shooted < (maxPhotons / nbLights)){
+		while((storedDirect + storedIndirect + storedCaustic) < (maxPhotons / nbLights)){
 			
-			int done = (int)round(100 * (shooted+1) / (maxPhotons / nbLights));
+			int done = (int)round(100 * ((storedDirect + storedIndirect + storedCaustic)+1) / (maxPhotons / nbLights));
 			
 			if(progress != done){
 				progress = done;
@@ -35,10 +35,6 @@ void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > object
 				std::cout.flush();
 			}
 			
-			/*
-			 * Random emission from diffuse point light 
-			 * As described by Henrik Wann Jensen
-			 */
 			Vector randDir = randomDirection();
 			Ray ray((*iter)->getSource(), &randDir);
 			
@@ -48,7 +44,6 @@ void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > object
 			
 			currentRecursions = 0;
 			shootPhoton(&ray, lights, objects, energy, true, false, false);
-			shooted++;
 		}
 		
 		/* Photons energy scaling */
@@ -77,6 +72,10 @@ void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > object
 	caustics->balance();
 }
 
+/*
+ * Random emission from diffuse point light 
+ * As described by Henrik Wann Jensen
+ */
 Vector PhotonShooter::randomDirection(void) const{
 	
 	double x, y, z;

@@ -12,86 +12,26 @@
 	</observer>
 
 	<lights>
-		<light x="4" y="8" z="2" r="1" g="1" b="1" radius="2.0" power="1000"/>
+		<light x="4" y="14" z="-4" r="1" g="1" b="1" radius="1.5" power="2000"/>
 	</lights>
 	
 	<objects>
 		<sphere x="0" y="0" z="0" radius="2"
-				enlightment="phong" r="1" g="1" b="1" 
+				enlightment="linear" r="0" g="1" b="0" 
 				reflecting="0"
-				kr="1.0"
-				glossyFocal="0"
-				glossyWidth="0"
+				kr="0"
+				glossyFocal="10"
+				glossyWidth="4"
 				refracting="1"
 				n="1.5"
 				kt="1.0"
 				perlin = "0"
 				epsilon = "0.0"/>
 				
-		<sphere x="-7.5" y="0" z="-5" radius="2"
-				enlightment="phong" r="0" g="1" b="0" 
-				reflecting="0"
-				kr="1.0"
-				glossyFocal="0.0"
-				glossyWidth="0.0"
-				refracting="0"
-				n="1.0"
-				kt="0.0"
-				perlin = "0"
-				epsilon = "0"/>
-				
-		<sphere x="-7.5" y="0" z="5" radius="2"
-				enlightment="phong" r="1" g="0" b="0" 
-				reflecting="0"
-				kr="1.0"
-				glossyFocal="0.0"
-				glossyWidth="0.0"
-				refracting="0"
-				n="1.0"
-				kt="0.0"
-				perlin = "0"
-				epsilon = "0"/>
-		
-		<sphere x="7.5" y="0" z="-5" radius="2"
-				enlightment="phong" r="0" g="0" b="1" 
-				reflecting="0"
-				kr="1.0"
-				glossyFocal="0.0"
-				glossyWidth="0.0"
-				refracting="0"
-				n="1.0"
-				kt="0.0"
-				perlin = "0"
-				epsilon = "0"/>
-				
-		<sphere x="7.5" y="0" z="5" radius="2"
-				enlightment="phong" r="1" g="0" b="1" 
-				reflecting="0"
-				kr="1.0"
-				glossyFocal="0.0"
-				glossyWidth="0.0"
-				refracting="0"
-				n="1.0"
-				kt="0.0"
-				perlin = "0"
-				epsilon = "0"/>
-				
-		<plan 	x="0" y="1" z="0" d="0" monoface="0"
-				enlightment="phong" r="0" g="0.4" b="1" 
+		<plan 	x="0" y="1" z="0" d="2" monoface="0"
+				enlightment="linear" r="0" g="0.4" b="1" 
 				reflecting="0"
 				kr="0"
-				glossyFocal="0.0"
-				glossyWidth="0.0"
-				refracting="1"
-				n="1.33"
-				kt="1.0"
-				perlin = "1"
-				epsilon = "0.2"/>
-				
-		<plan 	x="0" y="1" z="0" d="3" monoface="0"
-				enlightment="phong" r="0" g="0.4" b="1" 
-				reflecting="0"
-				kr="1.0"
 				glossyFocal="0.0"
 				glossyWidth="0.0"
 				refracting="0"
@@ -101,9 +41,9 @@
 				epsilon = "0"/>
 				
 		<plan 	x="1" y="0" z="0" d="10" monoface="0"
-				enlightment="phong" r="1" g="1" b="1" 
+				enlightment="linear" r="1" g="1" b="1" 
 				reflecting="0"
-				kr="0.0"
+				kr="0"
 				glossyFocal="0.0"
 				glossyWidth="0.0"
 				refracting="0"
@@ -113,9 +53,9 @@
 				epsilon = "0"/>
 				
 		<plan 	x="0" y="0" z="1" d="20" monoface="0"
-				enlightment="phong" r="1" g="1" b="1" 
+				enlightment="linear" r="1" g="1" b="1" 
 				reflecting="0"
-				kr="0.0"
+				kr="0"
 				glossyFocal="0.0"
 				glossyWidth="0.0"
 				refracting="0"
@@ -125,9 +65,9 @@
 				epsilon = "0"/>
 				
 		<plan 	x="0" y="-1" z="0" d="15" monoface="0"
-				enlightment="phong" r="1" g="1" b="1" 
+				enlightment="linear" r="1" g="1" b="1" 
 				reflecting="0"
-				kr="0.0"
+				kr="0"
 				glossyFocal="0.0"
 				glossyWidth="0.0"
 				refracting="0"
@@ -137,9 +77,9 @@
 				epsilon = "0"/>
 				
 		<plan 	x="-1" y="0" z="0" d="10.0" monoface="0"
-				enlightment="phong" r="1" g="1" b="1" 
+				enlightment="linear" r="1" g="1" b="1" 
 				reflecting="0"
-				kr="0.0"
+				kr="0"
 				glossyFocal="0.0"
 				glossyWidth="0.0"
 				refracting="0"
@@ -149,9 +89,9 @@
 				epsilon = "0"/>
 				
 		<plan 	x="0" y="0" z="-1" d="50" monoface="0"
-				enlightment="phong" r="1" g="1" b="1" 
+				enlightment="linear" r="1" g="1" b="1" 
 				reflecting="0"
-				kr="0.0"
+				kr="0"
 				glossyFocal="0.0"
 				glossyWidth="0.0"
 				refracting="0"
