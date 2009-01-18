@@ -16,10 +16,15 @@ public class Ray {
 	private double t;
 	
 	public Ray(Point3d origin, Vector3d direction, double t) {
-		super();
 		this.origin = origin;
 		this.direction = direction;
 		this.t = t;
+	}
+	
+	public Ray(Point3d origin, Vector3d direction) {
+		this.origin = origin;
+		this.direction = direction;
+		this.t = 0;
 	}
 
 	public Point3d getOrigin() {

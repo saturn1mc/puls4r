@@ -13,10 +13,10 @@ import javax.vecmath.Vector3d;
 public class Intersection {
 	private Point3d point;
 	private Vector3d normal;
-	private Object object;
+	private puls4r.scene.objects.Shape object;
 	private double t;
 
-	public Intersection(Point3d point, Vector3d normal, Object object, double t) {
+	public Intersection(Point3d point, Vector3d normal, puls4r.scene.objects.Shape object, double t) {
 		super();
 		this.point = point;
 		this.normal = normal;
@@ -40,11 +40,11 @@ public class Intersection {
 		this.normal = normal;
 	}
 
-	public Object getObject() {
+	public puls4r.scene.objects.Shape getObject() {
 		return object;
 	}
 
-	public void setObject(Object object) {
+	public void setObject(puls4r.scene.objects.Shape object) {
 		this.object = object;
 	}
 
