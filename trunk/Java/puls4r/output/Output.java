@@ -10,6 +10,7 @@ package puls4r.output;
 public abstract class Output {
 	private int w;
 	private int h;
+	private int antialiasing;
 
 	public int getW() {
 		return w;
@@ -25,5 +26,13 @@ public abstract class Output {
 
 	public void setH(int h) {
 		this.h = h;
+	}
+
+	public int getAntialiasing() {
+		return antialiasing;
+	}
+
+	public void setAntialiasing(int antialiasing) {
+		this.antialiasing = antialiasing;
 	}
 }

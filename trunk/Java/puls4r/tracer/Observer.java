@@ -17,6 +17,25 @@ public class Observer {
 	private Matrix4d view;
 	private double alpha;
 
+	public Observer(Point3d eye, Vector3d sight, Matrix4d view, double alpha) {
+		this.eye = eye;
+		this.sight = sight;
+		this.view = view;
+		this.alpha = alpha;
+
+		initMatrix();
+	}
+
+	public Ray ray(Point3d sp) {
+		Point3d np = new Point3d(sp);
+		view.transform(np);
+
+		Vector3d dir = new Vector3d(np.x - eye.x, np.y - eye.y, np.z - eye.z);
+		Ray ray = new Ray(eye, dir);
+
+		return ray;
+	}
+
 	void initMatrix() {
 		Vector3d up = new Vector3d(0, 1, 0);
 		up.normalize();
