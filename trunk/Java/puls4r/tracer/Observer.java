@@ -17,10 +17,23 @@ public class Observer {
 	private Matrix4d view;
 	private double alpha;
 
-	public Observer(Point3d eye, Vector3d sight, Matrix4d view, double alpha) {
+	public Observer(Point3d eye, Vector3d sight, double alpha) {
 		this.eye = eye;
+		
 		this.sight = sight;
-		this.view = view;
+		this.sight.normalize();
+		
+		this.alpha = alpha;
+
+		initMatrix();
+	}
+	
+	public Observer(Point3d eye, Point3d sight, double alpha) {
+		this.eye = eye;
+		
+		this.sight = new Vector3d(sight.x - eye.x, sight.y - eye.y, sight.z - eye.z);
+		this.sight.normalize();
+		
 		this.alpha = alpha;
 
 		initMatrix();
