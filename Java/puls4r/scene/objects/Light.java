@@ -3,8 +3,7 @@
  */
 package puls4r.scene.objects;
 
-import java.awt.Color;
-
+import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 
 /**
@@ -13,9 +12,16 @@ import javax.vecmath.Point3d;
  */
 public class Light {
 	private Point3d source;
-	private Color color;
+	private Color3f color;
 	private double radius;
 	private double power;
+
+	public Light(Point3d source, Color3f color, double radius, double power) {
+		this.source = source;
+		this.color = color;
+		this.radius = radius;
+		this.power = power;
+	}
 
 	public Point3d getSource() {
 		return source;
@@ -25,11 +31,11 @@ public class Light {
 		this.source = source;
 	}
 
-	public Color getColor() {
+	public Color3f getColor() {
 		return color;
 	}
 
-	public void setColor(Color color) {
+	public void setColor(Color3f color) {
 		this.color = color;
 	}
 

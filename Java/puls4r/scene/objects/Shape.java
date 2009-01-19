@@ -14,9 +14,11 @@ import puls4r.tracer.Ray;
  */
 public abstract class Shape {
 	
-	private Enlightment enlightment;
-	private Perlin perlin;
-	private double epsilon;
+	protected Enlightment enlightment;
+	protected Perlin perlin;
+	protected double epsilon;
+	
+	protected abstract Intersection createIntersection(Ray ray);
 	
 	public abstract Intersection intersection(Ray ray);
 

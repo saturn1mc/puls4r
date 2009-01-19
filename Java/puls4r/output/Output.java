@@ -3,15 +3,21 @@
  */
 package puls4r.output;
 
+import javax.vecmath.Color3f;
+
 /**
  * @author Camille
  * 
  */
 public abstract class Output {
-	private int w;
-	private int h;
-	private int antialiasing;
+	protected int w;
+	protected int h;
+	protected int antialiasing;
+	
+	protected Color3f pixels[][];
 
+	public abstract void writePixel(Color3f color, int w, int h);
+	
 	public int getW() {
 		return w;
 	}
@@ -35,4 +41,6 @@ public abstract class Output {
 	public void setAntialiasing(int antialiasing) {
 		this.antialiasing = antialiasing;
 	}
+	
+	public abstract void finalize();
 }

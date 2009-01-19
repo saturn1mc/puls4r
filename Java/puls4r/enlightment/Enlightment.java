@@ -33,6 +33,7 @@ public abstract class Enlightment {
 		kr = 0;
 		glossyFocal = 0.0;
 		glossyWidth = 0.0;
+		
 		refract = false;
 		n = 1.0;
 		kt = 0;

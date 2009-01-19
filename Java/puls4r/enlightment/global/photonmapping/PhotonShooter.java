@@ -35,6 +35,11 @@ public class PhotonShooter {
 	
 	private Scene scene;
 	
+	public PhotonShooter(Scene scene, int maxPhotons) {
+		this.scene = scene;
+		this.maxPhotons = maxPhotons;
+	}
+	
 	private Vector3d randomDirection(){
 		double x, y, z;
 		
@@ -158,9 +163,9 @@ public class PhotonShooter {
 				Vector3d randDir = randomDirection();
 				Ray ray = new Ray(l.getSource(), randDir);
 				
-				float energy[] = {	(float) (l.getPower() * l.getColor().getRed()), 
-									(float) (l.getPower() * l.getColor().getGreen()), 
-									(float) (l.getPower() * l.getColor().getBlue())};
+				float energy[] = {	(float) (l.getPower() * l.getColor().x), 
+									(float) (l.getPower() * l.getColor().y), 
+									(float) (l.getPower() * l.getColor().z)};
 				
 				currentRecursions = 0;
 				shootPhoton(ray, energy, true, false, false);

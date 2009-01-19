@@ -23,8 +23,8 @@ import puls4r.tracer.Ray;
  */
 public class Scene {
 
-	private static final int RAYCASTING_MODE = 0;
-	private static final int PHOTONMAPPING_MODE = 1;
+	public static final int RAYCASTING_MODE = 0;
+	public static final int PHOTONMAPPING_MODE = 1;
 
 	private double EPSILON = 0.000001;
 	private int PHOTONS = 1000000;
@@ -42,6 +42,43 @@ public class Scene {
 	private Vector<Shape> shapes;
 	private Vector<Light> lights;
 	private double focal;
+
+	public Scene() {
+		EPSILON = 0.000001;
+		PHOTONS = 1000000;
+		MAX_RECURSIONS = 1000;
+		RANDOMIZE = false;
+		SMOOTHING = 4.0;
+		this.currentRecursions = 0;
+		this.shooter = null;
+		this.observer = null;
+		this.output = null;
+		this.background = new Color3f();
+		this.shapes = new Vector<Shape>();
+		this.lights = new Vector<Light>();
+		this.focal = 0;
+	}
+
+	public Scene(double epsilon, int photons, int max_recursions,
+			boolean randomize, double smoothing, int currentRecursions,
+			PhotonShooter shooter, Observer observer, Output output,
+			Color3f background, Vector<Shape> shapes, Vector<Light> lights,
+			double focal) {
+		super();
+		EPSILON = epsilon;
+		PHOTONS = photons;
+		MAX_RECURSIONS = max_recursions;
+		RANDOMIZE = randomize;
+		SMOOTHING = smoothing;
+		this.currentRecursions = currentRecursions;
+		this.shooter = shooter;
+		this.observer = observer;
+		this.output = output;
+		this.background = background;
+		this.shapes = shapes;
+		this.lights = lights;
+		this.focal = focal;
+	}
 
 	private double calcFocal() {
 		return ((output.getW() / 2.0) / Math.tan(observer.getAlpha() / 2.0));
@@ -294,12 +331,82 @@ public class Scene {
 
 	/* Ray Casting Function */
 	private void rayCasting() {
-		// TODO
+		System.out.println( "---> Rendering...");
+		int progress = 0;
+		
+		int halfH = output.getH()/2;
+		int halfW = output.getW()/2;
+		
+		for(int l=-halfH; l<halfH; l++){
+			
+			int done = (int)Math.round(100 *  (float)(l+(output.getH()/2)+1) / (float)output.getH());
+			
+			if(progress != done){
+				progress = done;
+				System.out.println( "\r\t" + progress + "%");
+			}
+			
+			for(int p=-halfW/2; p<halfW/2; p++){
+				
+				Color3f color;
+				
+				if(output.getAntialiasing() > 1){
+					color = antialiasedColor(l, p, RAYCASTING_MODE);
+				}
+				else{
+					color = colorAt(l, p, RAYCASTING_MODE);
+				}
+				
+				output.writePixel(color, p+halfW, l+halfH);
+			}
+		}
+		
+		System.out.println( "\tWriting image to " + output.toString());
+		output.finalize();
+		System.out.println( "---> End of rendering");
 	}
-
-	/* Photon Mapping Functions */
+	
 	private void photonMapping() {
-		// TODO
+		System.out.println("---> Photon Tracing...");
+		
+		shooter = new PhotonShooter(this, PHOTONS);
+		shooter.shoot();
+		
+		System.out.println("---> End of photon tracing");
+		
+		System.out.println("---> Rendering...");
+		int progress = 0;
+		
+		int halfH = output.getH()/2;
+		int halfW = output.getW()/2;
+		
+		for(int l=-halfH/2; l<halfH; l++){
+			
+			int done = (int)Math.round(100 *  (float)(l+halfH+1) / (float)output.getH());
+			
+			if(progress != done){
+				progress = done;
+				System.out.println("\r\t" + progress + "%");
+			}
+			
+			for(int p=-halfW/2; p<halfW/2; p++){
+				
+				Color3f color;
+				
+				if(output.getAntialiasing() > 1){
+					color = antialiasedColor(l, p, PHOTONMAPPING_MODE);
+				}
+				else{
+					color = colorAt(l, p, PHOTONMAPPING_MODE);
+				}
+				
+				output.writePixel(color, p+halfW, l+halfH);
+			}
+		}
+		
+		System.out.println("\tWriting image to " + output.toString());
+		output.finalize();
+		System.out.println("---> End of rendering");
 	}
 
 	public Ray reflectedRay(Ray ray, Intersection intersection) {
@@ -431,13 +538,29 @@ public class Scene {
 
 		return nearestIntersection;
 	}
-
-	public void addShape(Shape obj) {
-		// TODO
+	
+	public void setOutput(Output output){
+		this.output = output;
+		
+		if(observer != null){
+			focal = calcFocal();
+		}
 	}
 
-	public void addLight(Light light) {
-		// TODO
+	public void setObserver(Observer observer){
+		this.observer = observer;
+		
+		if(output != null){
+			focal = calcFocal();
+		}
+	}
+	
+	public void addShape(Shape s) {
+		shapes.add(s);
+	}
+
+	public void addLight(Light l) {
+		lights.add(l);
 	}
 
 	public Vector<Shape> getShapes() {
