@@ -93,19 +93,15 @@ public class Puls4rFrame extends JFrame implements Output {
 	@Override
 	public void writePixel(Color3f color, int w, int h) {
 		pixels[w][h] = color;
-
+		
 		/*
 		BufferStrategy bf = this.getBufferStrategy();
 		if (bf != null) {
 			Graphics g = bf.getDrawGraphics();
 			g.setColor(color.get());
-			g.drawLine(w, h, w, h);
+			g.drawLine(w, h+this.getInsets().top, w, h+this.getInsets().top);
 			
 			bf.show();
-
-			// Tell the System to do the Drawing now, otherwise it can take a
-			// few extra ms until drawing is done
-			Toolkit.getDefaultToolkit().sync();
 
 			g.dispose();
 		}
