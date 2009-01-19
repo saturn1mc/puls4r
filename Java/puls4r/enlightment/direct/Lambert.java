@@ -40,6 +40,7 @@ public class Lambert extends Enlightment {
 			diffuse.scale((float) (kd * L.dot(norm)) );
 			
 			color.set(od.x * diffuse.x, od.y * diffuse.y, od.z * diffuse.z);
+			Enlightment.normalize(color);
 		}
 		
 		return color;

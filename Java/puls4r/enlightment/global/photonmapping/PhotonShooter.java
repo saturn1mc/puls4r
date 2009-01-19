@@ -7,6 +7,7 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
+import puls4r.enlightment.Enlightment;
 import puls4r.scene.Scene;
 import puls4r.scene.objects.Light;
 import puls4r.tracer.Intersection;
@@ -230,6 +231,7 @@ public class PhotonShooter {
 		caustics.irradiance_estimate(irradiance, pos, normal, (float) IRRADIANCE_AREA, IRRADIANCE_PHOTON_NUMBER);
 		
 		color.set(color.x + irradiance[0], color.y + irradiance[1], color.z + irradiance[2]);
+		Enlightment.normalize(color);
 		
 		return color;
 	}
