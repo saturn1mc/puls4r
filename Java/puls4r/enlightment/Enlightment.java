@@ -47,7 +47,7 @@ public abstract class Enlightment {
 		return v;
 	}
 
-	Vector3d getR(Vector3d light, Vector3d norm) {
+	public Vector3d getR(Vector3d light, Vector3d norm) {
 		// r = ( ( (norm) * 2.0 ) * ( norm * light ) ) - light
 
 		Vector3d norm2 = new Vector3d(norm);
