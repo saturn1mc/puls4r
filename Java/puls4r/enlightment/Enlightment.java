@@ -51,11 +51,8 @@ public abstract class Enlightment {
 		Vector3d norm2 = new Vector3d(norm);
 		norm2.scale(2.0);
 
-		Vector3d nl = new Vector3d(norm);
-		nl.dot(light);
-
 		Vector3d r = new Vector3d(norm2);
-		r.dot(nl);
+		r.scale(norm.dot(light));
 		r.sub(light);
 
 		return r;
