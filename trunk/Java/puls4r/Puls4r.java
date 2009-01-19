@@ -24,7 +24,9 @@ public class Puls4r {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Puls4rFrame output = new Puls4rFrame(800, 600);
+		Puls4rFrame output = new Puls4rFrame(200, 200, 0);
+		output.setVisible(true);
+		
 		Scene scene = new Scene();
 		
 		scene.setOutput(output);
@@ -34,7 +36,7 @@ public class Puls4r {
 		sphere.setEnlightment(new Lambert(new Color3f(1, 0, 0), 0.8));
 		
 		scene.addShape(sphere);
-		scene.addLight(new Light(new Point3d(10, 10, 0), new Color3f(1,1,1), 1.5d, 1500d));
+		scene.addLight(new Light(new Point3d(10, 10, 100), new Color3f(1,1,1), 1.5d, 1500d));
 		
 		scene.trace(Scene.RAYCASTING_MODE);
 	}

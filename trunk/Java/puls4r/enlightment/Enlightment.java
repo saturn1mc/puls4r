@@ -35,7 +35,7 @@ public abstract class Enlightment {
 		glossyWidth = 0.0;
 		
 		refract = false;
-		n = 1.0;
+		n = 1.0d;
 		kt = 0;
 	}
 
@@ -43,6 +43,7 @@ public abstract class Enlightment {
 		Vector3d v = new Vector3d(ray.getDirection());
 		v.negate();
 		v.normalize();
+		
 		return v;
 	}
 
@@ -50,12 +51,14 @@ public abstract class Enlightment {
 		// r = ( ( (norm) * 2.0 ) * ( norm * light ) ) - light
 
 		Vector3d norm2 = new Vector3d(norm);
-		norm2.scale(2.0);
+		norm2.scale(2.0d);
 
 		Vector3d r = new Vector3d(norm2);
 		r.scale(norm.dot(light));
 		r.sub(light);
 
+		r.normalize();
+		
 		return r;
 	}
 
@@ -137,5 +140,23 @@ public abstract class Enlightment {
 	public void setGlossy(double glossyFocal, double glossyWidth) {
 		this.glossyFocal = glossyFocal;
 		this.glossyWidth = glossyWidth;
+	}
+	
+	private static float normalizedComponent(float component){
+		
+		float normalizedComponent = component;
+		
+		if(component < 0.0f){
+			normalizedComponent = 0.0f;
+		}
+		else if(component > 1.0f){
+			normalizedComponent = 1.0f;
+		}
+		
+		return normalizedComponent;
+	}
+	
+	public static void normalize(Color3f color){
+		color.set(normalizedComponent(color.x), normalizedComponent(color.y), normalizedComponent(color.z));
 	}
 }

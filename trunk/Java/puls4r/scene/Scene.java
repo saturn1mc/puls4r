@@ -9,6 +9,7 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
+import puls4r.enlightment.Enlightment;
 import puls4r.enlightment.global.photonmapping.PhotonShooter;
 import puls4r.output.Output;
 import puls4r.scene.objects.Light;
@@ -81,7 +82,7 @@ public class Scene {
 	}
 
 	private double calcFocal() {
-		return ((output.getW() / 2.0) / Math.tan(observer.getAlpha() / 2.0));
+		return ((output.getW() / 2.0d) / Math.tan(observer.getAlpha() / 2.0d));
 	}
 
 	private Color3f observedColor(Ray ray, int mode) {
@@ -135,15 +136,15 @@ public class Scene {
 					reflectedColor
 							.set(
 									(float) (objectColor.x
-											* (1.0 - nearestIntersection
+											* (1.0d - nearestIntersection
 													.getObject().getKR()) + (reflectedColor.x * nearestIntersection
 											.getObject().getKR())),
 									(float) (objectColor.y
-											* (1.0 - nearestIntersection
+											* (1.0d - nearestIntersection
 													.getObject().getKR()) + (reflectedColor.y * nearestIntersection
 											.getObject().getKR())),
 									(float) (objectColor.z
-											* (1.0 - nearestIntersection
+											* (1.0d - nearestIntersection
 													.getObject().getKR()) + (reflectedColor.z * nearestIntersection
 											.getObject().getKR())));
 
@@ -159,15 +160,15 @@ public class Scene {
 					refractedColor
 							.set(
 									(float) (objectColor.x
-											* (1.0 - nearestIntersection
+											* (1.0d - nearestIntersection
 													.getObject().getKR()) + (refractedColor.x * nearestIntersection
 											.getObject().getKR())),
 									(float) (objectColor.y
-											* (1.0 - nearestIntersection
+											* (1.0d - nearestIntersection
 													.getObject().getKR()) + (refractedColor.y * nearestIntersection
 											.getObject().getKR())),
 									(float) (objectColor.z
-											* (1.0 - nearestIntersection
+											* (1.0d - nearestIntersection
 													.getObject().getKR()) + (refractedColor.z * nearestIntersection
 											.getObject().getKR())));
 					oc.set(oc.x + refractedColor.x, oc.y + refractedColor.y,
@@ -196,7 +197,7 @@ public class Scene {
 	private Color3f antialiasedColor(double l, double p, int mode) {
 		Color3f finalColor = new Color3f();
 		double cpt = 0;
-		double aa = 1.0 / ((double) output.getAntialiasing());
+		double aa = 1.0d / ((double) output.getAntialiasing());
 
 		for (double l2 = (l - 1); l2 <= (l + 1); l2 += aa) {
 			for (double p2 = (p - 1); p2 <= (p + 1); p2 += aa) {
@@ -205,8 +206,9 @@ public class Scene {
 			}
 		}
 
-		finalColor.scale((float) (1.0 / cpt));
-
+		finalColor.scale((float) (1.0d / cpt));
+		Enlightment.normalize(finalColor);
+		
 		return finalColor;
 	}
 
@@ -219,7 +221,7 @@ public class Scene {
 		
 		double f = intersection.getObject().getGlossyFocal();
 		double radius = intersection.getObject().getGlossyWidth();
-		double step = 1.0 / SMOOTHING;
+		double step = 1.0d / SMOOTHING;
 		
 		Ray reflected = reflectedRay(ray, intersection);
 		
@@ -231,14 +233,14 @@ public class Scene {
 		
 		Observer virtualObs = new Observer(intersection.getPoint(), sight, Math.PI / 4.0);
 		
-		for(double i=-radius/2.0; i<radius/2.0; i+= step){
-			for(double j=-radius/2.0; j<radius/2.0; j+= step){
+		for(double i=-radius/2.0d; i<radius/2.0d; i+= step){
+			for(double j=-radius/2.0d; j<radius/2.0d; j+= step){
 				
 				Point3d target;
 				
 				if(RANDOMIZE){
-					double ii = (Math.random() * radius) - (radius/2.0);
-					double jj = (Math.random() * radius) - (radius/2.0);
+					double ii = (Math.random() * radius) - (radius/2.0d);
+					double jj = (Math.random() * radius) - (radius/2.0d);
 					target = new Point3d(ii, jj, f);
 				}
 				else{
@@ -258,7 +260,8 @@ public class Scene {
 			}
 		}
 		
-		color.scale((float) (1.0 / cpt));
+		color.scale((float) (1.0d / cpt));
+		Enlightment.normalize(color);
 		
 		return color;
 	}
@@ -269,7 +272,7 @@ public class Scene {
 			double enlighted = 0;
 			double shadowed = 0;
 			double radius = l.getRadius();
-			double step = 1.0 / SMOOTHING;
+			double step = 1.0d / SMOOTHING;
 
 			Vector3d shiftedNorm = new Vector3d(intersection.getNormal());
 			shiftedNorm.scale(EPSILON);
@@ -285,14 +288,14 @@ public class Scene {
 					(Math.PI / 4.0d));
 			double f = distanceTolight.length();
 
-			for (double i = -radius / 2.0; i < radius / 2.0; i += step) {
-				for (double j = -radius / 2.0; j < radius / 2.0; j += step) {
+			for (double i = -radius / 2.0d; i < radius / 2.0d; i += step) {
+				for (double j = -radius / 2.0d; j < radius / 2.0d; j += step) {
 
 					Point3d target;
 
 					if (RANDOMIZE) {
-						double ii = (Math.random() * radius) - (radius / 2.0);
-						double jj = (Math.random() * radius) - (radius / 2.0);
+						double ii = (Math.random() * radius) - (radius / 2.0d);
+						double jj = (Math.random() * radius) - (radius / 2.0d);
 						target = new Point3d(ii, jj, f);
 					} else {
 						target = new Point3d(i, j, f);
@@ -323,8 +326,9 @@ public class Scene {
 			}
 
 			if (shadowed > 0) {
-				color.scale((float) Math.min(1.0,
-						(enlighted / (shadowed + enlighted)) + 0.3));
+				color.scale((float) Math.min(1.0d,
+						(enlighted / (shadowed + enlighted)) + 0.3d));
+				Enlightment.normalize(color);
 			}
 		}
 	}
@@ -346,7 +350,7 @@ public class Scene {
 				System.out.println( "\r\t" + progress + "%");
 			}
 			
-			for(int p=-halfW/2; p<halfW/2; p++){
+			for(int p=-halfW; p<halfW; p++){
 				
 				Color3f color;
 				
@@ -380,7 +384,7 @@ public class Scene {
 		int halfH = output.getH()/2;
 		int halfW = output.getW()/2;
 		
-		for(int l=-halfH/2; l<halfH; l++){
+		for(int l=-halfH; l<halfH; l++){
 			
 			int done = (int)Math.round(100 *  (float)(l+halfH+1) / (float)output.getH());
 			
@@ -389,7 +393,7 @@ public class Scene {
 				System.out.println("\r\t" + progress + "%");
 			}
 			
-			for(int p=-halfW/2; p<halfW/2; p++){
+			for(int p=-halfW; p<halfW; p++){
 				
 				Color3f color;
 				
@@ -431,7 +435,7 @@ public class Scene {
 	}
 
 	public Ray refractedRay(Ray ray, Intersection intersection) {
-		Ray r1 = refractRay(ray, intersection, 1.0, intersection.getObject()
+		Ray r1 = refractRay(ray, intersection, 1.0d, intersection.getObject()
 				.getN());
 		Intersection refractionIntersection = getNearestIntersection(r1);
 
@@ -440,7 +444,7 @@ public class Scene {
 				refractionIntersection.getNormal().negate();
 
 				Ray r2 = refractRay(r1, refractionIntersection, intersection
-						.getObject().getN(), 1.0);
+						.getObject().getN(), 1.0d);
 				return r2;
 			} else {
 				return r1;
@@ -455,7 +459,7 @@ public class Scene {
 
 		double n = n2 / n1;
 		double cosT = intersection.getNormal().dot(ray.getDirection());
-		double sinT2 = 1.0 - ((1.0 - cosT * cosT) / (n * n));
+		double sinT2 = 1.0d - ((1.0d - cosT * cosT) / (n * n));
 
 		Vector3d refractDirection;
 
@@ -480,7 +484,7 @@ public class Scene {
 			// reflexion
 			// reflect = rayDir - ( (intNorm * 2.0) * (interNorm * rayDir) )
 			Vector3d toSub = new Vector3d(intersection.getNormal());
-			toSub.scale(2.0);
+			toSub.scale(2.0d);
 			toSub.scale(intersection.getNormal().dot(ray.getDirection()));
 
 			refractDirection = new Vector3d(ray.getDirection());
