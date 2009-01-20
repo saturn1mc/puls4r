@@ -39,12 +39,18 @@ public class Phong extends Enlightment {
 		this.oa = new Color3f(od);
 		this.oa.scale((float) ia);
 		
-		this.ka = 1.0;
+		this.os = new Color3f(1.0f, 1.0f, 1.0f);
+		
+		this.ka = 1.0d;
+		this.kd = 0.7d;
+		this.ks = 0.3d;
+		
+		this.n = 10;
 	}
 	
 	public Phong(Color3f oa, Color3f od, Color3f os, double ia, double ka,
 			double kd, double ks, int n) {
-		super();
+		
 		this.oa = oa;
 		this.od = od;
 		this.os = os;
