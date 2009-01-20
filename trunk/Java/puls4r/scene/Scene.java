@@ -559,6 +559,10 @@ public class Scene {
 		}
 	}
 	
+	public void setBackground(Color3f background){
+		this.background = background;
+	}
+	
 	public void addShape(Shape s) {
 		shapes.add(s);
 	}
