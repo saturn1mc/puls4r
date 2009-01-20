@@ -22,6 +22,11 @@ public class Lambert extends Enlightment {
 	Color3f od;
 	double kd;
 	
+	public Lambert(Color3f od) {
+		this.od = od;
+		this.kd = 1.0d;
+	}
+	
 	public Lambert(Color3f od, double kd) {
 		this.od = od;
 		this.kd = kd;
