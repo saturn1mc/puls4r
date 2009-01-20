@@ -31,7 +31,7 @@ public class PhotonMap {
 		prev_scale = 1;
 		max_photons = max_phot;
 
-		photons = new Vector<Photon>(max_phot);
+		photons = new Vector<Photon>(max_phot+1);
 
 		bbox_min[0] = bbox_min[1] = bbox_min[2] = Float.POSITIVE_INFINITY;
 		bbox_max[0] = bbox_max[1] = bbox_max[2] = Float.NEGATIVE_INFINITY;
@@ -153,7 +153,8 @@ public class PhotonMap {
 			return;
 
 		stored_photons++;
-		Photon node = photons.elementAt(stored_photons);
+		Photon node = new Photon();
+		photons.add(node);
 
 		for (int i = 0; i < 3; i++) {
 			node.pos[i] = pos[i];
@@ -184,7 +185,7 @@ public class PhotonMap {
 	public void scale_photon_power(float scale) { // 1/(number of emitted /
 		// photons)
 
-		for (int i = prev_scale; i <= stored_photons; i++) {
+		for (int i = prev_scale; i < stored_photons; i++) {
 			photons.elementAt(i).power[0] *= scale;
 			photons.elementAt(i).power[1] *= scale;
 			photons.elementAt(i).power[2] *= scale;
@@ -199,7 +200,7 @@ public class PhotonMap {
 			Photon pa1[] = new Photon[stored_photons + 1];
 			Photon pa2[] = new Photon[stored_photons + 1];
 
-			for (int i = 0; i <= stored_photons; i++)
+			for (int i = 0; i < stored_photons; i++)
 				pa2[i] = photons.elementAt(i);
 
 			balance_segment(pa1, pa2, 1, 1, stored_photons);
@@ -208,9 +209,14 @@ public class PhotonMap {
 			int d, j = 1, foo = 1;
 			Photon foo_photon = photons.elementAt(j);
 
-			for (int i = 1; i <= stored_photons; i++) {
+			for (int i = 1; i < stored_photons; i++) {
+				
+				//TODO Very doubtful translation
 				d = photons.indexOf(pa1[j]) - photons.size();
+				//
+				
 				pa1[j] = null;
+				
 				if (d != foo) {
 					photons.remove(j);
 					photons.insertElementAt(photons.elementAt(d), j);
@@ -219,7 +225,7 @@ public class PhotonMap {
 					photons.insertElementAt(foo_photon, j);
 
 					if (i < stored_photons) {
-						for (; foo <= stored_photons; foo++)
+						for (; foo < stored_photons; foo++)
 							if (pa1[foo] != null)
 								break;
 						foo_photon = photons.elementAt(foo);

@@ -23,9 +23,9 @@ public class Triangle extends Shape{
 		this.enlightment = enlightment;
 		
 		this.points = new Point3d[3];
-		this.points[0] = new Point3d(a);
-		this.points[1] = new Point3d(b);
-		this.points[2] = new Point3d(c);
+		this.points[0] = a;
+		this.points[1] = b;
+		this.points[2] = c;
 		
 		Vector3d AB = new Vector3d(b.x - a.x, b.y - a.y, b.z - a.z);
 		Vector3d AC = new Vector3d(c.x - a.x, c.y - a.y, c.z - a.z);
