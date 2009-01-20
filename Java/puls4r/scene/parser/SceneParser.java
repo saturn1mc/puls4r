@@ -3,6 +3,7 @@
  **/
 package puls4r.scene.parser;
 
+import java.io.File;
 import java.util.List;
 
 import javax.vecmath.Color3f;
@@ -44,7 +45,7 @@ public class SceneParser {
 	public static final String LIGHT_LIST_NODE = "lights";
 	public static final String LIGHT_NODE = "light";
 
-	public static final String OBJECTS_LIST_NODE = "objects";
+	public static final String SHAPE_LIST_NODE = "objects";
 	public static final String SPHERE_NODE = "sphere";
 	public static final String PLAN_NODE = "plan";
 	public static final String TRIANGLE_NODE = "triangle";
@@ -116,7 +117,7 @@ public class SceneParser {
 		Scene scene = new Scene();
 
 		SAXReader reader = new SAXReader();
-		Document doc = reader.read(filePath);
+		Document doc = reader.read(new File(filePath).toURI().toURL());
 
 		Element root = doc.getRootElement();
 
@@ -137,20 +138,20 @@ public class SceneParser {
 
 		// Object list parsing
 		System.out.println("\tParsing objects ... ");
-		node = root.selectSingleNode("//" + OBJECTS_LIST_NODE);
-		parseObjectList(node, scene);
+		node = root.selectSingleNode("//" + SHAPE_LIST_NODE);
+		parseShapeList(node, scene);
 
-		System.out.println("--. End of parsing.");
+		System.out.println("-- End of parsing.");
 
 		return scene;
 	}
 
 	private static Color3f parseColor(Node node) {
 		float r, g, b;
-
-		r = Float.parseFloat(node.valueOf(R_ATTR));
-		g = Float.parseFloat(node.valueOf(G_ATTR));
-		b = Float.parseFloat(node.valueOf(B_ATTR));
+		
+		r = Float.parseFloat(node.valueOf("@" + R_ATTR));
+		g = Float.parseFloat(node.valueOf("@" + G_ATTR));
+		b = Float.parseFloat(node.valueOf("@" + B_ATTR));
 
 		return new Color3f(r, g, b);
 	}
@@ -158,9 +159,9 @@ public class SceneParser {
 	private static Point3d parsePoint(Node node) {
 		double x, y, z;
 
-		x = Double.parseDouble(node.valueOf(X_ATTR));
-		y = Double.parseDouble(node.valueOf(Y_ATTR));
-		z = Double.parseDouble(node.valueOf(Z_ATTR));
+		x = Double.parseDouble(node.valueOf("@" + X_ATTR));
+		y = Double.parseDouble(node.valueOf("@" + Y_ATTR));
+		z = Double.parseDouble(node.valueOf("@" + Z_ATTR));
 
 		return new Point3d(x, y, z);
 	}
@@ -168,9 +169,9 @@ public class SceneParser {
 	private static Vector3d parseVector(Node node) {
 		double x, y, z;
 
-		x = Double.parseDouble(node.valueOf(X_ATTR));
-		y = Double.parseDouble(node.valueOf(Y_ATTR));
-		z = Double.parseDouble(node.valueOf(Z_ATTR));
+		x = Double.parseDouble(node.valueOf("@" + X_ATTR));
+		y = Double.parseDouble(node.valueOf("@" + Y_ATTR));
+		z = Double.parseDouble(node.valueOf("@" + Z_ATTR));
 
 		return new Vector3d(x, y, z);
 	}
@@ -221,51 +222,52 @@ public class SceneParser {
 		Color3f color = parseColor(lightNode);
 
 		// Radius
-		double radius = Double.parseDouble(lightNode.valueOf(RADIUS_ATTR));
+		double radius = Double.parseDouble(lightNode.valueOf("@" + RADIUS_ATTR));
 
 		// Power
-		double power = Double.parseDouble(lightNode.valueOf(POWER_ATTR));
+		double power = Double.parseDouble(lightNode.valueOf("@" + POWER_ATTR));
 
 		// Light
 		Light light = new Light(position, color, radius, power);
 		scene.addLight(light);
 	}
 
-	private static void parseObjectList(Node objectListNode, Scene scene)
+	@SuppressWarnings("unchecked")
+	private static void parseShapeList(Node shapeListNode, Scene scene)
 			throws Exception {
-		List<Node> objectNodes = objectListNode.selectNodes(LIGHT_NODE);
+		List<Node> shapeNodes = shapeListNode.selectNodes("//" + SHAPE_LIST_NODE + "/*");
 
-		for (Node objectNode : objectNodes) {
-			parseObjectNode(objectNode, scene);
+		for (Node shapeNode : shapeNodes) {
+			parseShapeNode(shapeNode, scene);
 		}
 	}
 
-	private static void parseObjectNode(Node objectNode, Scene scene) throws Exception {
+	private static void parseShapeNode(Node shapeNode, Scene scene) throws Exception {
 
 		boolean handled = false;
 
-		if (objectNode.getStringValue().equals(SPHERE_NODE)) {
-			parseSphereNode(objectNode, scene);
+		if (shapeNode.getName().equals(SPHERE_NODE)) {
+			parseSphereNode(shapeNode, scene);
 			handled = true;
 		}
 
-		else if (objectNode.getStringValue().equals(PLAN_NODE)) {
-			parsePlanNode(objectNode, scene);
+		else if (shapeNode.getName().equals(PLAN_NODE)) {
+			parsePlanNode(shapeNode, scene);
 			handled = true;
 		}
 
-		else if (objectNode.getStringValue().equals(TRIANGLE_NODE)) {
-			parseTriangleNode(objectNode, scene);
+		else if (shapeNode.getName().equals(TRIANGLE_NODE)) {
+			parseTriangleNode(shapeNode, scene);
 			handled = true;
 		}
 
-		else if (objectNode.getStringValue().equals(QUADRIC_NODE)) {
-			parseQuadricNode(objectNode, scene);
+		else if (shapeNode.getName().equals(QUADRIC_NODE)) {
+			parseQuadricNode(shapeNode, scene);
 			handled = true;
 		}
 
 		if (!handled) {
-			System.err.println("Unknown object " + objectNode.getStringValue());
+			System.err.println("Unknown object " + shapeNode.getName());
 		}
 	}
 
@@ -274,7 +276,7 @@ public class SceneParser {
 		Point3d position = parsePoint(sphereNode);
 
 		// Radius
-		double radius = Double.parseDouble(sphereNode.valueOf(RADIUS_ATTR));
+		double radius = Double.parseDouble(sphereNode.valueOf("@" + RADIUS_ATTR));
 
 		// Enlightment
 		Enlightment enl = parseEnlightment(sphereNode);
@@ -285,26 +287,26 @@ public class SceneParser {
 		double glossyFocal;
 		double glossyWidth;
 
-		reflecting = Integer.parseInt(sphereNode.valueOf(REFLECTING_ATTR));
-		kr = Double.parseDouble(sphereNode.valueOf(KR_ATTR));
-		glossyFocal = Double.parseDouble(sphereNode.valueOf(GLOSSY_FOCAL_ATTR));
-		glossyWidth = Double.parseDouble(sphereNode.valueOf(GLOSSY_WIDTH_ATTR));
+		reflecting = Integer.parseInt(sphereNode.valueOf("@" + REFLECTING_ATTR));
+		kr = Double.parseDouble(sphereNode.valueOf("@" + KR_ATTR));
+		glossyFocal = Double.parseDouble(sphereNode.valueOf("@" + GLOSSY_FOCAL_ATTR));
+		glossyWidth = Double.parseDouble(sphereNode.valueOf("@" + GLOSSY_WIDTH_ATTR));
 
 		// Refraction attributes
 		int refracting;
 		double n;
 		double kt;
 
-		refracting = Integer.parseInt(sphereNode.valueOf(REFRACTING_ATTR));
-		n = Double.parseDouble(sphereNode.valueOf(N_ATTR));
-		kt = Double.parseDouble(sphereNode.valueOf(KT_ATTR));
+		refracting = Integer.parseInt(sphereNode.valueOf("@" + REFRACTING_ATTR));
+		n = Double.parseDouble(sphereNode.valueOf("@" + N_ATTR));
+		kt = Double.parseDouble(sphereNode.valueOf("@" + KT_ATTR));
 
 		// Noise attributes
 		int perlin;
 		double epsilon;
 
-		perlin = Integer.parseInt(sphereNode.valueOf(PERLIN_ATTR));
-		epsilon = Double.parseDouble(sphereNode.valueOf(EPSILON_ATTR));
+		perlin = Integer.parseInt(sphereNode.valueOf("@" + PERLIN_ATTR));
+		epsilon = Double.parseDouble(sphereNode.valueOf("@" + EPSILON_ATTR));
 
 		// Creating and adding object
 		Sphere sphere = new Sphere(enl, position, radius, perlin == 1);
@@ -319,14 +321,11 @@ public class SceneParser {
 	private static void parsePlanNode(Node planNode, Scene scene) throws Exception {
 
 		// Equation parameters
-		double x, y, z, d;
-
-		d = Double.parseDouble(planNode.valueOf(D_ATTR));
-
+		double d = Double.parseDouble(planNode.valueOf("@" + D_ATTR));
 		Vector3d normal = parseVector(planNode);
 
 		// Monoface property
-		int monoface = Integer.parseInt(planNode.valueOf(MONOFACE_ATTR));
+		int monoface = Integer.parseInt(planNode.valueOf("@" + MONOFACE_ATTR));
 
 		// Enlightment
 		Enlightment enl = parseEnlightment(planNode);
@@ -337,26 +336,26 @@ public class SceneParser {
 		double glossyFocal;
 		double glossyWidth;
 
-		reflecting = Integer.parseInt(planNode.valueOf(REFLECTING_ATTR));
-		kr = Double.parseDouble(planNode.valueOf(KR_ATTR));
-		glossyFocal = Double.parseDouble(planNode.valueOf(GLOSSY_FOCAL_ATTR));
-		glossyWidth = Double.parseDouble(planNode.valueOf(GLOSSY_WIDTH_ATTR));
+		reflecting = Integer.parseInt(planNode.valueOf("@" + REFLECTING_ATTR));
+		kr = Double.parseDouble(planNode.valueOf("@" + KR_ATTR));
+		glossyFocal = Double.parseDouble(planNode.valueOf("@" + GLOSSY_FOCAL_ATTR));
+		glossyWidth = Double.parseDouble(planNode.valueOf("@" + GLOSSY_WIDTH_ATTR));
 
 		// Refraction attributes
 		int refracting;
 		double n;
 		double kt;
 
-		refracting = Integer.parseInt(planNode.valueOf(REFRACTING_ATTR));
-		n = Double.parseDouble(planNode.valueOf(N_ATTR));
-		kt = Double.parseDouble(planNode.valueOf(KT_ATTR));
+		refracting = Integer.parseInt(planNode.valueOf("@" + REFRACTING_ATTR));
+		n = Double.parseDouble(planNode.valueOf("@" + N_ATTR));
+		kt = Double.parseDouble(planNode.valueOf("@" + KT_ATTR));
 
 		// Noise attributes
 		int perlin;
 		double epsilon;
 
-		perlin = Integer.parseInt(planNode.valueOf(PERLIN_ATTR));
-		epsilon = Double.parseDouble(planNode.valueOf(EPSILON_ATTR));
+		perlin = Integer.parseInt(planNode.valueOf("@" + PERLIN_ATTR));
+		epsilon = Double.parseDouble(planNode.valueOf("@" + EPSILON_ATTR));
 
 		// Creating and adding object
 		Plan plan = new Plan(enl, normal, d, monoface == 1, perlin == 1);
@@ -374,19 +373,19 @@ public class SceneParser {
 		// Equation parameters
 		double ax, ay, az, bx, by, bz, cx, cy, cz;
 
-		ax = Double.parseDouble(triangleNode.valueOf(AX_ATTR));
-		ay = Double.parseDouble(triangleNode.valueOf(AY_ATTR));
-		az = Double.parseDouble(triangleNode.valueOf(AZ_ATTR));
+		ax = Double.parseDouble(triangleNode.valueOf("@" + AX_ATTR));
+		ay = Double.parseDouble(triangleNode.valueOf("@" + AY_ATTR));
+		az = Double.parseDouble(triangleNode.valueOf("@" + AZ_ATTR));
 		Point3d a = new Point3d(ax, ay, az);
 
-		bx = Double.parseDouble(triangleNode.valueOf(BX_ATTR));
-		by = Double.parseDouble(triangleNode.valueOf(BY_ATTR));
-		bz = Double.parseDouble(triangleNode.valueOf(BZ_ATTR));
+		bx = Double.parseDouble(triangleNode.valueOf("@" + BX_ATTR));
+		by = Double.parseDouble(triangleNode.valueOf("@" + BY_ATTR));
+		bz = Double.parseDouble(triangleNode.valueOf("@" + BZ_ATTR));
 		Point3d b = new Point3d(bx, by, bz);
 
-		cx = Double.parseDouble(triangleNode.valueOf(CX_ATTR));
-		cy = Double.parseDouble(triangleNode.valueOf(CY_ATTR));
-		cz = Double.parseDouble(triangleNode.valueOf(CZ_ATTR));
+		cx = Double.parseDouble(triangleNode.valueOf("@" + CX_ATTR));
+		cy = Double.parseDouble(triangleNode.valueOf("@" + CY_ATTR));
+		cz = Double.parseDouble(triangleNode.valueOf("@" + CZ_ATTR));
 		Point3d c = new Point3d(cx, cy, cz);
 
 		// Enlightment
@@ -398,28 +397,28 @@ public class SceneParser {
 		double glossyFocal;
 		double glossyWidth;
 
-		reflecting = Integer.parseInt(triangleNode.valueOf(REFLECTING_ATTR));
-		kr = Double.parseDouble(triangleNode.valueOf(KR_ATTR));
+		reflecting = Integer.parseInt(triangleNode.valueOf("@" + REFLECTING_ATTR));
+		kr = Double.parseDouble(triangleNode.valueOf("@" + KR_ATTR));
 		glossyFocal = Double.parseDouble(triangleNode
-				.valueOf(GLOSSY_FOCAL_ATTR));
+				.valueOf("@" + GLOSSY_FOCAL_ATTR));
 		glossyWidth = Double.parseDouble(triangleNode
-				.valueOf(GLOSSY_WIDTH_ATTR));
+				.valueOf("@" + GLOSSY_WIDTH_ATTR));
 
 		// Refraction attributes
 		int refracting;
 		double n;
 		double kt;
 
-		refracting = Integer.parseInt(triangleNode.valueOf(REFRACTING_ATTR));
-		n = Double.parseDouble(triangleNode.valueOf(N_ATTR));
-		kt = Double.parseDouble(triangleNode.valueOf(KT_ATTR));
+		refracting = Integer.parseInt(triangleNode.valueOf("@" + REFRACTING_ATTR));
+		n = Double.parseDouble(triangleNode.valueOf("@" + N_ATTR));
+		kt = Double.parseDouble(triangleNode.valueOf("@" + KT_ATTR));
 
 		// Noise attributes
 		int perlin;
 		double epsilon;
 
-		perlin = Integer.parseInt(triangleNode.valueOf(PERLIN_ATTR));
-		epsilon = Double.parseDouble(triangleNode.valueOf(EPSILON_ATTR));
+		perlin = Integer.parseInt(triangleNode.valueOf("@" + PERLIN_ATTR));
+		epsilon = Double.parseDouble(triangleNode.valueOf("@" + EPSILON_ATTR));
 
 		// Creating and adding object
 		Triangle triangle = new Triangle(enl, a, b, c, perlin == 1);
@@ -437,16 +436,16 @@ public class SceneParser {
 		// Equation parameters
 		double a, b, c, d, e, f, g, h, i, j;
 
-		a = Double.parseDouble(quadricNode.valueOf(QA_ATTR));
-		b = Double.parseDouble(quadricNode.valueOf(QB_ATTR));
-		c = Double.parseDouble(quadricNode.valueOf(QC_ATTR));
-		d = Double.parseDouble(quadricNode.valueOf(QD_ATTR));
-		e = Double.parseDouble(quadricNode.valueOf(QE_ATTR));
-		f = Double.parseDouble(quadricNode.valueOf(QF_ATTR));
-		g = Double.parseDouble(quadricNode.valueOf(QG_ATTR));
-		h = Double.parseDouble(quadricNode.valueOf(QH_ATTR));
-		i = Double.parseDouble(quadricNode.valueOf(QI_ATTR));
-		j = Double.parseDouble(quadricNode.valueOf(QJ_ATTR));
+		a = Double.parseDouble(quadricNode.valueOf("@" + QA_ATTR));
+		b = Double.parseDouble(quadricNode.valueOf("@" + QB_ATTR));
+		c = Double.parseDouble(quadricNode.valueOf("@" + QC_ATTR));
+		d = Double.parseDouble(quadricNode.valueOf("@" + QD_ATTR));
+		e = Double.parseDouble(quadricNode.valueOf("@" + QE_ATTR));
+		f = Double.parseDouble(quadricNode.valueOf("@" + QF_ATTR));
+		g = Double.parseDouble(quadricNode.valueOf("@" + QG_ATTR));
+		h = Double.parseDouble(quadricNode.valueOf("@" + QH_ATTR));
+		i = Double.parseDouble(quadricNode.valueOf("@" + QI_ATTR));
+		j = Double.parseDouble(quadricNode.valueOf("@" + QJ_ATTR));
 
 		// Enlightment
 		Enlightment enl = parseEnlightment(quadricNode);
@@ -457,28 +456,28 @@ public class SceneParser {
 		double glossyFocal;
 		double glossyWidth;
 
-		reflecting = Integer.parseInt(quadricNode.valueOf(REFLECTING_ATTR));
-		kr = Double.parseDouble(quadricNode.valueOf(KR_ATTR));
+		reflecting = Integer.parseInt(quadricNode.valueOf("@" + REFLECTING_ATTR));
+		kr = Double.parseDouble(quadricNode.valueOf("@" + KR_ATTR));
 		glossyFocal = Double
-				.parseDouble(quadricNode.valueOf(GLOSSY_FOCAL_ATTR));
+				.parseDouble(quadricNode.valueOf("@" + GLOSSY_FOCAL_ATTR));
 		glossyWidth = Double
-				.parseDouble(quadricNode.valueOf(GLOSSY_WIDTH_ATTR));
+				.parseDouble(quadricNode.valueOf("@" + GLOSSY_WIDTH_ATTR));
 
 		// Refraction attributes
 		int refracting;
 		double n;
 		double kt;
 
-		refracting = Integer.parseInt(quadricNode.valueOf(REFRACTING_ATTR));
-		n = Double.parseDouble(quadricNode.valueOf(N_ATTR));
-		kt = Double.parseDouble(quadricNode.valueOf(KT_ATTR));
+		refracting = Integer.parseInt(quadricNode.valueOf("@" + REFRACTING_ATTR));
+		n = Double.parseDouble(quadricNode.valueOf("@" + N_ATTR));
+		kt = Double.parseDouble(quadricNode.valueOf("@" + KT_ATTR));
 
 		// Noise attributes
 		int perlin;
 		double epsilon;
 
-		perlin = Integer.parseInt(quadricNode.valueOf(PERLIN_ATTR));
-		epsilon = Double.parseDouble(quadricNode.valueOf(EPSILON_ATTR));
+		perlin = Integer.parseInt(quadricNode.valueOf("@" + PERLIN_ATTR));
+		epsilon = Double.parseDouble(quadricNode.valueOf("@" + EPSILON_ATTR));
 
 		// Creating and adding object
 		Quadric quadric = new Quadric(enl, a, b, c, d, e, f, g, h, i, j,
@@ -497,7 +496,7 @@ public class SceneParser {
 		Color3f color = parseColor(objectNode);
 
 		// Type
-		String enlName = objectNode.valueOf(ENLIGHTMENT_ATTR);
+		String enlName = objectNode.valueOf("@" + ENLIGHTMENT_ATTR);
 		Enlightment enl = null;
 
 		if (enlName.equals(ENL_PHONG)) {

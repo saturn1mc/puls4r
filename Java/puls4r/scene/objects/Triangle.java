@@ -23,15 +23,16 @@ public class Triangle extends Shape{
 		this.enlightment = enlightment;
 		
 		this.points = new Point3d[3];
-		this.points[0] = a;
-		this.points[1] = b;
-		this.points[2] = c;
+		this.points[0] = new Point3d(a);
+		this.points[1] = new Point3d(b);
+		this.points[2] = new Point3d(c);
 		
 		Vector3d AB = new Vector3d(b.x - a.x, b.y - a.y, b.z - a.z);
 		Vector3d AC = new Vector3d(c.x - a.x, c.y - a.y, c.z - a.z);
 	
 		Vector3d norm = new Vector3d();
 		norm.cross(AB, AC);
+		norm.normalize();
 		
 		double d = - (norm.getX() * points[0].getX())  - (norm.getY() * points[0].getY()) - (norm.getZ() * points[0].getZ());
 	
@@ -54,10 +55,10 @@ public class Triangle extends Shape{
 			b.sub(points[0]);
 			
 			Point3d c = new Point3d(points[2]);
-			b.sub(points[0]);
+			c.sub(points[0]);
 			
 			Point3d p = new Point3d(intersection.getPoint());
-			b.sub(points[0]);
+			p.sub(points[0]);
 			
 			double u = ((p.getY() * c.getX()) - (p.getX() * c.getY())) / ((b.getY() * c.getX()) - (b.getX() * c.getY()));
 			double v = ((p.getY() * b.getX()) - (p.getX() * b.getY())) / ((c.getY() * b.getX()) - (c.getX() * b.getY()));

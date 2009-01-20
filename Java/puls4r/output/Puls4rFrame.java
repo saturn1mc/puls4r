@@ -55,6 +55,12 @@ public class Puls4rFrame extends JFrame implements Output {
 			this.createBufferStrategy(2); // Buffering
 		}
 	}
+	
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
+		drawOutput();
+	}	
 
 	private void drawOutput() {
 
