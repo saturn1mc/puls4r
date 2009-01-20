@@ -6,6 +6,8 @@ package puls4r.scene.objects;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
+import puls4r.enlightment.Enlightment;
+import puls4r.texture.Perlin;
 import puls4r.tracer.Intersection;
 import puls4r.tracer.Ray;
 
@@ -18,12 +20,17 @@ public class Sphere extends Shape {
 	Point3d center;
 	double radius;
 
-	public Sphere(Point3d center, double radius) {
+	public Sphere(Enlightment enlightment, Point3d center, double radius, boolean perlinNoised) {
+		
+		this.enlightment = enlightment;
 		this.center = center;
 		this.radius = radius;
+		
+		if(perlinNoised){
+			this.perlin = Perlin.getInstance();
+		}
 	}
-
-	@Override
+	
 	protected Intersection createIntersection(Ray ray) {
 		Point3d m = new Point3d(ray.getOrigin().getX()
 				+ (ray.getDirection().getX() * ray.getT()), ray.getOrigin()
@@ -42,9 +49,7 @@ public class Sphere extends Shape {
 			perlin.disruptNormal(nm, epsilon);
 		}
 
-		Intersection intersection = new Intersection(m, nm, this, ray.getT());
-
-		return intersection;
+		return new Intersection(m, nm, this, ray.getT());
 	}
 
 	@Override
