@@ -208,7 +208,7 @@ public class Scene {
 
 		finalColor.scale((float) (1.0d / cpt));
 		Enlightment.normalize(finalColor);
-		
+
 		return finalColor;
 	}
 
@@ -216,53 +216,53 @@ public class Scene {
 			int mode) {
 
 		Color3f color = new Color3f();
-		
+
 		double cpt = 0;
-		
+
 		double f = intersection.getObject().getGlossyFocal();
 		double radius = intersection.getObject().getGlossyWidth();
 		double step = 1.0d / SMOOTHING;
-		
+
 		Ray reflected = reflectedRay(ray, intersection);
-		
+
 		Vector3d scaledReflection = new Vector3d(reflected.getDirection());
 		scaledReflection.scale(f);
-		
+
 		Point3d sight = new Point3d(intersection.getPoint());
 		sight.add(scaledReflection);
-		
-		Observer virtualObs = new Observer(intersection.getPoint(), sight, Math.PI / 4.0);
-		
-		for(double i=-radius/2.0d; i<radius/2.0d; i+= step){
-			for(double j=-radius/2.0d; j<radius/2.0d; j+= step){
-				
+
+		Observer virtualObs = new Observer(intersection.getPoint(), sight,
+				Math.PI / 4.0);
+
+		for (double i = -radius / 2.0d; i < radius / 2.0d; i += step) {
+			for (double j = -radius / 2.0d; j < radius / 2.0d; j += step) {
+
 				Point3d target;
-				
-				if(RANDOMIZE){
-					double ii = (Math.random() * radius) - (radius/2.0d);
-					double jj = (Math.random() * radius) - (radius/2.0d);
+
+				if (RANDOMIZE) {
+					double ii = (Math.random() * radius) - (radius / 2.0d);
+					double jj = (Math.random() * radius) - (radius / 2.0d);
 					target = new Point3d(ii, jj, f);
-				}
-				else{
+				} else {
 					target = new Point3d(i, j, f);
 				}
-				
+
 				Ray glossyRay = virtualObs.ray(target);
 				Intersection glossyIntersection = getNearestIntersection(glossyRay);
-				
-				if(glossyIntersection != null){
-					
+
+				if (glossyIntersection != null) {
+
 					Color3f glossyColor = observedColor(glossyRay, mode);
-					
+
 					color.add(glossyColor);
 					cpt++;
 				}
 			}
 		}
-		
+
 		color.scale((float) (1.0d / cpt));
 		Enlightment.normalize(color);
-		
+
 		return color;
 	}
 
@@ -335,79 +335,80 @@ public class Scene {
 
 	/* Ray Casting Function */
 	private void rayCasting() {
-		System.out.println( "---> Rendering...");
-		int progress = 0;
-		
-		int halfH = output.getH()/2;
-		int halfW = output.getW()/2;
-		
-		for(int l=-halfH; l<halfH; l++){
-			
-			int done = (int)Math.round(100 *  (float)(l+(output.getH()/2)+1) / (float)output.getH());
-			
-			if(progress != done){
-				progress = done;
-				System.out.println( "\r\t" + progress + "%");
-			}
-			
-			for(int p=-halfW; p<halfW; p++){
-				
-				Color3f color;
-				
-				if(output.getAntialiasing() > 1){
-					color = antialiasedColor(l, p, RAYCASTING_MODE);
-				}
-				else{
-					color = colorAt(l, p, RAYCASTING_MODE);
-				}
-				
-				output.writePixel(color, p+halfW, l+halfH);
-			}
-		}
-		
-		System.out.println( "\tWriting image to " + output.toString());
-		output.finalize();
-		System.out.println( "---> End of rendering");
-	}
-	
-	private void photonMapping() {
-		System.out.println("---> Photon Tracing...");
-		
-		shooter = new PhotonShooter(this, PHOTONS);
-		shooter.shoot();
-		
-		System.out.println("---> End of photon tracing");
-		
 		System.out.println("---> Rendering...");
 		int progress = 0;
-		
-		int halfH = output.getH()/2;
-		int halfW = output.getW()/2;
-		
-		for(int l=-halfH; l<halfH; l++){
-			
-			int done = (int)Math.round(100 *  (float)(l+halfH+1) / (float)output.getH());
-			
-			if(progress != done){
+
+		int halfH = output.getH() / 2;
+		int halfW = output.getW() / 2;
+
+		for (int l = -halfH; l < halfH; l++) {
+
+			int done = (int) Math.round(100
+					* (float) (l + (output.getH() / 2) + 1)
+					/ (float) output.getH());
+
+			if (progress != done) {
 				progress = done;
 				System.out.println("\r\t" + progress + "%");
 			}
-			
-			for(int p=-halfW; p<halfW; p++){
-				
+
+			for (int p = -halfW; p < halfW; p++) {
+
 				Color3f color;
-				
-				if(output.getAntialiasing() > 1){
-					color = antialiasedColor(l, p, PHOTONMAPPING_MODE);
+
+				if (output.getAntialiasing() > 1) {
+					color = antialiasedColor(l, p, RAYCASTING_MODE);
+				} else {
+					color = colorAt(l, p, RAYCASTING_MODE);
 				}
-				else{
-					color = colorAt(l, p, PHOTONMAPPING_MODE);
-				}
-				
-				output.writePixel(color, p+halfW, l+halfH);
+
+				output.writePixel(color, p + halfW, l + halfH);
 			}
 		}
-		
+
+		System.out.println("\tWriting image to " + output.toString());
+		output.finalize();
+		System.out.println("---> End of rendering");
+	}
+
+	private void photonMapping() {
+		System.out.println("---> Photon Tracing...");
+
+		shooter = new PhotonShooter(this, PHOTONS);
+		shooter.shoot();
+
+		System.out.println("---> End of photon tracing");
+
+		System.out.println("---> Rendering...");
+		int progress = 0;
+
+		int halfH = output.getH() / 2;
+		int halfW = output.getW() / 2;
+
+		for (int l = -halfH; l < halfH; l++) {
+
+			int done = (int) Math.round(100 * (float) (l + halfH + 1)
+					/ (float) output.getH());
+
+			if (progress != done) {
+				progress = done;
+				System.out.println("\r\t" + progress + "%");
+			}
+
+			for (int p = -halfW; p < halfW; p++) {
+
+				Color3f color;
+
+				if (output.getAntialiasing() > 1) {
+					color = antialiasedColor(l, p, PHOTONMAPPING_MODE);
+				} else {
+					color = colorAt(l, p, PHOTONMAPPING_MODE);
+				}
+
+				output.writePixel(color, p + halfW, l + halfH);
+			}
+		}
+
 		System.out.println("\tWriting image to " + output.toString());
 		output.finalize();
 		System.out.println("---> End of rendering");
@@ -542,27 +543,27 @@ public class Scene {
 
 		return nearestIntersection;
 	}
-	
-	public void setOutput(Output output){
+
+	public void setOutput(Output output) {
 		this.output = output;
-		
-		if(observer != null){
+
+		if (observer != null) {
 			focal = calcFocal();
 		}
 	}
 
-	public void setObserver(Observer observer){
+	public void setObserver(Observer observer) {
 		this.observer = observer;
-		
-		if(output != null){
+
+		if (output != null) {
 			focal = calcFocal();
 		}
 	}
-	
-	public void setBackground(Color3f background){
+
+	public void setBackground(Color3f background) {
 		this.background = background;
 	}
-	
+
 	public void addShape(Shape s) {
 		shapes.add(s);
 	}
@@ -582,14 +583,13 @@ public class Scene {
 	public void trace(int mode) {
 		if (observer != null && output != null && background != null) {
 			switch (mode) {
+
 			case RAYCASTING_MODE:
 				rayCasting();
-
 				break;
 
 			case PHOTONMAPPING_MODE:
 				photonMapping();
-
 				break;
 
 			default:

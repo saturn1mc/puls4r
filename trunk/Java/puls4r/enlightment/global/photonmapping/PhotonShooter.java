@@ -39,6 +39,10 @@ public class PhotonShooter {
 	public PhotonShooter(Scene scene, int maxPhotons) {
 		this.scene = scene;
 		this.maxPhotons = maxPhotons;
+		
+		directEnlightment = new PhotonMap(maxPhotons);
+		indirectEnlightment = new PhotonMap(maxPhotons);
+		caustics = new PhotonMap(maxPhotons);
 	}
 	
 	private Vector3d randomDirection(){
@@ -63,7 +67,7 @@ public class PhotonShooter {
 			return false;
 		}
 		else{
-			//Absorption
+			//Photon absorbed
 			return true;
 		}
 	}
