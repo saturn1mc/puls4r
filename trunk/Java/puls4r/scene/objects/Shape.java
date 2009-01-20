@@ -18,8 +18,6 @@ public abstract class Shape {
 	protected Perlin perlin;
 	protected double epsilon;
 	
-	protected abstract Intersection createIntersection(Ray ray);
-	
 	public abstract Intersection intersection(Ray ray);
 
 	public Enlightment getEnlightment() {
