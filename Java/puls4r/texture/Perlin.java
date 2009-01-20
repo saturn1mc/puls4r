@@ -26,7 +26,7 @@ public class Perlin {
 		}
 	}
 
-	public Perlin getInstance() {
+	static public Perlin getInstance() {
 		if (singleton == null) {
 			singleton = new Perlin();
 		}
@@ -78,14 +78,14 @@ public class Perlin {
 
 		x = noise(10.0 * n.x - e, 10.0 * n.y, 10.0 * n.z) - noise(10.0 * n.x + e, 10.0 * n.y, 10.0 * n.z);
 		y = noise(10.0 * n.x, 10.0 * n.y - e, 10.0 * n.z) - noise(10.0 * n.x, 10.0 * n.y + e, 10.0 * n.z);
-		z = noise(10.0 * n.x, 10.0 * n.y, 10.0 * n.z - e) - noise(10.0 * n.x, 10.0 * n.y, 10 * n.z + e);
+		z = noise(10.0 * n.x, 10.0 * n.y, 10.0 * n.z - e) - noise(10.0 * n.x, 10.0 * n.y, 10.0 * n.z + e);
 
 		n.set(n.x + x, n.y + y, n.z + z);
 
 		n.normalize();
 	}
 
-	void disruptNormal(Vector3d n, Point3d p, double e) {
+	public void disruptNormal(Vector3d n, Point3d p, double e) {
 		double x, y, z;
 		double X, Y, Z;
 

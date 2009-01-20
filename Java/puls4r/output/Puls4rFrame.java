@@ -41,8 +41,8 @@ public class Puls4rFrame extends JFrame implements Output {
 		
 		this.setPreferredSize(new Dimension(w, h));
 		this.pack();
-		//this.setResizable(false);
 		this.setLocationRelativeTo(null);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	@Override
@@ -51,6 +51,7 @@ public class Puls4rFrame extends JFrame implements Output {
 
 		if (b) {
 			this.setSize(this.getWidth(), this.getHeight()+this.getInsets().top);
+			this.setResizable(false);
 			this.createBufferStrategy(2); // Buffering
 		}
 	}
