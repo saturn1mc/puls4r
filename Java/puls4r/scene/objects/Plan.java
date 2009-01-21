@@ -39,12 +39,12 @@ public class Plan extends Shape {
 
 	@Override
 	public Intersection intersection(Ray ray) {
-		double vd = (norm.getX() * ray.getDirection().getX())
-				+ (norm.getY() * ray.getDirection().getY())
-				+ (norm.getZ() * ray.getDirection().getZ());
-		double t = -((norm.getX() * ray.getOrigin().getX())
-				+ (norm.getY() * ray.getOrigin().getY())
-				+ (norm.getZ() * ray.getOrigin().getZ()) + d)
+		double vd = (norm.x * ray.getDirection().x)
+				+ (norm.y * ray.getDirection().y)
+				+ (norm.z * ray.getDirection().z);
+		double t = -((norm.x * ray.getOrigin().x)
+				+ (norm.y * ray.getOrigin().y)
+				+ (norm.z * ray.getOrigin().z) + d)
 				/ vd;
 
 		if (vd == 0 || (vd > 0 && monoface)) {
@@ -56,12 +56,12 @@ public class Plan extends Shape {
 
 				ray.setT(t);
 
-				Point3d m = new Point3d(ray.getOrigin().getX()
-						+ (ray.getDirection().getX() * ray.getT()), ray
-						.getOrigin().getY()
-						+ (ray.getDirection().getY() * ray.getT()), ray
-						.getOrigin().getZ()
-						+ (ray.getDirection().getZ() * ray.getT()));
+				Point3d m = new Point3d(ray.getOrigin().x
+						+ (ray.getDirection().x * ray.getT()), ray
+						.getOrigin().y
+						+ (ray.getDirection().y * ray.getT()), ray
+						.getOrigin().z
+						+ (ray.getDirection().z * ray.getT()));
 
 				Vector3d nm = new Vector3d(norm);
 

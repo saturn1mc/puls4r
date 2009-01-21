@@ -23,9 +23,10 @@ public class Puls4r {
 		
 		try {
 			
-			Scene scene = SceneParser.parse("D://Mes Documents/Workspace/Puls4r/C++/scenes/waterScene.xml");
+			//Scene scene = SceneParser.parse("D://Mes Documents/Workspace/Puls4r/C++/scenes/waterScene.xml");
+			Scene scene = SceneParser.parse("./C++/scenes/testScene.xml");
 			scene.setOutput(output);
-			scene.trace(Scene.PHOTONMAPPING_MODE);
+			scene.trace(Scene.RAYCASTING_MODE);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

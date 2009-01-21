@@ -88,12 +88,12 @@ public class PhotonShooter {
 
 		if(indirect){
 			storedIndirect++;
-			indirectEnlightment.store(energy, pos, dir);
+			directEnlightment.store(energy, pos, dir);
 		}
 
 		if(caustic){
 			storedCaustic++;
-			caustics.store(energy, pos, dir);
+			directEnlightment.store(energy, pos, dir);
 		}
 	}
 
@@ -187,11 +187,11 @@ public class PhotonShooter {
 		System.out.println("- Balancing direct photon map...");
 		directEnlightment.balance();
 
-		System.out.println("- Balancing indirect photon map...");
-		indirectEnlightment.balance();
+		//System.out.println("- Balancing indirect photon map...");
+		//indirectEnlightment.balance();
 
-		System.out.println("- Balancing caustic photon map...");
-		caustics.balance();
+		//System.out.println("- Balancing caustic photon map...");
+		//caustics.balance();
 	}
 
 	public Color3f irradianceEstimate(Intersection intersection) {
@@ -206,7 +206,7 @@ public class PhotonShooter {
 		irradiance[1] = 0;
 		irradiance[2] = 0;
 
-		directEnlightment.irradiance_estimate(irradiance, pos, normal, IRRADIANCE_AREA, IRRADIANCE_PHOTON_NUMBER);
+		directEnlightment.irradiance_estimate(irradiance, pos, normal, IRRADIANCE_AREA, Math.min(IRRADIANCE_PHOTON_NUMBER, maxPhotons));
 
 		color.set(color.x + irradiance[0], color.y + irradiance[1], color.z + irradiance[2]);
 
@@ -215,7 +215,7 @@ public class PhotonShooter {
 		irradiance[1] = 0;
 		irradiance[2] = 0;
 
-		indirectEnlightment.irradiance_estimate(irradiance, pos, normal, IRRADIANCE_AREA, IRRADIANCE_PHOTON_NUMBER);
+		//indirectEnlightment.irradiance_estimate(irradiance, pos, normal, IRRADIANCE_AREA, Math.min(IRRADIANCE_PHOTON_NUMBER, maxPhotons));
 
 		color.set(color.x + irradiance[0], color.y + irradiance[1], color.z + irradiance[2]);
 
@@ -224,7 +224,7 @@ public class PhotonShooter {
 		irradiance[1] = 0;
 		irradiance[2] = 0;
 
-		caustics.irradiance_estimate(irradiance, pos, normal, IRRADIANCE_AREA, IRRADIANCE_PHOTON_NUMBER);
+		//caustics.irradiance_estimate(irradiance, pos, normal, IRRADIANCE_AREA, Math.min(IRRADIANCE_PHOTON_NUMBER, maxPhotons));
 
 		color.set(color.x + irradiance[0], color.y + irradiance[1], color.z + irradiance[2]);
 

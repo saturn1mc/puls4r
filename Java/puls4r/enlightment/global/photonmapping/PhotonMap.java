@@ -5,7 +5,6 @@ import java.util.Vector;
 public final class PhotonMap {
 	private Vector<Photon> photons;
 
-	private int stored_photons;
 	private int half_stored_photons;
 	private int max_photons;
 	private int prev_scale;
@@ -20,10 +19,9 @@ public final class PhotonMap {
 
 	public PhotonMap(int max_photons) {
 		this.max_photons = max_photons;
-		this.stored_photons = 0;
 		this.prev_scale = 1;
 
-		this.photons = new Vector<Photon>(max_photons + 1);
+		this.photons = new Vector<Photon>();
 
 		this.bbox_min[0] = this.bbox_min[1] = this.bbox_min[2] = Float.POSITIVE_INFINITY;
 		this.bbox_max[0] = this.bbox_max[1] = this.bbox_max[2] = Float.NEGATIVE_INFINITY;
@@ -177,10 +175,9 @@ public final class PhotonMap {
 	}
 
 	public void store(float power[], float pos[], float dir[]) {
-		if (stored_photons >= max_photons)
+		if (photons.size() >= max_photons)
 			return;
 
-		stored_photons++;
 		Photon node = new Photon();
 		photons.add(node);
 
@@ -211,45 +208,50 @@ public final class PhotonMap {
 	}
 
 	public void scale_photon_power(float scale) {
-		for (int i = prev_scale; i <= stored_photons; i++) {
+		for (int i = prev_scale; i < photons.size(); i++) {
 			photons.elementAt(i).power[0] *= scale;
 			photons.elementAt(i).power[1] *= scale;
 			photons.elementAt(i).power[2] *= scale;
 		}
-		prev_scale = stored_photons;
+		prev_scale = photons.size();
 	}
 
 	public void balance() {
-		if (stored_photons > 1) {
+		if (photons.size() > 0) {
 			// allocate two temporary arrays for the balancing procedure
-			Photon pa1[] = new Photon[stored_photons + 1];
-			Photon pa2[] = new Photon[stored_photons + 1];
-
-			for (int i = 0; i <= stored_photons; i++)
+			Photon pa1[] = new Photon[photons.size() + 1];
+			Photon pa2[] = new Photon[photons.size() + 1];
+			
+			for (int i=0; i< photons.size(); i++){
+				pa1[i] = new Photon();
 				pa2[i] = photons.elementAt(i);
-
-			balance_segment(pa1, pa2, 1, 1, stored_photons);
-
+			}
+			
+			pa2[photons.size()] = new Photon();
+			
+			balance_segment( pa1, pa2, 1, 1, photons.size() );
+			
 			// reorganize balanced kd-tree (make a heap)
-			int d, j = 1, foo = 1;
+			int d, j=1, foo=1;
 			Photon foo_photon = photons.elementAt(j);
-
-			for (int i = 1; i <= stored_photons; i++) {
-
-				// d=pa1[j]-photons; POSITION DE PA1[J] DANS PHOTONS
+			
+			for (int i=1; i<=photons.size(); i++) {
+				
 				d = photons.indexOf(pa1[j]);
-				pa1[j] = null;
-
-				if (d != foo){
-					photons.remove(j);
-					photons.add(j, photons.elementAt(d));
+				
+				if(d == - 1){
+					break;
 				}
+				
+				pa1[j] = null;
+				
+				if (d != foo)
+					photons.elementAt(j).set(photons.elementAt(d));
 				else {
-					photons.remove(j);
-					photons.add(j,foo_photon);
-
-					if (i < stored_photons) {
-						for (; foo <= stored_photons; foo++)
+					photons.elementAt(j).set(foo_photon);
+					
+					if (i<photons.size()) {
+						for (;foo<=photons.size(); foo++)
 							if (pa1[foo] != null)
 								break;
 						foo_photon = photons.elementAt(foo);
@@ -257,11 +259,12 @@ public final class PhotonMap {
 					}
 					continue;
 				}
+				
 				j = d;
 			}
 		}
-
-		half_stored_photons = stored_photons / 2 - 1;
+		
+		half_stored_photons = photons.size()/2-1;
 	}
 
 	private void swap(Photon ph[], int a, int b) {
