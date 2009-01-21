@@ -1,7 +1,9 @@
 package puls4r.enlightment.global.photonmapping;
 
+import java.util.Vector;
+
 public final class PhotonMap {
-	private Photon photons[];
+	private Vector<Photon> photons;
 
 	private int stored_photons;
 	private int half_stored_photons;
@@ -21,7 +23,7 @@ public final class PhotonMap {
 		this.stored_photons = 0;
 		this.prev_scale = 1;
 
-		this.photons = new Photon[max_photons + 1];
+		this.photons = new Vector<Photon>(max_photons + 1);
 
 		this.bbox_min[0] = this.bbox_min[1] = this.bbox_min[2] = Float.POSITIVE_INFINITY;
 		this.bbox_max[0] = this.bbox_max[1] = this.bbox_max[2] = Float.NEGATIVE_INFINITY;
@@ -89,7 +91,7 @@ public final class PhotonMap {
 
 	private void locate_photons(NearestPhotons np, int index) {
 
-		Photon p = photons[index];
+		Photon p = photons.elementAt(index);
 		float dist1;
 
 		if (index < half_stored_photons) {
@@ -179,7 +181,7 @@ public final class PhotonMap {
 			return;
 
 		stored_photons++;
-		Photon node = photons[stored_photons];
+		Photon node = photons.elementAt(stored_photons);
 
 		for (int i = 0; i < 3; i++) {
 			node.pos[i] = pos[i];
@@ -209,9 +211,9 @@ public final class PhotonMap {
 
 	public void scale_photon_power(float scale) {
 		for (int i = prev_scale; i <= stored_photons; i++) {
-			photons[i].power[0] *= scale;
-			photons[i].power[1] *= scale;
-			photons[i].power[2] *= scale;
+			photons.elementAt(i).power[0] *= scale;
+			photons.elementAt(i).power[1] *= scale;
+			photons.elementAt(i).power[2] *= scale;
 		}
 		prev_scale = stored_photons;
 	}
@@ -223,30 +225,33 @@ public final class PhotonMap {
 			Photon pa2[] = new Photon[stored_photons + 1];
 
 			for (int i = 0; i <= stored_photons; i++)
-				pa2[i] = photons[i];
+				pa2[i] = photons.elementAt(i);
 
 			balance_segment(pa1, pa2, 1, 1, stored_photons);
 
 			// reorganize balanced kd-tree (make a heap)
 			int d, j = 1, foo = 1;
-			Photon foo_photon = photons[j];
+			Photon foo_photon = photons.elementAt(j);
 
 			for (int i = 1; i <= stored_photons; i++) {
 
 				// d=pa1[j]-photons; POSITION DE PA1[J] DANS PHOTONS
-				d = j - photons.length;
+				d = photons.indexOf(pa1[j]);
 				pa1[j] = null;
 
 				if (d != foo)
+					//TODO
 					photons[j] = photons[d];
+					//
 				else {
-					photons[j] = foo_photon;
+					photons.remove(j);
+					photons.add(j,foo_photon);
 
 					if (i < stored_photons) {
 						for (; foo <= stored_photons; foo++)
 							if (pa1[foo] != null)
 								break;
-						foo_photon = photons[foo];
+						foo_photon = photons.elementAt(foo);
 						j = foo;
 					}
 					continue;
