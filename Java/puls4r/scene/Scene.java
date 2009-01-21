@@ -27,12 +27,12 @@ public class Scene {
 	public static final int RAYCASTING_MODE = 0;
 	public static final int PHOTONMAPPING_MODE = 1;
 
-	private double EPSILON = 0.000001;
-	private int PHOTONS = 1000000;
-	private int MAX_RECURSIONS = 1000;
+	private double EPSILON;
+	private int PHOTONS;
+	private int MAX_RECURSIONS;
 
-	private boolean RANDOMIZE = false;
-	private double SMOOTHING = 4.0;
+	private boolean RANDOMIZE;
+	private double SMOOTHING;
 
 	private int currentRecursions;
 
@@ -46,7 +46,7 @@ public class Scene {
 
 	public Scene() {
 		EPSILON = 0.000001;
-		PHOTONS = 1000000;
+		PHOTONS = 100000;
 		MAX_RECURSIONS = 1000;
 		RANDOMIZE = false;
 		SMOOTHING = 4.0;
@@ -60,11 +60,7 @@ public class Scene {
 		this.focal = 0;
 	}
 
-	public Scene(double epsilon, int photons, int max_recursions,
-			boolean randomize, double smoothing, int currentRecursions,
-			PhotonShooter shooter, Observer observer, Output output,
-			Color3f background, Vector<Shape> shapes, Vector<Light> lights,
-			double focal) {
+	public Scene(double epsilon, int photons, int max_recursions, boolean randomize, double smoothing, int currentRecursions, PhotonShooter shooter, Observer observer, Output output, Color3f background, Vector<Shape> shapes, Vector<Light> lights, double focal) {
 		super();
 		EPSILON = epsilon;
 		PHOTONS = photons;
@@ -88,99 +84,78 @@ public class Scene {
 	private Color3f observedColor(Ray ray, int mode) {
 		Color3f oc = new Color3f(background);
 		Intersection nearestIntersection = getNearestIntersection(ray);
-
+		
 		currentRecursions++;
-
-		if (nearestIntersection == null) {
+		
+		if(nearestIntersection == null){
 			return oc;
-		} else {
-
-			Color3f objectColor = nearestIntersection.getObject()
-					.getEnlightment().getColor(nearestIntersection.getPoint(),
-							nearestIntersection.getNormal(), ray, lights);
-
-			if ((currentRecursions >= MAX_RECURSIONS)
-					|| (!nearestIntersection.getObject().isReflecting() && !nearestIntersection
-							.getObject().isRefracting())) {
-
-				switch (mode) {
-				case RAYCASTING_MODE:
-					oc = new Color3f(objectColor);
-					shadow(oc, nearestIntersection);
-
-					break;
-
-				case PHOTONMAPPING_MODE:
-
-					oc = shooter.irradianceEstimate(nearestIntersection);
-
-					break;
-
-				default:
-					System.err.println("Unknown mode " + mode + " for tracing");
+		}
+		else{
+			
+			Color3f objectColor = nearestIntersection.getObject().getEnlightment().getColor(nearestIntersection.getPoint(), nearestIntersection.getNormal(), ray, lights);
+			
+			if((currentRecursions >= MAX_RECURSIONS) || (!nearestIntersection.getObject().isReflecting() && !nearestIntersection.getObject().isRefracting())){
+				
+				switch(mode){
+					case RAYCASTING_MODE :
+						oc = objectColor;
+						shadow(oc, nearestIntersection);
+						
+						break;
+						
+					case PHOTONMAPPING_MODE:
+						
+						oc = shooter.irradianceEstimate(nearestIntersection);
+						
+						break;
+						
+					default:
+						System.err.println("Unknown mode '" + mode + "' for tracing");
 				}
-			} else {
-				Color3f reflectedColor = new Color3f();
-				Color3f refractedColor = new Color3f();
-
-				if (nearestIntersection.getObject().isReflecting()) {
-
-					if (nearestIntersection.getObject().getGlossyFocal() == 0) {
+			}
+			else{
+				Color3f reflectedColor;
+				Color3f refractedColor;
+				
+				if(nearestIntersection.getObject().isReflecting()){
+					
+					if(nearestIntersection.getObject().getGlossyFocal() == 0){
 						Ray reflected = reflectedRay(ray, nearestIntersection);
 						reflectedColor = observedColor(reflected, mode);
-					} else {
-						reflectedColor = glossyReflection(ray,
-								nearestIntersection, mode);
 					}
-
-					reflectedColor
-							.set(
-									(float) (objectColor.x
-											* (1.0d - nearestIntersection
-													.getObject().getKR()) + (reflectedColor.x * nearestIntersection
-											.getObject().getKR())),
-									(float) (objectColor.y
-											* (1.0d - nearestIntersection
-													.getObject().getKR()) + (reflectedColor.y * nearestIntersection
-											.getObject().getKR())),
-									(float) (objectColor.z
-											* (1.0d - nearestIntersection
-													.getObject().getKR()) + (reflectedColor.z * nearestIntersection
-											.getObject().getKR())));
-
-					oc.set(oc.x + reflectedColor.x, oc.y + reflectedColor.y,
-							oc.z + reflectedColor.z);
+					else{
+						reflectedColor = glossyReflection(ray, nearestIntersection, mode);
+					}
+					
+					
+					Color3f objectColorPart = new Color3f(objectColor);
+					objectColorPart.scale((float) (1.0 - nearestIntersection.getObject().getKR()));
+					
+					reflectedColor.scale((float) nearestIntersection.getObject().getKR());
+					reflectedColor.add(objectColorPart);
+					
+					oc.add(reflectedColor);
 				}
-
-				if (nearestIntersection.getObject().isRefracting()) {
+				
+				if(nearestIntersection.getObject().isRefracting()){
 					Ray refracted = refractedRay(ray, nearestIntersection);
-
+					
 					refractedColor = observedColor(refracted, mode);
-
-					refractedColor
-							.set(
-									(float) (objectColor.x
-											* (1.0d - nearestIntersection
-													.getObject().getKR()) + (refractedColor.x * nearestIntersection
-											.getObject().getKR())),
-									(float) (objectColor.y
-											* (1.0d - nearestIntersection
-													.getObject().getKR()) + (refractedColor.y * nearestIntersection
-											.getObject().getKR())),
-									(float) (objectColor.z
-											* (1.0d - nearestIntersection
-													.getObject().getKR()) + (refractedColor.z * nearestIntersection
-											.getObject().getKR())));
-					oc.set(oc.x + refractedColor.x, oc.y + refractedColor.y,
-							oc.z + refractedColor.z);
+					
+					Color3f objectColorPart = new Color3f(objectColor);
+					objectColorPart.scale((float) (1.0 - nearestIntersection.getObject().getKT()));
+					
+					refractedColor.scale((float) nearestIntersection.getObject().getKT());
+					refractedColor.add(objectColorPart);
+					
+					oc.add(refractedColor);
 				}
-
-				if (nearestIntersection.getObject().isReflecting()
-						&& nearestIntersection.getObject().isRefracting()) {
+				
+				if(nearestIntersection.getObject().isReflecting() && nearestIntersection.getObject().isRefracting()){
 					oc.scale(0.5f);
 				}
 			}
-
+			
 			return oc;
 		}
 	}
@@ -212,8 +187,7 @@ public class Scene {
 		return finalColor;
 	}
 
-	private Color3f glossyReflection(Ray ray, Intersection intersection,
-			int mode) {
+	private Color3f glossyReflection(Ray ray, Intersection intersection, int mode) {
 
 		Color3f color = new Color3f();
 
@@ -231,8 +205,7 @@ public class Scene {
 		Point3d sight = new Point3d(intersection.getPoint());
 		sight.add(scaledReflection);
 
-		Observer virtualObs = new Observer(intersection.getPoint(), sight,
-				Math.PI / 4.0);
+		Observer virtualObs = new Observer(intersection.getPoint(), sight, Math.PI / 4.0);
 
 		for (double i = -radius / 2.0d; i < radius / 2.0d; i += step) {
 			for (double j = -radius / 2.0d; j < radius / 2.0d; j += step) {
@@ -280,12 +253,8 @@ public class Scene {
 			Point3d shadowedPoint = new Point3d(intersection.getPoint());
 			shadowedPoint.add(shiftedNorm);
 
-			Vector3d distanceTolight = new Vector3d(l.getSource().x
-					- shadowedPoint.x, l.getSource().y - shadowedPoint.y, l
-					.getSource().z
-					- shadowedPoint.z);
-			Observer virtualObs = new Observer(shadowedPoint, l.getSource(),
-					(Math.PI / 4.0d));
+			Vector3d distanceTolight = new Vector3d(l.getSource().x - shadowedPoint.x, l.getSource().y - shadowedPoint.y, l.getSource().z - shadowedPoint.z);
+			Observer virtualObs = new Observer(shadowedPoint, l.getSource(), (Math.PI / 4.0d));
 			double f = distanceTolight.length();
 
 			for (double i = -radius / 2.0d; i < radius / 2.0d; i += step) {
@@ -306,13 +275,7 @@ public class Scene {
 
 					if (shadowIntersection != null) {
 
-						Vector3d shadowVect = new Vector3d(shadowIntersection
-								.getPoint().x
-								- intersection.getPoint().x, shadowIntersection
-								.getPoint().y
-								- intersection.getPoint().y, shadowIntersection
-								.getPoint().z
-								- intersection.getPoint().z);
+						Vector3d shadowVect = new Vector3d(shadowIntersection.getPoint().x - intersection.getPoint().x, shadowIntersection.getPoint().y - intersection.getPoint().y, shadowIntersection.getPoint().z - intersection.getPoint().z);
 
 						if (shadowVect.length() < f) {
 							shadowed++;
@@ -326,8 +289,7 @@ public class Scene {
 			}
 
 			if (shadowed > 0) {
-				color.scale((float) Math.min(1.0d,
-						(enlighted / (shadowed + enlighted)) + 0.3d));
+				color.scale((float) Math.min(1.0d, (enlighted / (shadowed + enlighted)) + 0.3d));
 				Enlightment.normalize(color);
 			}
 		}
@@ -335,7 +297,7 @@ public class Scene {
 
 	/* Ray Casting Function */
 	private void rayCasting() {
-		System.out.println("---> Rendering...");
+		System.out.println("-- Rendering...");
 		int progress = 0;
 
 		int halfH = output.getH() / 2;
@@ -343,9 +305,7 @@ public class Scene {
 
 		for (int l = -halfH; l < halfH; l++) {
 
-			int done = (int) Math.round(100
-					* (float) (l + (output.getH() / 2) + 1)
-					/ (float) output.getH());
+			int done = (int) Math.round(100 * (float) (l + (output.getH() / 2) + 1) / (float) output.getH());
 
 			if (progress != done) {
 				progress = done;
@@ -368,18 +328,18 @@ public class Scene {
 
 		System.out.println("\tWriting image to " + output.toString());
 		output.finalize();
-		System.out.println("---> End of rendering");
+		System.out.println("-- End of rendering");
 	}
 
 	private void photonMapping() {
-		System.out.println("---> Photon Tracing...");
+		System.out.println("-- Photon Tracing...");
 
 		shooter = new PhotonShooter(this, PHOTONS);
 		shooter.shoot();
 
-		System.out.println("---> End of photon tracing");
+		System.out.println("-- End of photon tracing");
 
-		System.out.println("---> Rendering...");
+		System.out.println("-- Rendering...");
 		int progress = 0;
 
 		int halfH = output.getH() / 2;
@@ -387,8 +347,7 @@ public class Scene {
 
 		for (int l = -halfH; l < halfH; l++) {
 
-			int done = (int) Math.round(100 * (float) (l + halfH + 1)
-					/ (float) output.getH());
+			int done = (int) Math.round(100 * (float) (l + halfH + 1) / (float) output.getH());
 
 			if (progress != done) {
 				progress = done;
@@ -411,7 +370,7 @@ public class Scene {
 
 		System.out.println("\tWriting image to " + output.toString());
 		output.finalize();
-		System.out.println("---> End of rendering");
+		System.out.println("-- End of rendering");
 	}
 
 	public Ray reflectedRay(Ray ray, Intersection intersection) {
@@ -436,16 +395,14 @@ public class Scene {
 	}
 
 	public Ray refractedRay(Ray ray, Intersection intersection) {
-		Ray r1 = refractRay(ray, intersection, 1.0d, intersection.getObject()
-				.getN());
+		Ray r1 = refractRay(ray, intersection, 1.0d, intersection.getObject().getN());
 		Intersection refractionIntersection = getNearestIntersection(r1);
 
 		if (refractionIntersection != null) {
 			if (refractionIntersection.getObject() == intersection.getObject()) {
 				refractionIntersection.getNormal().negate();
 
-				Ray r2 = refractRay(r1, refractionIntersection, intersection
-						.getObject().getN(), 1.0d);
+				Ray r2 = refractRay(r1, refractionIntersection, intersection.getObject().getN(), 1.0d);
 				return r2;
 			} else {
 				return r1;
@@ -455,8 +412,7 @@ public class Scene {
 		}
 	}
 
-	public Ray refractRay(Ray ray, Intersection intersection, double n1,
-			double n2) {
+	public Ray refractRay(Ray ray, Intersection intersection, double n1, double n2) {
 
 		double n = n2 / n1;
 		double cosT = intersection.getNormal().dot(ray.getDirection());
@@ -490,7 +446,6 @@ public class Scene {
 
 			refractDirection = new Vector3d(ray.getDirection());
 			refractDirection.sub(toSub);
-			refractDirection.normalize();
 		}
 
 		refractDirection.normalize();
@@ -512,9 +467,7 @@ public class Scene {
 			Intersection candidate = s.intersection(ray);
 
 			if (candidate != null) {
-				if ((nearestIntersection == null || nearestIntersection.getT() > candidate
-						.getT())
-						&& (candidate.getT() > EPSILON)) {
+				if ((nearestIntersection == null || nearestIntersection.getT() > candidate.getT()) && (candidate.getT() > EPSILON)) {
 					nearestIntersection = candidate;
 				}
 			}
@@ -532,10 +485,7 @@ public class Scene {
 			Intersection candidate = s.intersection(ray);
 
 			if (candidate != null) {
-				if ((nearestIntersection == null || nearestIntersection.getT() > candidate
-						.getT())
-						&& (!candidate.getObject().isRefracting())
-						&& (candidate.getT() > EPSILON)) {
+				if ((nearestIntersection == null || nearestIntersection.getT() > candidate.getT()) && (!candidate.getObject().isRefracting()) && (candidate.getT() > EPSILON)) {
 					nearestIntersection = candidate;
 				}
 			}
@@ -596,8 +546,7 @@ public class Scene {
 				System.err.println("Unknown mode " + mode + " for tracing");
 			}
 		} else {
-			System.err
-					.println("Can't trace Scene : attributes uninitialized (check observer, image and background color)");
+			System.err.println("Can't trace Scene : attributes uninitialized (check observer, image and background color)");
 		}
 	}
 }

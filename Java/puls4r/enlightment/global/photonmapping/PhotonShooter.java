@@ -7,7 +7,10 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
+import puls4r.color.Color;
 import puls4r.enlightment.Enlightment;
+import puls4r.math.Point3;
+import puls4r.math.Vector3;
 import puls4r.scene.Scene;
 import puls4r.scene.objects.Light;
 import puls4r.tracer.Intersection;
@@ -19,8 +22,8 @@ import puls4r.tracer.Ray;
  */
 public class PhotonShooter {
 	private static int MAX_RECURSIONS = 500;
-	private static double IRRADIANCE_AREA = 1.5;
-	private static int IRRADIANCE_PHOTON_NUMBER = 1000000;
+	private static float IRRADIANCE_AREA = 0.5f;
+	private static int IRRADIANCE_GATHER = 50;
 	
 	private int currentRecursions;
 	
@@ -31,8 +34,8 @@ public class PhotonShooter {
 	private int maxPhotons;
 	
 	private PhotonMap directEnlightment;
-	private PhotonMap indirectEnlightment;
-	private PhotonMap caustics;
+	//private GlobalPhotonMap indirectEnlightment;
+	//private GlobalPhotonMap caustics;
 	
 	private Scene scene;
 	
@@ -40,9 +43,13 @@ public class PhotonShooter {
 		this.scene = scene;
 		this.maxPhotons = maxPhotons;
 		
-		directEnlightment = new PhotonMap(maxPhotons);
-		indirectEnlightment = new PhotonMap(maxPhotons);
-		caustics = new PhotonMap(maxPhotons);
+		directEnlightment = new PhotonMap(maxPhotons, IRRADIANCE_GATHER, IRRADIANCE_AREA);
+		//indirectEnlightment = new GlobalPhotonMap(maxPhotons, (int)(maxPhotons*IRRADIANCE_PHOTON_RATIO), IRRADIANCE_AREA);
+		//caustics = new GlobalPhotonMap(maxPhotons, (int)(maxPhotons*IRRADIANCE_PHOTON_RATIO), IRRADIANCE_AREA);
+		
+		directEnlightment.prepare();
+		//indirectEnlightment.prepare();
+		//caustics.prepare();
 	}
 	
 	private Vector3d randomDirection(){
@@ -72,24 +79,28 @@ public class PhotonShooter {
 		}
 	}
 	
-	private void storePhoton(Point3d position, Vector3d direction, float energy[], boolean direct, boolean indirect, boolean caustic){
-		float pos[] = {(float) position.x, (float) position.y, (float) position.z};
-		float dir[] = {(float) direction.x, (float) direction.y, (float) direction.z};
+	private void storePhoton(Point3d position, Vector3d norm, Vector3d direction, float energy[], Color3f diffColor, boolean direct, boolean indirect, boolean caustic){
+		Point3 point = new Point3((float)position.x, (float)position.y, (float)position.z);
+		Vector3 dir = new Vector3((float)direction.x, (float)direction.y, (float)direction.z);
+		Vector3 normal = new Vector3((float)norm.x, (float)norm.y, (float)norm.z);;
 		
-		if(direct){
+		Color power = new Color(energy[0], energy[1], energy[2]);
+		Color diffuse = new Color((float)diffColor.x, (float)diffColor.y, (float)diffColor.z);
+		
+		//if(direct){
 			storedDirect++;
-			directEnlightment.store(energy, pos, dir);
-		}
+			directEnlightment.store(point, normal, dir, power, diffuse);
+		//}
 		
-		if(indirect){
-			storedIndirect++;
-			indirectEnlightment.store(energy, pos, dir);
-		}
+		//else if(indirect){
+		//	storedIndirect++;
+		//	indirectEnlightment.store(point, normal, dir, power, diffuse);
+		//}
 		
-		if(caustic){
-			storedCaustic++;
-			caustics.store(energy, pos, dir);
-		}
+		//else if(caustic){
+		//	storedCaustic++;
+		//	caustics.store(point, normal, dir, power, diffuse);
+		//}
 	}
 	
 	private void scaleEnergy(float energy[], Color3f color){
@@ -103,12 +114,13 @@ public class PhotonShooter {
 		currentRecursions++;
 		
 		Intersection photonIntersection = scene.getNearestIntersection(ray);
+		Color3f objectColor = photonIntersection.getObject().getEnlightment().getColor(photonIntersection.getPoint(), photonIntersection.getNormal(), ray, scene.getLights());
 		
 		if(photonIntersection != null){
 			if(photonIntersection.getObject().isReflecting()){
 				
 				if(russianRoulette(photonIntersection.getObject().getKR()) || (currentRecursions >= MAX_RECURSIONS)){
-					storePhoton(photonIntersection.getPoint(), ray.getDirection(), energy, direct, indirect, caustic);
+					storePhoton(photonIntersection.getPoint(), photonIntersection.getNormal(), ray.getDirection(), energy, objectColor, direct, indirect, caustic);
 				}
 				else{
 					Ray reflected = scene.reflectedRay(ray, photonIntersection);
@@ -119,7 +131,7 @@ public class PhotonShooter {
 			if(photonIntersection.getObject().isRefracting()){
 				
 				if(russianRoulette(photonIntersection.getObject().getKT()) || (currentRecursions >= MAX_RECURSIONS)){
-					storePhoton(photonIntersection.getPoint(), ray.getDirection(), energy, direct, indirect, caustic);
+					storePhoton(photonIntersection.getPoint(), photonIntersection.getNormal(), ray.getDirection(), energy, objectColor, direct, indirect, caustic);
 				}
 				else{
 					Ray refracted = scene.refractedRay(ray, photonIntersection);
@@ -130,10 +142,9 @@ public class PhotonShooter {
 			
 			if(!photonIntersection.getObject().isReflecting() && !photonIntersection.getObject().isRefracting()){
 				
-				Color3f objectColor = photonIntersection.getObject().getEnlightment().getColor(photonIntersection.getPoint(), photonIntersection.getNormal(), ray, scene.getLights());
 				scaleEnergy(energy, objectColor);
 				
-				storePhoton(photonIntersection.getPoint(), ray.getDirection(), energy, direct, indirect, caustic);
+				storePhoton(photonIntersection.getPoint(), photonIntersection.getNormal(), ray.getDirection(), energy, objectColor, direct, indirect, caustic);
 				
 				if(!russianRoulette(photonIntersection.getObject().getKR()) && !(currentRecursions >= MAX_RECURSIONS)){
 					Vector3d randDir = randomDirection();
@@ -168,73 +179,42 @@ public class PhotonShooter {
 				Vector3d randDir = randomDirection();
 				Ray ray = new Ray(l.getSource(), randDir);
 				
-				float energy[] = {	(float) (l.getPower() * l.getColor().x), 
-									(float) (l.getPower() * l.getColor().y), 
-									(float) (l.getPower() * l.getColor().z)};
+				float energy[] = {	l.getColor().x / maxPhotons, 
+									l.getColor().y / maxPhotons, 
+									l.getColor().z / maxPhotons};
 				
 				currentRecursions = 0;
 				shootPhoton(ray, energy, true, false, false);
 			}
-			
-			/* Photons energy scaling */
-			if(storedDirect != 0){
-				directEnlightment.scale_photon_power(1.0f / storedDirect);
-			}
-			
-			if(storedIndirect != 0){
-				indirectEnlightment.scale_photon_power(1.0f / storedIndirect);
-			}
-			
-			if(storedCaustic != 0){
-				caustics.scale_photon_power(1.0f / storedCaustic);
-			}
-			
-			System.out.println("");
 		}
 		
 		System.out.println("--> Balancing direct photon map...");
-		directEnlightment.balance();
+		directEnlightment.init();
 		
 		System.out.println("--> Balancing indirect photon map...");
-		indirectEnlightment.balance();
+		//indirectEnlightment.init();
 		
 		System.out.println("--> Balancing caustic photon map...");
-		caustics.balance();
+		//caustics.init();
 	}
 	
 	public Color3f irradianceEstimate(Intersection intersection){
 		Color3f color = new Color3f();
-		
-		float irradiance[] = new float[3];
-		float pos[] = {(float) intersection.getPoint().x, (float) intersection.getPoint().y, (float) intersection.getPoint().z};
-		float normal[] = {(float) intersection.getNormal().x, (float) intersection.getNormal().y, (float) intersection.getNormal().z};
+		Point3 point = new Point3((float)intersection.getPoint().x, (float)intersection.getPoint().y, (float)intersection.getPoint().z);
+		Vector3 norm = new Vector3((float)intersection.getNormal().x, (float)intersection.getNormal().y, (float)intersection.getNormal().z);
 		
 		//Direct enlightment component
-		irradiance[0] = 0;
-		irradiance[1] = 0;
-		irradiance[2] = 0;
-		
-		directEnlightment.irradiance_estimate(irradiance, pos, normal, (float) IRRADIANCE_AREA, IRRADIANCE_PHOTON_NUMBER);
-		
-		color.set(color.x + irradiance[0], color.y + irradiance[1], color.z + irradiance[2]);			
+		Color radiance = directEnlightment.getRadiance(point, norm);
+		color.set(color.x + radiance.getR(), color.y + radiance.getG(), color.z + radiance.getB());			
 		
 		//Indirect enlightment component
-		irradiance[0] = 0;
-		irradiance[1] = 0;
-		irradiance[2] = 0;
-		
-		indirectEnlightment.irradiance_estimate(irradiance, pos, normal, (float) IRRADIANCE_AREA, IRRADIANCE_PHOTON_NUMBER);
-		
-		color.set(color.x + irradiance[0], color.y + irradiance[1], color.z + irradiance[2]);	
+		//radiance = indirectEnlightment.getRadiance(point, norm);
+		//color.set(color.x + radiance.getR(), color.y + radiance.getG(), color.z + radiance.getB());	
 		
 		//Caustics component
-		irradiance[0] = 0;
-		irradiance[1] = 0;
-		irradiance[2] = 0;
+		//radiance = indirectEnlightment.getRadiance(point, norm);
+		//color.set(color.x + radiance.getR(), color.y + radiance.getG(), color.z + radiance.getB());	
 		
-		caustics.irradiance_estimate(irradiance, pos, normal, (float) IRRADIANCE_AREA, IRRADIANCE_PHOTON_NUMBER);
-		
-		color.set(color.x + irradiance[0], color.y + irradiance[1], color.z + irradiance[2]);
 		Enlightment.normalize(color);
 		
 		return color;
