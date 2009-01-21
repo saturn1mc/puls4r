@@ -53,7 +53,7 @@ public abstract class Shape {
 	}
 
 	public void setReflecting(boolean reflect, double kr) {
-		enlightment.setReflecting(isReflecting(), kr);
+		enlightment.setReflecting(reflect, kr);
 	}
 
 	public boolean isRefracting() {

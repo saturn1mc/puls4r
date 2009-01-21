@@ -77,14 +77,14 @@
 				epsilon = "0"/>
 				
 		<plan 	x="0" y="1" z="0" d="0" monoface="0"
-				enlightment="phong" r="0" g="0.4" b="1" 
+				enlightment="phong" r="1" g="1" b="1" 
 				reflecting="0"
 				kr="0"
 				glossyFocal="0.0"
 				glossyWidth="0.0"
 				refracting="1"
-				n="1.33"
-				kt="1.0"
+				n="1"
+				kt="1.33"
 				perlin = "1"
 				epsilon = "0.2"/>
 				

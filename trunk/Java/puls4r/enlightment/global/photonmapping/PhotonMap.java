@@ -1,397 +1,477 @@
-/**
- * 
- */
 package puls4r.enlightment.global.photonmapping;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
-/**
- * @author Camille
- * 
- */
-public class PhotonMap {
+import puls4r.color.Color;
+import puls4r.math.BoundingBox;
+import puls4r.math.Point3;
+import puls4r.math.Vector3;
 
-	private Vector<Photon> photons;
+public final class PhotonMap {
+    private ArrayList<Photon> photonList;
+    private Photon[] photons;
+    private int storedPhotons;
+    private int halfStoredPhotons;
+    private int log2n;
+    private int numGather;
+    private float gatherRadius;
+    private BoundingBox bounds;
+    private boolean hasRadiance;
+    private float maxPower;
+    private float maxRadius;
+    private int numEmit;
 
-	private int stored_photons;
-	private int half_stored_photons;
-	private int max_photons;
-	private int prev_scale;
+    public PhotonMap(int numEmit, int numGather, float gatherRadius) {
+        this.numEmit = numEmit;
+        this.numGather = numGather;
+        this.gatherRadius = gatherRadius;
+        bounds = new BoundingBox();
+        hasRadiance = false;
+        maxPower = 0;
+        maxRadius = 0;
+    }
 
-	private float costheta[] = new float[256];
-	private float sintheta[] = new float[256];
-	private float cosphi[] = new float[256];
-	private float sinphi[] = new float[256];
+    public void prepare() {
+        photonList = new ArrayList<Photon>();
+        photonList.add(null);
+        photons = null;
+        storedPhotons = halfStoredPhotons = 0;
+    }
 
-	private float bbox_min[] = new float[3]; // use bbox_min;
-	private float bbox_max[] = new float[3]; // use bbox_max;
+    public void store(Point3 point, Vector3 norm, Vector3 dir, Color power, Color diffuse) {
+        Photon p = new Photon(point, norm, dir, power, diffuse);
+        synchronized (this) {
+            storedPhotons++;
+            photonList.add(p);
+            bounds.include(new Point3(p.x, p.y, p.z));
+            maxPower = Math.max(maxPower, power.getMax());
+        }
+    }
 
-	public PhotonMap(int max_phot) {
-		stored_photons = 0;
-		prev_scale = 1;
-		max_photons = max_phot;
+    private void locatePhotons(NearestPhotons np) {
+        float[] dist1d2 = new float[log2n];
+        int[] chosen = new int[log2n];
+        int i = 1;
+        int level = 0;
+        int cameFrom;
+        while (true) {
+            while (i < halfStoredPhotons) {
+                float dist1d = photons[i].getDist1(np.px, np.py, np.pz);
+                dist1d2[level] = dist1d * dist1d;
+                i += i;
+                if (dist1d > 0.0f)
+                    i++;
+                chosen[level++] = i;
+            }
+            np.checkAddNearest(photons[i]);
+            do {
+                cameFrom = i;
+                i >>= 1;
+                level--;
+                if (i == 0)
+                    return;
+            } while ((dist1d2[level] >= np.dist2[0]) || (cameFrom != chosen[level]));
+            np.checkAddNearest(photons[i]);
+            i = chosen[level++] ^ 1;
+        }
+    }
 
-		photons = new Vector<Photon>(max_phot+1);
+    private void balance() {
+        if (storedPhotons == 0)
+            return;
+        photons = photonList.toArray(new Photon[photonList.size()]);
+        photonList = null;
+        Photon[] temp = new Photon[storedPhotons + 1];
+        balanceSegment(temp, 1, 1, storedPhotons);
+        photons = temp;
+        halfStoredPhotons = storedPhotons / 2;
+        log2n = (int) Math.ceil(Math.log(storedPhotons) / Math.log(2.0));
+    }
 
-		bbox_min[0] = bbox_min[1] = bbox_min[2] = Float.POSITIVE_INFINITY;
-		bbox_max[0] = bbox_max[1] = bbox_max[2] = Float.NEGATIVE_INFINITY;
+    private void balanceSegment(Photon[] temp, int index, int start, int end) {
+        int median = 1;
+        while ((4 * median) <= (end - start + 1))
+            median += median;
+        if ((3 * median) <= (end - start + 1)) {
+            median += median;
+            median += (start - 1);
+        } else
+            median = end - median + 1;
+        int axis = Photon.SPLIT_Z;
+        Vector3 extents = bounds.getExtents();
+        if ((extents.x > extents.y) && (extents.x > extents.z))
+            axis = Photon.SPLIT_X;
+        else if (extents.y > extents.z)
+            axis = Photon.SPLIT_Y;
+        int left = start;
+        int right = end;
+        while (right > left) {
+            double v = photons[right].getCoord(axis);
+            int i = left - 1;
+            int j = right;
+            while (true) {
+                while (photons[++i].getCoord(axis) < v) {
+                }
+                while ((photons[--j].getCoord(axis) > v) && (j > left)) {
+                }
+                if (i >= j)
+                    break;
+                swap(i, j);
+            }
+            swap(i, right);
+            if (i >= median)
+                right = i - 1;
+            if (i <= median)
+                left = i + 1;
+        }
+        temp[index] = photons[median];
+        temp[index].setSplitAxis(axis);
+        if (median > start) {
+            if (start < (median - 1)) {
+                float tmp;
+                switch (axis) {
+                    case Photon.SPLIT_X:
+                        tmp = bounds.getMaximum().x;
+                        bounds.getMaximum().x = temp[index].x;
+                        balanceSegment(temp, 2 * index, start, median - 1);
+                        bounds.getMaximum().x = tmp;
+                        break;
+                    case Photon.SPLIT_Y:
+                        tmp = bounds.getMaximum().y;
+                        bounds.getMaximum().y = temp[index].y;
+                        balanceSegment(temp, 2 * index, start, median - 1);
+                        bounds.getMaximum().y = tmp;
+                        break;
+                    default:
+                        tmp = bounds.getMaximum().z;
+                        bounds.getMaximum().z = temp[index].z;
+                        balanceSegment(temp, 2 * index, start, median - 1);
+                        bounds.getMaximum().z = tmp;
+                }
+            } else
+                temp[2 * index] = photons[start];
+        }
+        if (median < end) {
+            if ((median + 1) < end) {
+                float tmp;
+                switch (axis) {
+                    case Photon.SPLIT_X:
+                        tmp = bounds.getMinimum().x;
+                        bounds.getMinimum().x = temp[index].x;
+                        balanceSegment(temp, (2 * index) + 1, median + 1, end);
+                        bounds.getMinimum().x = tmp;
+                        break;
+                    case Photon.SPLIT_Y:
+                        tmp = bounds.getMinimum().y;
+                        bounds.getMinimum().y = temp[index].y;
+                        balanceSegment(temp, (2 * index) + 1, median + 1, end);
+                        bounds.getMinimum().y = tmp;
+                        break;
+                    default:
+                        tmp = bounds.getMinimum().z;
+                        bounds.getMinimum().z = temp[index].z;
+                        balanceSegment(temp, (2 * index) + 1, median + 1, end);
+                        bounds.getMinimum().z = tmp;
+                }
+            } else
+                temp[(2 * index) + 1] = photons[end];
+        }
+    }
 
-		// ----------------------------------------
-		// initialize direction conversion tables
-		// ----------------------------------------
+    private void swap(int i, int j) {
+        Photon tmp = photons[i];
+        photons[i] = photons[j];
+        photons[j] = tmp;
+    }
 
-		for (int i = 0; i < 256; i++) {
-			double angle = ((double) i) * (1.0 / 256.0) * Math.PI;
-			costheta[i] = (float) Math.cos(angle);
-			sintheta[i] = (float) Math.sin(angle);
-			cosphi[i] = (float) Math.cos(2.0 * angle);
-			sinphi[i] = (float) Math.sin(2.0 * angle);
-		}
-	}
+    static class Photon {
+        float x;
+        float y;
+        float z;
+        short dir;
+        short normal;
+        int data;
+        int power;
+        int flags;
 
-	private void balance_segment(Photon[] pbal, Photon[] porg, int index, int start, int end) {
-		//--------------------
-		// compute new median
-		//--------------------
-		
-		int median=1;
-		while ((4*median) <= (end-start+1))
-			median += median;
-		
-		if ((3*median) <= (end-start+1)) {
-			median += median;
-			median += start-1;
-		} else
-			median = end-median+1;
-		
-		//--------------------------
-		// find axis to split along
-		//--------------------------
-		
-		int axis=2;
-		if ((bbox_max[0]-bbox_min[0])>(bbox_max[1]-bbox_min[1]) &&
-			(bbox_max[0]-bbox_min[0])>(bbox_max[2]-bbox_min[2]))
-			axis=0;
-		else if ((bbox_max[1]-bbox_min[1])>(bbox_max[2]-bbox_min[2]))
-			axis=1;
-		
-		//------------------------------------------
-		// partition photon block around the median
-		//------------------------------------------
-		
-		median_split( porg, start, end, median, axis );
-		
-		pbal[ index ] = porg[ median ];
-		pbal[ index ].plane = (short) axis;
-		
-		//----------------------------------------------
-		// recursively balance the left and right block
-		//----------------------------------------------
-		
-		if ( median > start ) {
-			// balance left segment
-			if ( start < median-1 ) {
-				float tmp=bbox_max[axis];
-				bbox_max[axis] = pbal[index].pos[axis];
-				balance_segment( pbal, porg, 2*index, start, median-1 );
-				bbox_max[axis] = tmp;
-			} else {
-				pbal[ 2*index ] = porg[start];
-			}
-		}
-		
-		if ( median < end ) {
-			// balance right segment
-			if ( median+1 < end ) {
-				float tmp = bbox_min[axis];
-				bbox_min[axis] = pbal[index].pos[axis];
-				balance_segment( pbal, porg, 2*index+1, median+1, end );
-				bbox_min[axis] = tmp;
-			} else {
-				pbal[ 2*index+1 ] = porg[end];
-			}
-		}
-	}
+        static final int SPLIT_X = 0;
+        static final int SPLIT_Y = 1;
+        static final int SPLIT_Z = 2;
+        static final int SPLIT_MASK = 3;
 
-	private void swap(Photon ph[], int a, int b) {
-		Photon ph2 = ph[a];
-		ph[a] = ph[b];
-		ph[b] = ph2;
-	}
+        Photon(Point3 p, Vector3 n, Vector3 dir, Color power, Color diffuse) {
+            x = p.x;
+            y = p.y;
+            z = p.z;
+            this.dir = dir.encode();
+            this.power = power.toRGBE();
+            flags = 0;
+            normal = n.encode();
+            data = diffuse.toRGB();
+        }
 
-	private void median_split(Photon p[], int start, int end, int median, int axis) {
-		int left = start;
-		int right = end;
+        void setSplitAxis(int axis) {
+            flags &= ~SPLIT_MASK;
+            flags |= axis;
+        }
 
-		while (right > left) {
-			float v = p[right].pos[axis];
-			int i = left - 1;
-			int j = right;
-			for (;;) {
-				while (p[++i].pos[axis] < v)
-					;
-				while (p[--j].pos[axis] > v && j > left)
-					;
-				if (i >= j)
-					break;
-				swap(p, i, j);
-			}
+        float getCoord(int axis) {
+            switch (axis) {
+                case SPLIT_X:
+                    return x;
+                case SPLIT_Y:
+                    return y;
+                default:
+                    return z;
+            }
+        }
 
-			swap(p, i, right);
-			if (i >= median)
-				right = i - 1;
-			if (i <= median)
-				left = i + 1;
-		}
-	}
+        float getDist1(float px, float py, float pz) {
+            switch (flags & SPLIT_MASK) {
+                case SPLIT_X:
+                    return px - x;
+                case SPLIT_Y:
+                    return py - y;
+                default:
+                    return pz - z;
+            }
+        }
 
-	public void store(float power[], // photon power
-			float pos[], // photon position
-			float dir[]) { // photon direction
+        float getDist2(float px, float py, float pz) {
+            float dx = x - px;
+            float dy = y - py;
+            float dz = z - pz;
+            return (dx * dx) + (dy * dy) + (dz * dz);
+        }
+    }
 
-		if (stored_photons >= max_photons)
-			return;
+    public void init() {
 
-		stored_photons++;
-		Photon node = new Photon();
-		photons.add(node);
+       
+        balance();
+       
+        maxRadius = 1.4f * (float) Math.sqrt(maxPower * numGather);
+       
+        if (gatherRadius > maxRadius)
+            gatherRadius = maxRadius;
+      
+        precomputeRadiance();
+        
+    }
 
-		for (int i = 0; i < 3; i++) {
-			node.pos[i] = pos[i];
+    public void precomputeRadiance() {
+        if (storedPhotons == 0)
+            return;
+        // precompute the radiance for all photons that are neither
+        // leaves nor parents of leaves in the tree.
+        int quadStoredPhotons = halfStoredPhotons / 2;
+        Point3 p = new Point3();
+        Vector3 n = new Vector3();
+        Point3 ppos = new Point3();
+        Vector3 pdir = new Vector3();
+        Vector3 pvec = new Vector3();
+        Color irr = new Color();
+        Color pow = new Color();
+        float maxDist2 = gatherRadius * gatherRadius;
+        NearestPhotons np = new NearestPhotons(p, numGather, maxDist2);
+        Photon[] temp = new Photon[quadStoredPhotons + 1];
+        
+        for (int i = 1; i <= quadStoredPhotons; i++) {
+            Photon curr = photons[i];
+            p.set(curr.x, curr.y, curr.z);
+            Vector3.decode(curr.normal, n);
+            irr.set(Color.BLACK);
+            np.reset(p, maxDist2);
+            locatePhotons(np);
+            if (np.found < 8) {
+                curr.data = 0;
+                temp[i] = curr;
+                continue;
+            }
+            float invArea = 1.0f / ((float) Math.PI * np.dist2[0]);
+            float maxNDist = np.dist2[0] * 0.05f;
+            for (int j = 1; j <= np.found; j++) {
+                Photon phot = np.index[j];
+                Vector3.decode(phot.dir, pdir);
+                float cos = -Vector3.dot(pdir, n);
+                if (cos > 0.01f) {
+                    ppos.set(phot.x, phot.y, phot.z);
+                    Point3.sub(ppos, p, pvec);
+                    float pcos = Vector3.dot(pvec, n);
+                    if ((pcos < maxNDist) && (pcos > -maxNDist))
+                        irr.add(pow.setRGBE(phot.power));
+                }
+            }
+            irr.mul(invArea);
+            // compute radiance
+            irr.mul(new Color(curr.data)).mul(1.0f / (float) Math.PI);
+            curr.data = irr.toRGBE();
+            temp[i] = curr;
+        }
 
-			if (node.pos[i] < bbox_min[i])
-				bbox_min[i] = node.pos[i];
-			if (node.pos[i] > bbox_max[i])
-				bbox_max[i] = node.pos[i];
+        // resize photon map to only include irradiance photons
+        numGather /= 4;
+        maxRadius = 1.4f * (float) Math.sqrt(maxPower * numGather);
+        if (gatherRadius > maxRadius)
+            gatherRadius = maxRadius;
+        storedPhotons = quadStoredPhotons;
+        halfStoredPhotons = storedPhotons / 2;
+        log2n = (int) Math.ceil(Math.log(storedPhotons) / Math.log(2.0));
+        photons = temp;
+        hasRadiance = true;
+    }
 
-			node.power[i] = power[i];
-		}
+    public Color getRadiance(Point3 p, Vector3 n) {
+        if (!hasRadiance || (storedPhotons == 0))
+            return Color.BLACK;
+        float px = p.x;
+        float py = p.y;
+        float pz = p.z;
+        int i = 1;
+        int level = 0;
+        int cameFrom;
+        float dist2;
+        float maxDist2 = gatherRadius * gatherRadius;
+        Photon nearest = null;
+        Photon curr;
+        Vector3 photN = new Vector3();
+        float[] dist1d2 = new float[log2n];
+        int[] chosen = new int[log2n];
+        while (true) {
+            while (i < halfStoredPhotons) {
+                float dist1d = photons[i].getDist1(px, py, pz);
+                dist1d2[level] = dist1d * dist1d;
+                i += i;
+                if (dist1d > 0)
+                    i++;
+                chosen[level++] = i;
+            }
+            curr = photons[i];
+            dist2 = curr.getDist2(px, py, pz);
+            if (dist2 < maxDist2) {
+                Vector3.decode(curr.normal, photN);
+                float currentDotN = Vector3.dot(photN, n);
+                if (currentDotN > 0.9f) {
+                    nearest = curr;
+                    maxDist2 = dist2;
+                }
+            }
+            do {
+                cameFrom = i;
+                i >>= 1;
+                level--;
+                if (i == 0)
+                    return (nearest == null) ? Color.BLACK : new Color().setRGBE(nearest.data);
+            } while ((dist1d2[level] >= maxDist2) || (cameFrom != chosen[level]));
+            curr = photons[i];
+            dist2 = curr.getDist2(px, py, pz);
+            if (dist2 < maxDist2) {
+                Vector3.decode(curr.normal, photN);
+                float currentDotN = Vector3.dot(photN, n);
+                if (currentDotN > 0.9f) {
+                    nearest = curr;
+                    maxDist2 = dist2;
+                }
+            }
+            i = chosen[level++] ^ 1;
+        }
+    }
 
-		int theta = (int) (Math.acos(dir[2]) * (256.0 / Math.PI));
-		if (theta > 255)
-			node.theta = 255;
-		else
-			node.theta = (char) theta;
+    private static class NearestPhotons {
+        int found;
+        float px, py, pz;
+        private int max;
+        private boolean gotHeap;
+        protected float[] dist2;
+        protected Photon[] index;
 
-		int phi = (int) (Math.atan2(dir[1], dir[0]) * (256.0 / (2.0 * Math.PI)));
-		if (phi > 255)
-			node.phi = 255;
-		else if (phi < 0)
-			node.phi = (char) (phi + 256);
-		else
-			node.phi = (char) phi;
-	}
+        NearestPhotons(Point3 p, int n, float maxDist2) {
+            max = n;
+            found = 0;
+            gotHeap = false;
+            px = p.x;
+            py = p.y;
+            pz = p.z;
+            dist2 = new float[n + 1];
+            index = new Photon[n + 1];
+            dist2[0] = maxDist2;
+        }
 
-	public void scale_photon_power(float scale) { // 1/(number of emitted /
-		// photons)
+        void reset(Point3 p, float maxDist2) {
+            found = 0;
+            gotHeap = false;
+            px = p.x;
+            py = p.y;
+            pz = p.z;
+            dist2[0] = maxDist2;
+        }
 
-		for (int i = prev_scale; i < stored_photons; i++) {
-			photons.elementAt(i).power[0] *= scale;
-			photons.elementAt(i).power[1] *= scale;
-			photons.elementAt(i).power[2] *= scale;
-		}
+        void checkAddNearest(Photon p) {
+            float fdist2 = p.getDist2(px, py, pz);
+            if (fdist2 < dist2[0]) {
+                if (found < max) {
+                    found++;
+                    dist2[found] = fdist2;
+                    index[found] = p;
+                } else {
+                    int j;
+                    int parent;
+                    if (!gotHeap) {
+                        float dst2;
+                        Photon phot;
+                        int halfFound = found >> 1;
+                        for (int k = halfFound; k >= 1; k--) {
+                            parent = k;
+                            phot = index[k];
+                            dst2 = dist2[k];
+                            while (parent <= halfFound) {
+                                j = parent + parent;
+                                if ((j < found) && (dist2[j] < dist2[j + 1]))
+                                    j++;
+                                if (dst2 >= dist2[j])
+                                    break;
+                                dist2[parent] = dist2[j];
+                                index[parent] = index[j];
+                                parent = j;
+                            }
+                            dist2[parent] = dst2;
+                            index[parent] = phot;
+                        }
+                        gotHeap = true;
+                    }
+                    parent = 1;
+                    j = 2;
+                    while (j <= found) {
+                        if ((j < found) && (dist2[j] < dist2[j + 1]))
+                            j++;
+                        if (fdist2 > dist2[j])
+                            break;
+                        dist2[parent] = dist2[j];
+                        index[parent] = index[j];
+                        parent = j;
+                        j += j;
+                    }
+                    dist2[parent] = fdist2;
+                    index[parent] = p;
+                    dist2[0] = dist2[1];
+                }
+            }
+        }
+    }
 
-		prev_scale = stored_photons;
-	}
+    public boolean allowDiffuseBounced() {
+        return true;
+    }
 
-	public void balance() { // balance the kd-tree (before use!)
-		if (stored_photons > 1) {
-			// allocate two temporary arrays for the balancing procedure
-			Photon pa1[] = new Photon[stored_photons + 1];
-			Photon pa2[] = new Photon[stored_photons + 1];
+    public boolean allowReflectionBounced() {
+        return true;
+    }
 
-			for (int i = 0; i < stored_photons; i++)
-				pa2[i] = photons.elementAt(i);
+    public boolean allowRefractionBounced() {
+        return true;
+    }
 
-			balance_segment(pa1, pa2, 1, 1, stored_photons);
-
-			// reorganize balanced kd-tree (make a heap)
-			int d, j = 1, foo = 1;
-			Photon foo_photon = photons.elementAt(j);
-
-			for (int i = 1; i < stored_photons; i++) {
-				
-				//TODO Very doubtful translation
-				d = photons.indexOf(pa1[j]) - photons.size();
-				//
-				
-				pa1[j] = null;
-				
-				if (d != foo) {
-					photons.remove(j);
-					photons.insertElementAt(photons.elementAt(d), j);
-				} else {
-					photons.remove(j);
-					photons.insertElementAt(foo_photon, j);
-
-					if (i < stored_photons) {
-						for (; foo < stored_photons; foo++)
-							if (pa1[foo] != null)
-								break;
-						foo_photon = photons.elementAt(foo);
-						j = foo;
-					}
-					continue;
-				}
-				j = d;
-			}
-		}
-
-		half_stored_photons = stored_photons / 2 - 1;
-	}
-
-	public void irradiance_estimate(float irrad[], // returned irradiance
-			float pos[], // surface position
-			float normal[], // surface normal at pos
-			float max_dist, // max distance to look for photons
-			int nphotons) { // number of photons to use
-
-		irrad[0] = irrad[1] = irrad[2] = 0.0f;
-
-		NearestPhotons np = new NearestPhotons();
-		np.dist2 = new float[nphotons + 1];
-		np.index = new Photon[nphotons + 1];
-
-		np.pos[0] = pos[0];
-		np.pos[1] = pos[1];
-		np.pos[2] = pos[2];
-		np.max = nphotons;
-		np.found = 0;
-		np.got_heap = 0;
-		np.dist2[0] = max_dist * max_dist;
-
-		// locate the nearest photons
-		locate_photons(np, 1);
-
-		// if less than 8 photons return
-		if (np.found < 8)
-			return;
-
-		float pdir[] = new float[3];
-
-		// sum irradiance from all photons
-		for (int i = 1; i <= np.found; i++) {
-			Photon p = np.index[i];
-			// the photon_dir call and following if can be omitted (for speed)
-			// if the scene does not have any thin surfaces
-			photon_dir(pdir, p);
-			if ((pdir[0] * normal[0] + pdir[1] * normal[1] + pdir[2] * normal[2]) < 0.0f) {
-				irrad[0] += p.power[0];
-				irrad[1] += p.power[1];
-				irrad[2] += p.power[2];
-			}
-		}
-
-		float tmp = (float) ((1.0f / Math.PI) / (np.dist2[0])); // estimate of
-		// density
-
-		irrad[0] *= tmp;
-		irrad[1] *= tmp;
-		irrad[2] *= tmp;
-	}
-
-	public void locate_photons(NearestPhotons np, // np is used to locate
-			// the photons
-			int index) { // call with index = 1
-
-		Photon p = photons.elementAt(index);
-		float dist1;
-
-		if (index < half_stored_photons) {
-			dist1 = np.pos[p.plane] - p.pos[p.plane];
-
-			if (dist1 > 0.0) { // if dist1 is positive search right plane
-				locate_photons(np, 2 * index + 1);
-				if (dist1 * dist1 < np.dist2[0])
-					locate_photons(np, 2 * index);
-			} else { // dist1 is negative search left first
-				locate_photons(np, 2 * index);
-				if (dist1 * dist1 < np.dist2[0])
-					locate_photons(np, 2 * index + 1);
-			}
-		}
-
-		// compute squared distance between current photon and np.pos
-
-		dist1 = p.pos[0] - np.pos[0];
-		float dist2 = dist1 * dist1;
-		dist1 = p.pos[1] - np.pos[1];
-		dist2 += dist1 * dist1;
-		dist1 = p.pos[2] - np.pos[2];
-		dist2 += dist1 * dist1;
-
-		if (dist2 < np.dist2[0]) {
-			// we found a photon :) Insert it in the candidate list
-
-			if (np.found < np.max) {
-				// heap is not full; use array
-				np.found++;
-				np.dist2[np.found] = dist2;
-				np.index[np.found] = p;
-			} else {
-				int j, parent;
-
-				if (np.got_heap == 0) { // Do we need to build the heap?
-					// Build heap
-					float dst2;
-					Photon phot;
-					int half_found = np.found >> 1;
-					for (int k = half_found; k >= 1; k--) {
-						parent = k;
-						phot = np.index[k];
-						dst2 = np.dist2[k];
-						while (parent <= half_found) {
-							j = parent + parent;
-							if (j < np.found && np.dist2[j] < np.dist2[j + 1])
-								j++;
-							if (dst2 >= np.dist2[j])
-								break;
-							np.dist2[parent] = np.dist2[j];
-							np.index[parent] = np.index[j];
-							parent = j;
-						}
-						np.dist2[parent] = dst2;
-						np.index[parent] = phot;
-					}
-					np.got_heap = 1;
-				}
-
-				// insert new photon into max heap
-				// delete largest element, insert new and reorder the heap
-
-				parent = 1;
-				j = 2;
-				while (j <= np.found) {
-					if (j < np.found && np.dist2[j] < np.dist2[j + 1])
-						j++;
-					if (dist2 > np.dist2[j])
-						break;
-					np.dist2[parent] = np.dist2[j];
-					np.index[parent] = np.index[j];
-					parent = j;
-					j += j;
-				}
-				np.index[parent] = p;
-				np.dist2[parent] = dist2;
-
-				np.dist2[0] = np.dist2[1];
-			}
-		}
-	}
-
-	public void photon_dir(float dir[], // direction of photon (returned)
-			Photon p) { // the photon
-
-		dir[0] = sintheta[p.theta] * cosphi[p.phi];
-		dir[1] = sintheta[p.theta] * sinphi[p.phi];
-		dir[2] = costheta[p.theta];
-	}
-
-	public Vector<Photon> get_photons() {
-		return photons;
-	}
-
-	public int get_stored_photons() {
-		return stored_photons;
-	}
+    public int numEmit() {
+        return numEmit;
+    }
 }
