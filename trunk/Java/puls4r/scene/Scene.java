@@ -46,7 +46,7 @@ public class Scene {
 
 	public Scene() {
 		EPSILON = 0.000001;
-		PHOTONS = 100000;
+		PHOTONS = 50000;
 		MAX_RECURSIONS = 1000;
 		RANDOMIZE = false;
 		SMOOTHING = 4.0;

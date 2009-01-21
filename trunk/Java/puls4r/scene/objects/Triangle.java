@@ -34,7 +34,7 @@ public class Triangle extends Shape{
 		norm.cross(AB, AC);
 		norm.normalize();
 		
-		double d = - (norm.getX() * points[0].getX())  - (norm.getY() * points[0].getY()) - (norm.getZ() * points[0].getZ());
+		double d = - (norm.x * points[0].x)  - (norm.y * points[0].y) - (norm.z * points[0].z);
 	
 		this.plan = new Plan(enlightment, norm, d, false, perlinNoised);
 		
@@ -60,8 +60,8 @@ public class Triangle extends Shape{
 			Point3d p = new Point3d(intersection.getPoint());
 			p.sub(points[0]);
 			
-			double u = ((p.getY() * c.getX()) - (p.getX() * c.getY())) / ((b.getY() * c.getX()) - (b.getX() * c.getY()));
-			double v = ((p.getY() * b.getX()) - (p.getX() * b.getY())) / ((c.getY() * b.getX()) - (c.getX() * b.getY()));
+			double u = ((p.y * c.x) - (p.x * c.y)) / ((b.y * c.x) - (b.x * c.y));
+			double v = ((p.y * b.x) - (p.x * b.y)) / ((c.y * b.x) - (c.x * b.y));
 			
 			if((u>=0) && (v >= 0) && ((u+v) <= 1)){
 				intersection.setObject(this);

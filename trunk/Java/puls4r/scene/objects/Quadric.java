@@ -51,17 +51,17 @@ public class Quadric extends Shape {
 	}
 
 	private Intersection createIntersection(Ray ray) {
-		Point3d m = new Point3d(ray.getOrigin().getX()
-				+ (ray.getDirection().getX() * ray.getT()), ray.getOrigin()
-				.getY()
-				+ (ray.getDirection().getY() * ray.getT()), ray.getOrigin()
-				.getZ()
-				+ (ray.getDirection().getZ() * ray.getT()));
+		Point3d m = new Point3d(ray.getOrigin().x
+				+ (ray.getDirection().x * ray.getT()), ray.getOrigin()
+				.y
+				+ (ray.getDirection().y * ray.getT()), ray.getOrigin()
+				.z
+				+ (ray.getDirection().z * ray.getT()));
 
-		Vector3d nm = new Vector3d(2.0 * A * m.getX() + D * m.getY() + E
-				* m.getZ() + G, 2.0 * B * m.getY() + D * m.getX() + F
-				* m.getZ() + H, 2.0 * C * m.getZ() + E * m.getX() + F
-				* m.getY() + I);
+		Vector3d nm = new Vector3d(2.0 * A * m.x + D * m.y + E
+				* m.z + G, 2.0 * B * m.y + D * m.x + F
+				* m.z + H, 2.0 * C * m.z + E * m.x + F
+				* m.y + I);
 
 		nm.normalize();
 
@@ -80,44 +80,44 @@ public class Quadric extends Shape {
 
 	@Override
 	public Intersection intersection(Ray ray) {
-		double Aq = A * (ray.getDirection().getX())
-				* (ray.getDirection().getX()) + B * (ray.getDirection().getY())
-				* (ray.getDirection().getY()) + C * (ray.getDirection().getZ())
-				* (ray.getDirection().getZ()) + D * (ray.getDirection().getX())
-				* (ray.getDirection().getY()) + E * (ray.getDirection().getX())
-				* (ray.getDirection().getZ()) + F * (ray.getDirection().getY())
-				* (ray.getDirection().getZ());
+		double Aq = A * (ray.getDirection().x)
+				* (ray.getDirection().x) + B * (ray.getDirection().y)
+				* (ray.getDirection().y) + C * (ray.getDirection().z)
+				* (ray.getDirection().z) + D * (ray.getDirection().x)
+				* (ray.getDirection().y) + E * (ray.getDirection().x)
+				* (ray.getDirection().z) + F * (ray.getDirection().y)
+				* (ray.getDirection().z);
 
 		double Bq = 2.0
 				* A
-				* (ray.getOrigin().getX())
-				* (ray.getDirection().getX())
+				* (ray.getOrigin().x)
+				* (ray.getDirection().x)
 				+ 2.0
 				* B
-				* (ray.getOrigin().getY())
-				* (ray.getDirection().getY())
+				* (ray.getOrigin().y)
+				* (ray.getDirection().y)
 				+ 2.0
 				* C
-				* (ray.getOrigin().getZ())
-				* (ray.getDirection().getZ())
+				* (ray.getOrigin().z)
+				* (ray.getDirection().z)
 				+ D
-				* (((ray.getOrigin().getX()) * (ray.getDirection().getY())) + ((ray
-						.getOrigin().getY()) * (ray.getDirection().getX())))
+				* (((ray.getOrigin().x) * (ray.getDirection().y)) + ((ray
+						.getOrigin().y) * (ray.getDirection().x)))
 				+ E
-				* ((ray.getOrigin().getX()) * (ray.getDirection().getZ()))
+				* ((ray.getOrigin().x) * (ray.getDirection().z))
 				+ F
-				* (((ray.getOrigin().getY()) * (ray.getDirection().getZ())) + ((ray
-						.getOrigin().getZ()) * (ray.getDirection().getY())))
-				+ G * (ray.getDirection().getX()) + H
-				* (ray.getDirection().getY()) + I * (ray.getDirection().getZ());
+				* (((ray.getOrigin().y) * (ray.getDirection().z)) + ((ray
+						.getOrigin().z) * (ray.getDirection().y)))
+				+ G * (ray.getDirection().x) + H
+				* (ray.getDirection().y) + I * (ray.getDirection().z);
 
-		double Cq = A * (ray.getOrigin().getX()) * (ray.getOrigin().getX()) + B
-				* (ray.getOrigin().getY()) * (ray.getOrigin().getY()) + C
-				* (ray.getOrigin().getZ()) * (ray.getOrigin().getZ()) + D
-				* (ray.getOrigin().getX()) * (ray.getOrigin().getY()) + E
-				* (ray.getOrigin().getX()) * (ray.getOrigin().getZ()) + F
-				* (ray.getOrigin().getY()) * (ray.getOrigin().getZ()) + H
-				* (ray.getOrigin().getY()) + I * (ray.getOrigin().getZ()) + J;
+		double Cq = A * (ray.getOrigin().x) * (ray.getOrigin().x) + B
+				* (ray.getOrigin().y) * (ray.getOrigin().y) + C
+				* (ray.getOrigin().z) * (ray.getOrigin().z) + D
+				* (ray.getOrigin().x) * (ray.getOrigin().y) + E
+				* (ray.getOrigin().x) * (ray.getOrigin().z) + F
+				* (ray.getOrigin().y) * (ray.getOrigin().z) + H
+				* (ray.getOrigin().y) + I * (ray.getOrigin().z) + J;
 
 		if (Aq == 0) {
 			ray.setT((-Cq / Bq));

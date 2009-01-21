@@ -32,16 +32,16 @@ public class Sphere extends Shape {
 	}
 	
 	protected Intersection createIntersection(Ray ray) {
-		Point3d m = new Point3d(ray.getOrigin().getX()
-				+ (ray.getDirection().getX() * ray.getT()), ray.getOrigin()
-				.getY()
-				+ (ray.getDirection().getY() * ray.getT()), ray.getOrigin()
-				.getZ()
-				+ (ray.getDirection().getZ() * ray.getT()));
+		Point3d m = new Point3d(ray.getOrigin().x
+				+ (ray.getDirection().x * ray.getT()), ray.getOrigin()
+				.y
+				+ (ray.getDirection().y * ray.getT()), ray.getOrigin()
+				.z
+				+ (ray.getDirection().z * ray.getT()));
 
-		Vector3d nm = new Vector3d((m.getX() - center.getX()) / radius, (m
-				.getY() - center.getY())
-				/ radius, (m.getZ() - center.getZ()) / radius);
+		Vector3d nm = new Vector3d((m.x - center.x) / radius, (m
+				.y - center.y)
+				/ radius, (m.z - center.z) / radius);
 
 		nm.normalize();
 
@@ -54,9 +54,9 @@ public class Sphere extends Shape {
 
 	@Override
 	public Intersection intersection(Ray ray) {
-		double A = Math.pow(ray.getDirection().getX(), 2.0) + Math.pow(ray.getDirection().getY(), 2.0) + Math.pow(ray.getDirection().getZ(), 2.0);
-		double B = 2.0 * ( (ray.getDirection().getX() * (ray.getOrigin().getX() - center.getX())) + (ray.getDirection().getY() * (ray.getOrigin().getY() - center.getY())) + (ray.getDirection().getZ() * (ray.getOrigin().getZ() - center.getZ())));
-		double C = Math.pow(ray.getOrigin().getX() - center.getX(), 2.0) + Math.pow(ray.getOrigin().getY() - center.getY(), 2.0) + Math.pow(ray.getOrigin().getZ() - center.getZ(), 2.0) - Math.pow(radius, 2.0);
+		double A = Math.pow(ray.getDirection().x, 2.0) + Math.pow(ray.getDirection().y, 2.0) + Math.pow(ray.getDirection().z, 2.0);
+		double B = 2.0 * ( (ray.getDirection().x * (ray.getOrigin().x - center.x)) + (ray.getDirection().y * (ray.getOrigin().y - center.y)) + (ray.getDirection().z * (ray.getOrigin().z - center.z)));
+		double C = Math.pow(ray.getOrigin().x - center.x, 2.0) + Math.pow(ray.getOrigin().y - center.y, 2.0) + Math.pow(ray.getOrigin().z - center.z, 2.0) - Math.pow(radius, 2.0);
 		
 		double t0 = (-B - Math.sqrt((B*B) - (4*A*C))) / (2.0*A);
 		double t1 = (-B + Math.sqrt((B*B) - (4*A*C))) / (2.0*A);
