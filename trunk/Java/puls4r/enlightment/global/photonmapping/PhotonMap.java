@@ -239,10 +239,10 @@ public final class PhotonMap {
 				d = photons.indexOf(pa1[j]);
 				pa1[j] = null;
 
-				if (d != foo)
-					//TODO
-					photons[j] = photons[d];
-					//
+				if (d != foo){
+					photons.remove(j);
+					photons.add(j, photons.elementAt(d));
+				}
 				else {
 					photons.remove(j);
 					photons.add(j,foo_photon);
