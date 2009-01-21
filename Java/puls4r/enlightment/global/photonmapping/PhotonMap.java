@@ -181,7 +181,8 @@ public final class PhotonMap {
 			return;
 
 		stored_photons++;
-		Photon node = photons.elementAt(stored_photons);
+		Photon node = new Photon();
+		photons.add(node);
 
 		for (int i = 0; i < 3; i++) {
 			node.pos[i] = pos[i];
