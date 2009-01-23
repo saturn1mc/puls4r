@@ -1,32 +1,25 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<!-- Scene example -->
+	<!-- Scene example -->
 
 <scene>
-	
-	<background r="0" g="0" b="0"/>
-	
+
+	<background r="0" g="0" b="0" />
+
 	<observer>
-		<eye x="0" y="0" z="100"/>
-		<sight x="0" y="0" z="0"/>
+		<eye x="0" y="0" z="100" />
+		<sight x="0" y="0" z="0" />
 	</observer>
 
 	<lights>
-		<light x="10" y="10" z="100" r="1" g="1" b="1" radius="1.5" power="1500"/>
+		<light x="10" y="10" z="100" r="1" g="1" b="1" radius="1.5"
+			power="1500" />
 	</lights>
-	
+
 	<objects>
-		<sphere x="0" y="0" z="0" radius="20"
-				enlightment="phong" r="1" g="0" b="0" 
-				reflecting="0"
-				kr="0.8"
-				glossyFocal="0"
-				glossyWidth="0"
-				refracting="0"
-				n="1.0"
-				kt="0"
-				perlin = "1"
-				epsilon = "20"/>
+		<sphere x="0" y="0" z="0" radius="20" enlightment="phong" r="1"
+			g="0" b="0" reflecting="0" kr="0.8" glossyFocal="0" glossyWidth="0"
+			refracting="0" n="1.0" kt="0" perlin="1" epsilon="20" />
 	</objects>
-	
+
 </scene>

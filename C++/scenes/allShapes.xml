@@ -1,125 +1,59 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<!-- Scene example -->
+	<!-- Scene example -->
 
 <scene>
-	
-	<background r="0" g="0" b="0"/>
-	
+
+	<background r="0" g="0" b="0" />
+
 	<observer>
-		<eye x="0" y="5" z="30"/>
-		<sight x="0" y="0" z="0"/>
+		<eye x="0" y="5" z="30" />
+		<sight x="0" y="0" z="0" />
 	</observer>
 
 	<lights>
-		<light x="0" y="2" z="5" r="1" g="1" b="1" radius="1.5" power="900"/>
+		<light x="0" y="2" z="5" r="1" g="1" b="1" radius="1.5" power="900" />
 	</lights>
-	
+
 	<objects>
-		<sphere x="0" y="7" z="0" radius="1"
-				enlightment="phong" r="1" g="0" b="0" 
-				reflecting="0"
-				kr="0"
-				glossyFocal="0"
-				glossyWidth="0"
-				refracting="0"
-				n="0"
-				kt="0"
-				perlin = "0"
-				epsilon = "0.0"/>
-				
-		<sphere x="-8" y="-3" z="0" radius="1"
-				enlightment="phong" r="0" g="1" b="0" 
-				reflecting="0"
-				kr="0.0"
-				glossyFocal="0"
-				glossyWidth="0"
-				refracting="0"
-				n="0"
-				kt="0"
-				perlin = "0"
-				epsilon = "0.0"/>
-		
-		<sphere x="8" y="-3" z="0" radius="1"
-				enlightment="phong" r="0" g="0" b="1" 
-				reflecting="0"
-				kr="0"
-				glossyFocal="0"
-				glossyWidth="0"
-				refracting="0"
-				n="0"
-				kt="0"
-				perlin = "0"
-				epsilon = "0.0"/>
-		
-		<triangle 	ax="0" ay="7" az="0" 
-					bx="-4" by="2" bz="0" 
-					cx="4" cy="2" cz="0"
-					enlightment="phong" r="0.9" g="0.7" b="0.1" 
-					reflecting="0"
-					kr="0.0"
-					glossyFocal="0"
-					glossyWidth="0"
-					refracting="0"
-					n="0"
-					kt="0"
-					perlin = "0"
-					epsilon = "0.0"/>
-					
-		<triangle 	ax="-4" ay="2" az="0" 
-					bx="-8" by="-3" bz="0" 
-					cx="0" cy="-3" cz="0"
-					enlightment="phong" r="0.9" g="0.7" b="0.1" 
-					reflecting="0"
-					kr="0.0"
-					glossyFocal="0"
-					glossyWidth="0"
-					refracting="0"
-					n="0"
-					kt="0"
-					perlin = "0"
-					epsilon = "0.0"/>
-					
-		<triangle 	ax="4" ay="2" az="0" 
-					bx="0" by="-3" bz="0" 
-					cx="8" cy="-3" cz="0"
-					enlightment="phong" r="0.9" g="0.7" b="0.1" 
-					reflecting="0"
-					kr="0.0"
-					glossyFocal="0"
-					glossyWidth="0"
-					refracting="0"
-					n="0"
-					kt="0"
-					perlin = "0"
-					epsilon = "0.0"/>
-					
-					
-		<quadric 	qa="1" qb="10" qc="1" qd="0" qe="0" qf="0" qg="0" qh="0" qi="0" qj="-2"
-					enlightment="phong" r="1" g="0" b="1" 
-					reflecting="0"
-					kr="0.0"
-					glossyFocal="0"
-					glossyWidth="0"
-					refracting="0"
-					n="0"
-					kt="0"
-					perlin = "0"
-					epsilon = "0.0"/>
-		
-				
-		<plan 	x="0" y="1" z="0" d="4" monoface="0"
-				enlightment="phong" r="1" g="1" b="1" 
-				reflecting="0"
-				kr="0.0"
-				glossyFocal="0.0"
-				glossyWidth="0.0"
-				refracting="0"
-				n="0.0"
-				kt="0.0"
-				perlin = "0"
-				epsilon = "0"/>
-				
+		<sphere x="0" y="7" z="0" radius="1" enlightment="phong" r="1"
+			g="0" b="0" reflecting="0" kr="0" glossyFocal="0" glossyWidth="0"
+			refracting="0" n="0" kt="0" perlin="0" epsilon="0.0" />
+
+		<sphere x="-8" y="-3" z="0" radius="1" enlightment="phong" r="0"
+			g="1" b="0" reflecting="0" kr="0.0" glossyFocal="0" glossyWidth="0"
+			refracting="0" n="0" kt="0" perlin="0" epsilon="0.0" />
+
+		<sphere x="8" y="-3" z="0" radius="1" enlightment="phong" r="0"
+			g="0" b="1" reflecting="0" kr="0" glossyFocal="0" glossyWidth="0"
+			refracting="0" n="0" kt="0" perlin="0" epsilon="0.0" />
+
+		<triangle ax="0" ay="7" az="0" bx="-4" by="2" bz="0" cx="4"
+			cy="2" cz="0" enlightment="phong" r="0.9" g="0.7" b="0.1" reflecting="0"
+			kr="0.0" glossyFocal="0" glossyWidth="0" refracting="0" n="0" kt="0"
+			perlin="0" epsilon="0.0" />
+
+		<triangle ax="-4" ay="2" az="0" bx="-8" by="-3" bz="0" cx="0"
+			cy="-3" cz="0" enlightment="phong" r="0.9" g="0.7" b="0.1"
+			reflecting="0" kr="0.0" glossyFocal="0" glossyWidth="0" refracting="0"
+			n="0" kt="0" perlin="0" epsilon="0.0" />
+
+		<triangle ax="4" ay="2" az="0" bx="0" by="-3" bz="0" cx="8"
+			cy="-3" cz="0" enlightment="phong" r="0.9" g="0.7" b="0.1"
+			reflecting="0" kr="0.0" glossyFocal="0" glossyWidth="0" refracting="0"
+			n="0" kt="0" perlin="0" epsilon="0.0" />
+
+
+		<quadric qa="1" qb="10" qc="1" qd="0" qe="0" qf="0" qg="0" qh="0"
+			qi="0" qj="-2" enlightment="phong" r="1" g="0" b="1" reflecting="0"
+			kr="0.0" glossyFocal="0" glossyWidth="0" refracting="0" n="0" kt="0"
+			perlin="0" epsilon="0.0" />
+
+
+		<plan x="0" y="1" z="0" d="4" monoface="0" enlightment="phong" r="1"
+			g="1" b="1" reflecting="0" kr="0.0" glossyFocal="0.0" glossyWidth="0.0"
+			refracting="0" n="0.0" kt="0.0" perlin="0" epsilon="0" />
+
 	</objects>
-	
+
 </scene>
