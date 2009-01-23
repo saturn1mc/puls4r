@@ -18,21 +18,21 @@ PhotonMap :: PhotonMap( const int max_phot )
 	stored_photons = 0;
 	prev_scale = 1;
 	max_photons = max_phot;
-	
+
 	photons = (Photon*)malloc( sizeof( Photon ) * ( max_photons+1 ) );
-	
+
 	if (photons == NULL) {
 		fprintf(stderr,"Out of memory initializing photon map\n");
 		exit(-1);
 	}
-	
+
 	bbox_min[0] = bbox_min[1] = bbox_min[2] = 1e8f;
 	bbox_max[0] = bbox_max[1] = bbox_max[2] = -1e8f;
-	
+
 	//----------------------------------------
 	// initialize direction conversion tables
 	//----------------------------------------
-	
+
 	for (int i=0; i<256; i++) {
 		double angle = double(i)*(1.0/256.0)*M_PI;
 		costheta[i] = cos( angle );
@@ -76,26 +76,26 @@ void PhotonMap :: irradiance_estimate(
 //**********************************************
 {
 	irrad[0] = irrad[1] = irrad[2] = 0.0;
-	
+
 	NearestPhotons np;
 	np.dist2 = (float*)alloca( sizeof(float)*(nphotons+1) );
 	np.index = (const Photon**)alloca( sizeof(Photon*)*(nphotons+1) );
-	
+
 	np.pos[0] = pos[0]; np.pos[1] = pos[1]; np.pos[2] = pos[2];
 	np.max = nphotons;
 	np.found = 0;
 	np.got_heap = 0;
 	np.dist2[0] = max_dist*max_dist;
-	
+
 	// locate the nearest photons
 	locate_photons( &np, 1 );
-	
+
 	// if less than 8 photons return
 	if (np.found<8)
 		return;
-	
+
 	float pdir[3];
-	
+
 	// sum irradiance from all photons
 	for (int i=1; i<=np.found; i++) {
 		const Photon *p = np.index[i];
@@ -108,9 +108,9 @@ void PhotonMap :: irradiance_estimate(
 			irrad[2] += p->power[2];
 		}
 	}
-	
+
 	const float tmp=(1.0f/M_PI)/(np.dist2[0]);	// estimate of density
-	
+
 	irrad[0] *= tmp;
 	irrad[1] *= tmp;
 	irrad[2] *= tmp;
@@ -128,10 +128,10 @@ void PhotonMap :: locate_photons(
 {
 	const Photon *p = &photons[index];
 	float dist1;
-	
+
 	if (index<half_stored_photons) {
 		dist1 = np->pos[ p->plane ] - p->pos[ p->plane ];
-		
+
 		if (dist1>0.0) { // if dist1 is positive search right plane
 			locate_photons( np, 2*index+1 );
 			if ( dist1*dist1 < np->dist2[0] )
@@ -142,19 +142,19 @@ void PhotonMap :: locate_photons(
 				locate_photons( np, 2*index+1 );
 		}
 	}
-	
+
 	// compute squared distance between current photon and np->pos
-	
+
 	dist1 = p->pos[0] - np->pos[0];
 	float dist2 = dist1*dist1;
 	dist1 = p->pos[1] - np->pos[1];
 	dist2 += dist1*dist1;
 	dist1 = p->pos[2] - np->pos[2];
 	dist2 += dist1*dist1;
-	
+
 	if ( dist2 < np->dist2[0] ) {
 		// we found a photon :) Insert it in the candidate list
-		
+
 		if ( np->found < np->max ) {
 			// heap is not full; use array
 			np->found++;
@@ -162,7 +162,7 @@ void PhotonMap :: locate_photons(
 			np->index[np->found] = p;
 		} else {
 			int j,parent;
-			
+
 			if (np->got_heap==0) { // Do we need to build the heap?
 								   // Build heap
 				float dst2;
@@ -187,10 +187,10 @@ void PhotonMap :: locate_photons(
 				}
 				np->got_heap = 1;
 			}
-			
+
 			// insert new photon into max heap
 			// delete largest element, insert new and reorder the heap
-			
+
 			parent=1;
 			j = 2;
 			while ( j <= np->found ) {
@@ -205,7 +205,7 @@ void PhotonMap :: locate_photons(
 			}
 			np->index[parent] = p;
 			np->dist2[parent] = dist2;
-			
+
 			np->dist2[0] = np->dist2[1];
 		}
   }
@@ -226,27 +226,27 @@ void PhotonMap :: store(
 {
 	if (stored_photons>=max_photons)
 		return;
-	
+
 	stored_photons++;
 	Photon *const node = &photons[stored_photons];
-	
+
 	for (int i=0; i<3; i++) {
 		node->pos[i] = pos[i];
-		
+
 		if (node->pos[i] < bbox_min[i])
 			bbox_min[i] = node->pos[i];
 		if (node->pos[i] > bbox_max[i])
 			bbox_max[i] = node->pos[i];
-		
+
 		node->power[i] = power[i];
 	}
-	
+
 	int theta = int( acos(dir[2])*(256.0/M_PI) );
 	if (theta>255)
 		node->theta = 255;
 	else
 		node->theta = (unsigned char)theta;
-	
+
 	int phi = int( atan2(dir[1],dir[0])*(256.0/(2.0*M_PI)) );
 	if (phi>255)
 		node->phi = 255;
@@ -287,17 +287,17 @@ void PhotonMap :: balance(void)
 		// allocate two temporary arrays for the balancing procedure
 		Photon **pa1 = (Photon**)malloc(sizeof(Photon*)*(stored_photons+1));
 		Photon **pa2 = (Photon**)malloc(sizeof(Photon*)*(stored_photons+1));
-		
+
 		for (int i=0; i<=stored_photons; i++)
 			pa2[i] = &photons[i];
-		
+
 		balance_segment( pa1, pa2, 1, 1, stored_photons );
 		free(pa2);
-		
+
 		// reorganize balanced kd-tree (make a heap)
 		int d, j=1, foo=1;
 		Photon foo_photon = photons[j];
-		
+
 		for (int i=1; i<=stored_photons; i++) {
 			d=pa1[j]-photons;
 			pa1[j] = NULL;
@@ -305,7 +305,7 @@ void PhotonMap :: balance(void)
 				photons[j] = photons[d];
 			else {
 				photons[j] = foo_photon;
-				
+
 				if (i<stored_photons) {
 					for (;foo<=stored_photons; foo++)
 						if (pa1[foo] != NULL)
@@ -319,7 +319,7 @@ void PhotonMap :: balance(void)
 		}
 		free(pa1);
 	}
-	
+
 	half_stored_photons = stored_photons/2-1;
 }
 
@@ -343,7 +343,7 @@ void PhotonMap :: median_split(
 {
 	int left = start;
 	int right = end;
-	
+
 	while ( right > left ) {
 		const float v = p[right]->pos[axis];
 		int i=left-1;
@@ -357,7 +357,7 @@ void PhotonMap :: median_split(
 				break;
 			swap(p,i,j);
 		}
-		
+
 		swap(p,i,right);
 		if ( i >= median )
 			right=i-1;
@@ -381,41 +381,41 @@ void PhotonMap :: balance_segment(
 	//--------------------
 	// compute new median
 	//--------------------
-	
+
 	int median=1;
 	while ((4*median) <= (end-start+1))
 		median += median;
-	
+
 	if ((3*median) <= (end-start+1)) {
 		median += median;
 		median += start-1;
 	} else
 		median = end-median+1;
-	
+
 	//--------------------------
 	// find axis to split along
 	//--------------------------
-	
+
 	int axis=2;
 	if ((bbox_max[0]-bbox_min[0])>(bbox_max[1]-bbox_min[1]) &&
 		(bbox_max[0]-bbox_min[0])>(bbox_max[2]-bbox_min[2]))
 		axis=0;
 	else if ((bbox_max[1]-bbox_min[1])>(bbox_max[2]-bbox_min[2]))
 		axis=1;
-	
+
 	//------------------------------------------
 	// partition photon block around the median
 	//------------------------------------------
-	
+
 	median_split( porg, start, end, median, axis );
-	
+
 	pbal[ index ] = porg[ median ];
 	pbal[ index ]->plane = axis;
-	
+
 	//----------------------------------------------
 	// recursively balance the left and right block
 	//----------------------------------------------
-	
+
 	if ( median > start ) {
 		// balance left segment
 		if ( start < median-1 ) {
@@ -427,7 +427,7 @@ void PhotonMap :: balance_segment(
 			pbal[ 2*index ] = porg[start];
 		}
 	}
-	
+
 	if ( median < end ) {
 		// balance right segment
 		if ( median+1 < end ) {
