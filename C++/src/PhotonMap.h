@@ -10,10 +10,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <malloc.h>
 #include <math.h>
 
 #define PI 3.141592654
+
+#ifdef __MINGW32__
+void *alloca(size_t);
+#endif
 
 typedef struct Photon {
 	float pos[3];				  // photon position

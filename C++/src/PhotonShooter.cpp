@@ -10,7 +10,7 @@
 #include "PhotonShooter.h"
 
 const double PhotonShooter::EPSILON = 0.000001;
-const double PhotonShooter::IRRADIANCE_AREA = 1.5;
+const double PhotonShooter::IRRADIANCE_AREA = 0.5;
 
 void PhotonShooter::shoot(std::list<Light* > lights, std::list<Object * > objects){
 
@@ -189,12 +189,15 @@ Color PhotonShooter::irradianceEstimate(Intersection* intersection){
 	float* pos = intersection->getPoint()->toArray();
 	float* normal = intersection->getNormal()->toArray();
 
+
+	int gatherPhotons = (IRRADIANCE_PHOTON_NUMBER > maxPhotons ? maxPhotons : IRRADIANCE_PHOTON_NUMBER);
+
 	//Direct enlightment component
 	irradiance[0] = 0;
 	irradiance[1] = 0;
 	irradiance[2] = 0;
 
-	directEnlightment->irradiance_estimate(irradiance, pos, normal, IRRADIANCE_AREA, IRRADIANCE_PHOTON_NUMBER);
+	directEnlightment->irradiance_estimate(irradiance, pos, normal, IRRADIANCE_AREA, gatherPhotons);
 
 	color.setR(color.getR() + (double)irradiance[0]);
 	color.setG(color.getG() + (double)irradiance[1]);
@@ -205,7 +208,7 @@ Color PhotonShooter::irradianceEstimate(Intersection* intersection){
 	irradiance[1] = 0;
 	irradiance[2] = 0;
 
-	indirectEnlightment->irradiance_estimate(irradiance, pos, normal, IRRADIANCE_AREA, IRRADIANCE_PHOTON_NUMBER);
+	indirectEnlightment->irradiance_estimate(irradiance, pos, normal, IRRADIANCE_AREA, gatherPhotons);
 
 	color.setR(color.getR() + (double)irradiance[0]);
 	color.setG(color.getG() + (double)irradiance[1]);
@@ -216,7 +219,7 @@ Color PhotonShooter::irradianceEstimate(Intersection* intersection){
 	irradiance[1] = 0;
 	irradiance[2] = 0;
 
-	caustics->irradiance_estimate(irradiance, pos, normal, IRRADIANCE_AREA, IRRADIANCE_PHOTON_NUMBER);
+	caustics->irradiance_estimate(irradiance, pos, normal, IRRADIANCE_AREA, gatherPhotons);
 
 	color.setR(color.getR() + (double)irradiance[0]);
 	color.setG(color.getG() + (double)irradiance[1]);

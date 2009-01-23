@@ -435,8 +435,6 @@ void Scene::photonMapping(void){
 	std::cout << "---> Rendering..." << std::endl;
 	int progress = 0;
 
-	std::cout << "---> 1" << std::endl;
-
 	for(int l=-getH()/2; l<getH()/2; l++){
 
 		int done = (int)round(100 *  (float)(l+(getH()/2)+1) / (float)getH());
@@ -455,7 +453,6 @@ void Scene::photonMapping(void){
 				color = antialiasedColor(l, p, PHOTONMAPPING_MODE);
 			}
 			else{
-				std::cout << "---> 2" << std::endl;
 				color = colorAt(l, p, PHOTONMAPPING_MODE);
 			}
 
